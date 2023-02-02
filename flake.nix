@@ -21,9 +21,9 @@
 
   };
 
-  outputs = {self, ...}@inputs:
-    let
-
+  outputs = {self, nixpkgs-unstable, ...}@inputs:
+    {
+    nixosModules = {
       hardware_config = { config, lib, pkgs, modulesPath, ...}:
         {
           imports = [
@@ -64,33 +64,29 @@
             video.hidpi.enable = lib.mkDefault true;
           };
         };
-
-      system_config = {config, pkgs, ...}:
+      bootstrap_user = {config, pkgs, ...}:
         {
-          nixpkgs.config.allowUnfree = true;
-          system.stateVersion = "21.11";
-          boot.loader.systemd-boot = {
-            enable = true;
-            configurationLimit = 200; #limit to 200 versions to boot from: 200*30Mb = 6Gb out of 10GB partition
-            editor = false;  #don't allow kernel cli editing before boot
-            #secureBoot = {
-            #  enable = false;
-            #  keyPath = "/secrets/secureboot_keys/DB.key";
-            #  certPath = "/secrets/secureboot_keys/DB.crt";
-            #};
+          users.users = {
+            bootstrap = {
+              isNormalUser = true;
+              extraGroups = ["wheel"];
+              password = "tmppwd";
+            };
           };
-          boot.loader.efi.canTouchEfiVariables = true;
-          boot.kernelPackages = pkgs.linuxPackages_latest;
+        };
+      system_config_secrets = {config, pkgs, ...}:
+        {
 
+          boot.loader.systemd-boot = {
+            configurationLimit = 200; #limit to 200 versions to boot from: 200*30Mb = 6Gb out of 10GB partition
+            secureBoot = {
+             enable = true;
+             keyPath = "/secrets/secureboot_keys/DB.key";
+             certPath = "/secrets/secureboot_keys/DB.crt";
+          };
+        };
           age.secrets.wpa_pwd_env.file = "/secrets/agenix/wpa_pwd.env.age";
           networking = {
-            hostName = "prime-ai-nixos";
-            firewall = {
-              allowedTCPPorts = [ ];
-              allowedUDPPorts = [ ];
-            };
-            wireless = {
-              enable = true;
               environmentFile = config.age.secrets.wpa_pwd_env.path;
               networks = {
                 PBAGJmob = {
@@ -106,6 +102,36 @@
                   priority = 99;
                 };
               };
+          };
+
+          age.secrets.user_phil_pwd.file = "/secrets/agenix/user_phil_pwd.age";
+          users.users = {
+            phil = {
+              isNormalUser = true;
+              extraGroups = ["wheel"];
+              passwordFile = config.age.secrets.user_phil_pwd.path;
+            };
+          };
+      };
+      system_config = {config, pkgs, ...}:
+        {
+          nixpkgs.config.allowUnfree = true;
+          system.stateVersion = "21.11";
+          boot.loader.systemd-boot = {
+            enable = true;
+            editor = false;  #don't allow kernel cli editing before boot
+          };
+          boot.loader.efi.canTouchEfiVariables = true;
+          boot.kernelPackages = pkgs.linuxPackages_latest;
+
+          networking = {
+            hostName = "prime-ai-nixos";
+            firewall = {
+              allowedTCPPorts = [ ];
+              allowedUDPPorts = [ ];
+            };
+            wireless = {
+              enable = true;
             };
             interfaces = {
               enp4s0.useDHCP = true;
@@ -127,14 +153,7 @@
           hardware.pulseaudio.enable = true;
 
           users.mutableUsers = false;
-          age.secrets.user_phil_pwd.file = "/secrets/agenix/user_phil_pwd.age";
           users.users = {
-            phil = {
-              isNormalUser = true;
-              extraGroups = ["wheel"];
-              #passwordFile = config.age.secrets.user_phil_pwd.path;
-              password = "tmppwd";
-            };
             root.hashedPassword = "*";
           };
 
@@ -177,24 +196,25 @@
             openFirewall = false;
           };
 
-
-
-    in  {
+        };
+    };
       nixosConfigurations = {
+        prime-ai-bootstrap = nixpkgs-unstable.lib.nixosSystem {
+          system = "x86_64-linux";
+          modules = [
+            self.hardware_config
+            self.system_config
+            self.bootstrap_user
+          ];
+        };
         prime-ai = nixpkgs-unstable.lib.nixosSystem {
           system = "x86_64-linux";
           modules = [
-            (hardware_config)
-            (system_config)
+            self.hardware_config
+            self.system_config
+            self.system_config_secrets
           ];
-
+        };
     };
-
-
-
-
-
-
-
-
+  };
 }

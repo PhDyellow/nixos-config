@@ -1,0 +1,39 @@
+#+TITLE: NixOS configuration using flakes
+
+
+
+* Quickstart
+:PROPERTIES:
+:ID:       org:20a5c6cb-fd41-443d-8784-e94a18484f3a
+:END:
+Set up system according to NixOS installation guide: https://nixos.org/manual/nixos/stable/index.html#sec-installation
+When asked to call ~nixos-install~, instead use:
+
+#+begin_src sh
+nixos-install --flake github:PhDyellow/nixos-config#prime-ai-bootstrap
+#+end_src
+
+Boot into the installed system, as bootstrap user with password ~tmppwd~.
+
+Configure agenix
+
+Configure Secure Boot
+
+#+begin_src sh
+sudo nixos-rebuild switch --flake github:PhDyellow/nixos-config#prime-ai
+#+end_src
+
+reboot system and log in as regular user with configured password.
+
+* In depth
+:PROPERTIES:
+:ID:       org:facf4b0c-bc5a-4edf-bcb7-889db2a4b5a1
+:END:
+
+This will install a base system ready for adding secrets
+* Acknowledgements
+:PROPERTIES:
+:ID:       org:2efc2be5-85c1-4e6b-883b-faf25af7d4f2
+:END:
+https://www.tweag.io/blog/2020-07-31-nixos-flakes/
+https://jdisaacs.com/blog/nixos-config/
