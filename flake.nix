@@ -217,7 +217,7 @@
         prime-ai-bootstrap = nixpkgs-unstable.lib.nixosSystem {
           system = "x86_64-linux";
           modules = [
-            self.prime-ai_hardware_config
+            self.nixosModules.prime-ai_hardware_config
             self.system_config
             self.bootstrap_user
           ];
