@@ -60,7 +60,7 @@
           swapDevices = [ ];
 
           hardware = {
-            cpu.amp.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
+            cpu.amd.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
             video.hidpi.enable = lib.mkDefault true;
           };
         };
