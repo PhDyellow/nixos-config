@@ -168,7 +168,7 @@
             wget
             firefox
             st
-            inputs.agenix.defaultPackage.x86_64-linux
+            #agenix.packages.x86_64-linux.default #nix run github:ryantm/agenix -- --help
             python3
             openssl
           ];
@@ -220,6 +220,7 @@
             self.nixosModules.prime-ai_hardware_config
             self.nixosModules.system_config
             self.nixosModules.bootstrap_user
+            agenix.nixosModules.default
           ];
         };
         prime-ai = nixpkgs-unstable.lib.nixosSystem {
