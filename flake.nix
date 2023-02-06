@@ -218,18 +218,18 @@
           system = "x86_64-linux";
           modules = [
             self.nixosModules.prime-ai_hardware_config
-            self.system_config
-            self.bootstrap_user
+            self.nixosModules.system_config
+            self.nixosModules.bootstrap_user
           ];
         };
         prime-ai = nixpkgs-unstable.lib.nixosSystem {
           system = "x86_64-linux";
           modules = [
-            self.prime-ai_hardware_config
-            self.system_config
-            self.phil_user
-            self.wifi_secrets
-            self.secure_boot
+            self.nixosModules.prime-ai_hardware_config
+            self.nixosModules.system_config
+            self.nixosModules.phil_user
+            self.nixosModules.wifi_secrets
+            self.nixosModules.secure_boot
           ];
         };
     };
