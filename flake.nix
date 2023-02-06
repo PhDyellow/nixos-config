@@ -181,7 +181,7 @@
                 "kvm"
               ];
               experimental-features = [
-                "nix=command"
+                "nix-command"
                 "flakes"
                 "recursive-nix"
               ];
