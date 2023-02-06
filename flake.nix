@@ -208,6 +208,7 @@
 
           buildInputs = with pkgs; [
             sbsigntool
+            sbctl
             efitools
           ];
         };
