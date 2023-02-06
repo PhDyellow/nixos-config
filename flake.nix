@@ -220,7 +220,7 @@
             self.nixosModules.prime-ai_hardware_config
             self.nixosModules.system_config
             self.nixosModules.bootstrap_user
-            agenix.nixosModules.default
+            inputs.agenix.nixosModules.default
           ];
         };
         prime-ai = nixpkgs-unstable.lib.nixosSystem {
