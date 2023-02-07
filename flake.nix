@@ -52,8 +52,8 @@
               fsType = "btrfs";
             };
             "/boot" = {
-              device = "systemd-1";
-              fsType = "autofs";
+              device = "/dev/disk/by-partuuid/5a687aae-d3c0-4f4e-b580-5cf32bec51b2";
+              fsType = "vfat";
             };
           };
 
