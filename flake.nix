@@ -11,12 +11,9 @@
       inputs.nixpkgs.follows = "nixpkgs-unstable";
     };
 
-    systemd-secure-boot = {
-      flake = false;
-      type = "github";
-      owner = "PhDyellow";
-      repo = "nix-machines";
-      ref = "main";
+    lanzaboote = {
+      url = "github:nix-community/lanzaboote";
+      inputs.nixpkgs.follows = "nixpkgs-unstable"; #needs unstable
     };
 
   };
@@ -74,21 +71,22 @@
             };
           };
         };
-      secure_boot = {config, pkgs, ...}:
+      secure_boot = {config, pkgs, lib, ...}:
         {
-          boot.loader.systemd-boot = {
-            configurationLimit = 200; #limit to 200 versions to boot from: 200*30Mb = 6Gb out of 10GB partition
-            secureBoot = {
-             enable = true;
-             keyPath = "/secrets/secureboot_keys/DB.key";
-             certPath = "/secrets/secureboot_keys/DB.crt";
+          imports = [
+            inputs.lanzaboote.nixosModules.lanzaboote
+          ];
+          #boot.bootspec.enable = true; #duplicated from prime-ai_hardware_config
+          boot.loader.systemd-boot.enable = lib.mkForce false;
+          boot.lanzaboote = {
+            enable = true;
+            pkiBundle = "/secrets/secureboot";
           };
         };
-      };
       wifi_secrets = {config, pkgs, ...}:
         {
         age.secrets.wpa_pwd_env.file = "/secrets/agenix/wpa_pwd.env.age";
-        networking = {
+        networking.wireless = {
             environmentFile = config.age.secrets.wpa_pwd_env.path;
             networks = {
               PBAGJmob = {
@@ -122,7 +120,7 @@
           nixpkgs.config.allowUnfree = true;
           system.stateVersion = "21.11";
           boot.loader.systemd-boot = {
-            enable = true;
+            #enable = true; #set to false by lanzaboote
             editor = false;  #don't allow kernel cli editing before boot
           };
           boot.loader.efi.canTouchEfiVariables = true;
