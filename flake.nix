@@ -44,7 +44,7 @@
             "kvm-amd"
           ];
           boot.extraModulePackages = [ ];
-
+          boot.bootspec.enable = true;
 
           fileSystems = {
             "/" = {
