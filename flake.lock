@@ -2,31 +2,8 @@
   "nodes": {
     "agenix": {
       "inputs": {
-        "agenix": "agenix_2",
-        "flake-utils": "flake-utils",
         "nixpkgs": [
-          "nixpkgs-unstable"
-        ],
-        "rust-overlay": "rust-overlay"
-      },
-      "locked": {
-        "lastModified": 1675293936,
-        "narHash": "sha256-xaObOxlMiZ8noXbXWfoUJrCjVZ8oc9HBblc/MeCq7fc=",
-        "owner": "yaxitech",
-        "repo": "ragenix",
-        "rev": "325733b734aa4cc4d6b19f1169e6672cad4128ca",
-        "type": "github"
-      },
-      "original": {
-        "owner": "yaxitech",
-        "repo": "ragenix",
-        "type": "github"
-      }
-    },
-    "agenix_2": {
-      "inputs": {
-        "nixpkgs": [
-          "agenix",
+          "ragenix",
           "nixpkgs"
         ]
       },
@@ -75,21 +52,44 @@
         "type": "github"
       }
     },
-    "root": {
+    "ragenix": {
       "inputs": {
         "agenix": "agenix",
+        "flake-utils": "flake-utils",
+        "nixpkgs": [
+          "nixpkgs-unstable"
+        ],
+        "rust-overlay": "rust-overlay"
+      },
+      "locked": {
+        "lastModified": 1675293936,
+        "narHash": "sha256-xaObOxlMiZ8noXbXWfoUJrCjVZ8oc9HBblc/MeCq7fc=",
+        "owner": "yaxitech",
+        "repo": "ragenix",
+        "rev": "325733b734aa4cc4d6b19f1169e6672cad4128ca",
+        "type": "github"
+      },
+      "original": {
+        "owner": "yaxitech",
+        "repo": "ragenix",
+        "type": "github"
+      }
+    },
+    "root": {
+      "inputs": {
         "nixpkgs-unstable": "nixpkgs-unstable",
+        "ragenix": "ragenix",
         "systemd-secure-boot": "systemd-secure-boot"
       }
     },
     "rust-overlay": {
       "inputs": {
         "flake-utils": [
-          "agenix",
+          "ragenix",
           "flake-utils"
         ],
         "nixpkgs": [
-          "agenix",
+          "ragenix",
           "nixpkgs"
         ]
       },

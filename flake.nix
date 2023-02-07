@@ -6,7 +6,7 @@
       url = "github:NixOS/nixpkgs/nixos-unstable";
     };
 
-    agenix = {
+    ragenix = {
       url = "github:yaxitech/ragenix";
       inputs.nixpkgs.follows = "nixpkgs-unstable";
     };
@@ -221,7 +221,7 @@
             self.nixosModules.prime-ai_hardware_config
             self.nixosModules.system_config
             self.nixosModules.bootstrap_user
-            inputs.agenix.nixosModules.default
+            inputs.ragenix.agenix.nixosModules.default
           ];
         };
         prime-ai = nixpkgs-unstable.lib.nixosSystem {
@@ -232,6 +232,7 @@
             self.nixosModules.phil_user
             self.nixosModules.wifi_secrets
             self.nixosModules.secure_boot
+            inputs.agenix.nixosModules.default
           ];
         };
     };
