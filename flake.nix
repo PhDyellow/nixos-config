@@ -71,7 +71,10 @@
             "/para" = {
               device = "/dev/mapper/para-crypt"; #after mounting from crypttab
               fsType = "ntfs3";
-              options = [ "ro" "uid=1001"];
+              options = [ "ro"
+                          "uid=1001"
+                        "windows_names"
+                        ];
             };
           };
           environment.etc.crypttab = {
@@ -134,7 +137,6 @@
             extraGroups = ["wheel"];
             passwordFile = config.age.secrets.user_phil_pwd.path;
             uid = 1001;
-            gid = 100;
           };
         };
       };
