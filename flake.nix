@@ -27,25 +27,29 @@
               (modulesPath + "/installer/scan/not-detected.nix")
           ];
 
-          boot.initrd.luks.devices."nixos-crypt".device =
-            "dev/disk/by-uuid/c4129dcf-90da-4d0c-8da9-880b9c111e6f";
+          boot = {
+            initrd = {
+              luks.devices."nixos-crypt".device =
+                "dev/disk/by-uuid/c4129dcf-90da-4d0c-8da9-880b9c111e6f";
 
-          boot.initrd.availableKernelModules = [
-            "nvme"
-            "xhci_pci"
-            "ahci"
-            "sdhci_pci"
-          ];
-          boot.initrd.kernelModules = [ ];
-          boot.kernelModules = [
-            "kvm-amd"
-          ];
-          boot.extraModulePackages = [ ];
-          boot.bootspec.enable = true;
-
+              availableKernelModules = [
+                "nvme"
+                "xhci_pci"
+                "ahci"
+                "sdhci_pci"
+              ];
+              kernelModules = [ ];
+            };
+            kernelModules = [
+              "kvm-amd"
+            ];
+            extraModulePackages = [ ];
+            bootspec.enable = true; #needed for lanzaboote secureboot
+            supportedFilesystems = [ "ntfs" ]; #needed for NTFS support
+          };
           fileSystems = {
             "/" = {
-              device = "/dev/disk/by-uuid/6a9829dd-f9b5-4f87-8e1b-5df21fadfeda";
+              device = "/dev/mapper/nixos-crypt";
               fsType = "btrfs";
             };
             "/boot" = {
@@ -61,6 +65,23 @@
             video.hidpi.enable = lib.mkDefault true;
           };
         };
+      prime-ai_hardware_shared_crypt = { config, lib, pkgs, ...}:
+        {
+          fileSystems = {
+            "/para" = {
+              device = "/dev/mapper/para-crypt"; #after mounting from crypttab
+              fsType = "ntfs3";
+              options = [ "ro" "uid=1001"];
+            };
+          };
+          environment.etc.crypttab = {
+            enable = false;
+            text = ''
+              para-crypt /dev/disk/by-partuuid/1b5333c3-9421-44d5-8d21-fc2f22c8cbe3 /secrets/bitlocker/para.bek bitlk
+              ''
+          };
+      };
+
       bootstrap_user = {config, pkgs, ...}:
         {
           users.users = {
@@ -112,6 +133,8 @@
             isNormalUser = true;
             extraGroups = ["wheel"];
             passwordFile = config.age.secrets.user_phil_pwd.path;
+            uid = 1001;
+            gid = 100;
           };
         };
       };
@@ -230,7 +253,9 @@
             self.nixosModules.phil_user
             self.nixosModules.wifi_secrets
             self.nixosModules.secure_boot
+            #self.nixosModules.prime-ai_hardware_shared_crypt
             inputs.ragenix.nixosModules.age
+
           ];
         };
     };
