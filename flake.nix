@@ -80,7 +80,7 @@
                           #"windows_names"
                           "fmask=133"
                           "dmask=022"
-                          "norecover"
+                          #"norecover"
                         ];
             };
           };
