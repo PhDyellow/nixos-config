@@ -78,7 +78,7 @@
             enable = false;
             text = ''
               para-crypt /dev/disk/by-partuuid/1b5333c3-9421-44d5-8d21-fc2f22c8cbe3 /secrets/bitlocker/para.bek bitlk
-              ''
+              '';
           };
       };
 
