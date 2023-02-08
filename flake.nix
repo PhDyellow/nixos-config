@@ -77,7 +77,7 @@
               options = [ "ro"
                           "uid=1001"
                           "gid=100"
-                          "windows_names"
+                          #"windows_names"
                           "fmask=133"
                           "dmask=022"
                           "norecover"
