@@ -45,7 +45,10 @@
             ];
             extraModulePackages = [ ];
             bootspec.enable = true; #needed for lanzaboote secureboot
-            supportedFilesystems = [ "ntfs" ]; #needed for NTFS support
+            supportedFilesystems = [
+              "ntfs" #needed for NTFS support
+              "btrfs"
+            ];
           };
           fileSystems = {
             "/" = {
@@ -67,20 +70,20 @@
         };
       prime-ai_hardware_shared_crypt = { config, lib, pkgs, ...}:
         {
-          # fileSystems = {
-          #   "/para" = {
-          #     device = "/dev/mapper/para-crypt"; #after mounting from crypttab
-          #     fsType = "ntfs3";
-          #     options = [ "ro"
-          #                 "uid=1001"
-          #                 "gid=100"
-          #                 "windows_names"
-          #                 "fmask=133"
-          #                 "dmask=022"
-          #                 "norecover"
-          #               ];
-          #   };
-          # };
+          fileSystems = {
+            "/para" = {
+              device = "/dev/mapper/para-crypt"; #after mounting from crypttab
+              fsType = "ntfs3";
+              options = [ "ro"
+                          "uid=1001"
+                          "gid=100"
+                          "windows_names"
+                          "fmask=133"
+                          "dmask=022"
+                          "norecover"
+                        ];
+            };
+          };
           environment.etc.crypttab = {
             enable = true;
             text = ''
