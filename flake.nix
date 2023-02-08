@@ -74,14 +74,14 @@
             "/para" = {
               device = "/dev/mapper/para-crypt"; #after mounting from crypttab
               fsType = "ntfs-3g";
-              options = [ "ro"
+              options = [ "rw"
                           "uid=1001"
                           "gid=100"
                           "windows_names" #added to kernel in 6.2, current kernel in NixOS is 6.1.9. Supported by ntfs-3g
                           "fmask=133"
                           "dmask=022"
                           "norecover" # this is an ntfs-3g option, not supported by ntfs3
-                          #"discard"
+                          #"discard" #ntfs3 only option
                         ];
             };
           };
