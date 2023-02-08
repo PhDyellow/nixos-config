@@ -73,7 +73,11 @@
               fsType = "ntfs3";
               options = [ "ro"
                           "uid=1001"
-                        "windows_names"
+                          "gid=100"
+                          "windows_names"
+                          "fmask=133"
+                          "dmask=022"
+                          "norecover"
                         ];
             };
           };
@@ -255,7 +259,7 @@
             self.nixosModules.phil_user
             self.nixosModules.wifi_secrets
             self.nixosModules.secure_boot
-            #self.nixosModules.prime-ai_hardware_shared_crypt
+            self.nixosModules.prime-ai_hardware_shared_crypt
             inputs.ragenix.nixosModules.age
 
           ];
