@@ -77,10 +77,11 @@
               options = [ "ro"
                           "uid=1001"
                           "gid=100"
-                          #"windows_names"
+                          #"windows_names" #added to kernel in 6.2, current kernel in NixOS is 6.1.9
                           "fmask=133"
                           "dmask=022"
-                          #"norecover"
+                          #"norecover" # this is an ntfs-3g option, not supported by ntfs3
+                          "discard"
                         ];
             };
           };
