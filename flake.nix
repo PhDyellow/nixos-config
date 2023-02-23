@@ -120,6 +120,27 @@
             pkiBundle = "/etc/secureboot";
           };
         };
+      network_fs = {config, pkgs, ...}:
+        {
+        age.secrets.cifs_dpbagje_share.file = "/secrets/agenix/cifs_dpbagje_share.age";
+        let
+          # this line prevents hanging on network split
+          automount_opts = "x-systemd.automount,noauto,x-systemd.idle-timeout=600,x-systemd.device-timeout=5s,x-systemd.mount-timeout=5s";
+        in {
+          fileSystems = {
+            "/nas/dpbagj/parent_share" = {
+              device = "//100.108.81.63/parent_share";
+              fsType = "cifs";
+              options = ["${automount_opts},credentials=${config.age.secrets.cifs_dpbagje_share.path}"];
+            };
+            "/nas/dpbagj/family_share" = {
+              device = "//100.108.81.63/family_share";
+              fsType = "cifs";
+              options = ["${automount_opts},credentials=${config.age.secrets.cifs_dpbagje_share.path}"];
+            };
+          };
+        };
+      };
       wifi_secrets = {config, pkgs, ...}:
         {
         age.secrets.wpa_pwd_env.file = "/secrets/agenix/wpa_pwd.env.age";
@@ -152,6 +173,41 @@
             uid = 1001;
           };
         };
+      };
+      prime_ai_tailscale = {
+        age.secrets.prime_ai_tailscale.file = "/secrets/agenix/prime_ai_tailscale.age";
+          services.tailscale = {
+            enable = true;
+          };
+          # https://tailscale.com/blog/nixos-minecraft/
+          # create a oneshot job to authenticate to Tailscale
+          systemd.services.tailscale-autoconnect = {
+            description = "Automatic connection to Tailscale";
+
+            # make sure tailscale is running before trying to connect to tailscale
+            after = [ "network-pre.target" "tailscale.service" ];
+            wants = [ "network-pre.target" "tailscale.service" ];
+            wantedBy = [ "multi-user.target" ];
+
+            # set this service as a oneshot job
+            serviceConfig.Type = "oneshot";
+
+            # have the job run this shell script
+            script = with pkgs; ''
+              # wait for tailscaled to settle
+              sleep 2
+
+              # check if we are already authenticated to tailscale
+              status="$(${tailscale}/bin/tailscale status -json | ${jq}/bin/jq -r .BackendState)"
+              if [ $status = "Running" ]; then # if so, then do nothing
+                exit 0
+              fi
+
+              # otherwise authenticate with tailscale
+              ${tailscale}/bin/tailscale up -authkey file:${config.age.secrets.prime_ai_tailscale.path}
+            '';
+          };
+
       };
       system_config = {config, pkgs, ...}:
         {
@@ -270,7 +326,8 @@
             self.nixosModules.secure_boot
             self.nixosModules.prime-ai_hardware_shared_crypt
             inputs.ragenix.nixosModules.age
-
+            self.nixosModules.prime_ai_tailscale
+            self.nixosModules.network_fs
           ];
         };
     };
