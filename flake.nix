@@ -173,7 +173,8 @@
           };
         };
       };
-      prime_ai_tailscale = {
+      prime_ai_tailscale = {config, pkgs, ...}:
+        {
         age.secrets.prime_ai_tailscale.file = "/secrets/agenix/prime_ai_tailscale.age";
           services.tailscale = {
             enable = true;
