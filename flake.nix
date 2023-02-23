@@ -6,6 +6,8 @@
       url = "github:NixOS/nixpkgs/nixos-unstable";
     };
 
+    nixos-hardware.url = "github:NixOS/nixos-hardware/master";
+
     ragenix = {
       url = "github:yaxitech/ragenix";
       inputs.nixpkgs.follows = "nixpkgs-unstable";
@@ -15,7 +17,6 @@
       url = "github:nix-community/lanzaboote";
       inputs.nixpkgs.follows = "nixpkgs-unstable"; #needs unstable
     };
-
   };
 
   outputs = {self, nixpkgs-unstable, ...}@inputs:
@@ -25,6 +26,11 @@
         {
           imports = [
               (modulesPath + "/installer/scan/not-detected.nix")
+              inputs.nixos-hardware.nixosModules.common-cpu-amd-pstate
+              inputs.nixos-hardware.nixosModules.common-cpu-amd
+              inputs.nixos-hardware.nixosModules.common-pc-ssd
+              inputs.nixos-hardware.nixosModules.common-pc
+              inputs.nixos-hardware.nixosModules.common-gpu-nvidia-nonprime
           ];
 
           boot = {
@@ -60,13 +66,17 @@
               fsType = "vfat";
             };
           };
-
           swapDevices = [ ];
-
           hardware = {
-            cpu.amd.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
             video.hidpi.enable = lib.mkDefault true;
           };
+
+          environment.systemPackages = with pkgs; [
+            zenstates
+            ryzenadj
+            linuxPackages.zenpower
+            #amdctl #not in nixos, but does same job as zenstates
+          ];
         };
       prime-ai_hardware_shared_crypt = { config, lib, pkgs, ...}:
         {
@@ -242,7 +252,6 @@
             displayManager.lightdm.enable = true;
             displayManager.defaultSession = "none+dwm";
             windowManager.dwm.enable = true;
-            videoDrivers = ["nvidia"]; #noveau gave blank screen, nvidia needed nixpkgs.config.allowUnfree
           };
 
           sound.enable = true;
