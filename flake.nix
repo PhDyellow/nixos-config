@@ -121,12 +121,12 @@
           };
         };
       network_fs = {config, pkgs, ...}:
-        {
-        age.secrets.cifs_dpbagje_share.file = "/secrets/agenix/cifs_dpbagje_share.age";
         let
           # this line prevents hanging on network split
           automount_opts = "x-systemd.automount,noauto,x-systemd.idle-timeout=600,x-systemd.device-timeout=5s,x-systemd.mount-timeout=5s";
-        in {
+        in
+        {
+        age.secrets.cifs_dpbagje_share.file = "/secrets/agenix/cifs_dpbagje_share.age";
           fileSystems = {
             "/nas/dpbagj/parent_share" = {
               device = "//100.108.81.63/parent_share";
@@ -139,7 +139,6 @@
               options = ["${automount_opts},credentials=${config.age.secrets.cifs_dpbagje_share.path}"];
             };
           };
-        };
       };
       wifi_secrets = {config, pkgs, ...}:
         {
