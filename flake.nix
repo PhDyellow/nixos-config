@@ -76,7 +76,7 @@
             zenstates
             ryzenadj
             linuxPackages.zenpower
-            linuxPackages.zenmonitor
+            zenmonitor
             #amdctl #not in nixos, but does same job as zenstates
           ];
         };
