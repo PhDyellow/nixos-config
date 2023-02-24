@@ -294,16 +294,16 @@
     },
     "nixpkgs-unstable": {
       "locked": {
-        "lastModified": 1677063315,
-        "narHash": "sha256-qiB4ajTeAOVnVSAwCNEEkoybrAlA+cpeiBxLobHndE8=",
-        "owner": "NixOS",
+        "lastModified": 1677085721,
+        "narHash": "sha256-vBaxwj5429hXvXOJMfQKMyp5pK5/szbuEuKO6o8iEr8=",
+        "owner": "Kiskae",
         "repo": "nixpkgs",
-        "rev": "988cc958c57ce4350ec248d2d53087777f9e1949",
+        "rev": "d120c5307788c4d984ef6705bde80daa5015a084",
         "type": "github"
       },
       "original": {
-        "owner": "NixOS",
-        "ref": "nixos-unstable",
+        "owner": "Kiskae",
+        "ref": "nvidia/unbreak-6.2",
         "repo": "nixpkgs",
         "type": "github"
       }

@@ -3,7 +3,8 @@
 
   inputs  = {
     nixpkgs-unstable = {
-      url = "github:NixOS/nixpkgs/nixos-unstable";
+      #url = "github:NixOS/nixpkgs/nixos-unstable";
+      url = "github:Kiskae/nixpkgs/nvidia/unbreak-6.2";
     };
 
     nixos-hardware.url = "github:NixOS/nixos-hardware/master";
