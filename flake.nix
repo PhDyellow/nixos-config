@@ -301,11 +301,11 @@
             openFirewall = false;
           };
 
-        programs.ssh = {
-          #agentTimeout = "1h"; #request passphrase for keys every hour
-          startAgent = true;
-          askPassword = "systemd-ask-password";
-        };
+          programs.ssh = {
+            #agentTimeout = "1h"; #request passphrase for keys every hour
+            startAgent = true;
+            askPassword = "systemd-ask-password";
+          };
         };
     };
     devShells."x86_64-linux" = {
