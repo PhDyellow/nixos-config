@@ -76,6 +76,7 @@
             zenstates
             ryzenadj
             linuxPackages.zenpower
+            linuxPackages.zenmonitor
             #amdctl #not in nixos, but does same job as zenstates
           ];
         };
@@ -134,7 +135,7 @@
       network_fs = {config, pkgs, ...}:
         let
           # this line prevents hanging on network split
-          automount_opts = "x-systemd.automount,noauto,x-systemd.idle-timeout=600,x-systemd.device-timeout=5s,x-systemd.mount-timeout=5s";
+          automount_opts = "x-systemd.automount,noauto,x-systemd.idle-timeout=600,x-systemd.device-timeout=5s,x-systemd.mount-timeout=5s,uid=1001,gid=100";
         in
         {
         age.secrets.cifs_dpbagje_share.file = "/secrets/agenix/cifs_dpbagje_share.age";
