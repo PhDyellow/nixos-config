@@ -166,6 +166,10 @@
                 psk = "@parent_psk@";
                 priority = 60;
               };
+              WiFi-56E0-5G = {
+                psk = "@parent_psk@";
+                priority = 65;
+              };
               PBAGJE_H_5G = {
                 psk = "@home_psk@";
                 priority = 99;
