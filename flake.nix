@@ -326,8 +326,8 @@
           programs.hyprland.enable = true;
           environment = {
               variables = {
-                _JAVA_AWT_WM_NONREPARENTING=1;
-                  XCURSOR_SIZE=24;
+                _JAVA_AWT_WM_NONREPARENTING="1";
+                XCURSOR_SIZE="24";
                # NIXOS_OZONE_WL = "1"; #Already set by hyprland module
                 LIBVA_DRIVER_NAME="nvidia";
                 XDG_SESSION_TYPE = "wayland";
