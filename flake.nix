@@ -333,7 +333,7 @@
             systemPackages = with pkgs; [
               kitty
             ];
-            variables = {
+            sessionVariables = {
               _JAVA_AWT_WM_NONREPARENTING="1";
               XCURSOR_SIZE="24";
               # NIXOS_OZONE_WL = "1"; #Already set by hyprland module
