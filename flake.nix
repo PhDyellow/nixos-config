@@ -317,17 +317,17 @@
           };
         };
       hyprland-desktop = {config, pkgs, ...}:
-{
-        imports = [
-          inputs.hyprland.nixosModules.default
-        ];
+        {
+          imports = [
+            inputs.hyprland.nixosModules.default
+          ];
 
-        programs.hyprland.enable = true;
+          programs.hyprland.enable = true;
 
-        nix.settings = {
-          substituters = ["https://hyprland.cachix.org"];
-          trusted-public-keys = ["hyprland.cachix.org-1:a7pgxzMz7+chwVL3/pzj6jIBMioiJM7ypFP8PwtkuGc="];
-        };
+          nix.settings = {
+            substituters = ["https://hyprland.cachix.org"];
+            trusted-public-keys = ["hyprland.cachix.org-1:a7pgxzMz7+chwVL3/pzj6jIBMioiJM7ypFP8PwtkuGc="];
+          };
       };
     };
     devShells."x86_64-linux" = {
