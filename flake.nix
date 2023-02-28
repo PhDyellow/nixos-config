@@ -323,54 +323,63 @@
             inputs.hyprland.nixosModules.default
           ];
 
-          programs.hyprland.enable = true;
-          environment = {
-              variables = {
-                _JAVA_AWT_WM_NONREPARENTING="1";
-                XCURSOR_SIZE="24";
-               # NIXOS_OZONE_WL = "1"; #Already set by hyprland module
-                LIBVA_DRIVER_NAME="nvidia";
-                XDG_SESSION_TYPE = "wayland";
-                GBM_BACKEND = "nvidia-drm";
-                __GLX_VENDOR_LIBRARY_NAME = "nvidia";
-                WLR_NO_HARDWARE_CURSORS = "1";
-                # __GL_GSYNC_ALLOWED = "0";
-                # __GL_VRR_ALLOWED = "0";
-                # DISABLE_QT5_COMPAT = "0";
-                # ANKI_WAYLAND = "1";
-                # DIRENV_LOG_FORMAT = "";
-                # WLR_DRM_NO_ATOMIC = "1";
-                # QT_QPA_PLATFORM = "wayland";
-                # QT_WAYLAND_DISABLE_WINDOWDECORATION = "1";
-                # QT_QPA_PLATFORMTHEME = "qt5ct";
-                # MOZ_ENABLE_WAYLAND = "1";
-                # WLR_BACKEND = "vulkan";
-                # CLUTTER_BACKEND = "wayland";
-                # WLR_DRM_DEVICES = "/dev/dri/card1:/dev/dri/card0";
-              };
-          };
-        # obviously
-        services.xserver.videoDrivers = ["nvidia"];
-
-        hardware = {
-          nvidia = {
-            open = true;
-            powerManagement.enable = true;
-            modesetting.enable = true;
-          };
-
-          opengl = {
+          programs.hyprland = {
             enable = true;
-            driSupport = true;
-            driSupport32Bit = true;
-            extraPackages = with pkgs; [
-              vaapiVdpau
-              libvdpau-va-gl
-              nvidia-vaapi-driver
-            ];
+            nvidiaPatches = true;
           };
-          pulseaudio.support32Bit = true;
-        };
+
+          environment = {
+
+            systemPackages = with pkgs; [
+              kitty
+            ];
+            variables = {
+              _JAVA_AWT_WM_NONREPARENTING="1";
+              XCURSOR_SIZE="24";
+              # NIXOS_OZONE_WL = "1"; #Already set by hyprland module
+              LIBVA_DRIVER_NAME="nvidia";
+              XDG_SESSION_TYPE = "wayland";
+              GBM_BACKEND = "nvidia-drm";
+              __GLX_VENDOR_LIBRARY_NAME = "nvidia";
+              WLR_NO_HARDWARE_CURSORS = "1";
+              HYPRLAND_LOG_WLR="1";
+              # __GL_GSYNC_ALLOWED = "0";
+              # __GL_VRR_ALLOWED = "0";
+              # DISABLE_QT5_COMPAT = "0";
+              # ANKI_WAYLAND = "1";
+              # DIRENV_LOG_FORMAT = "";
+              # WLR_DRM_NO_ATOMIC = "1";
+              # QT_QPA_PLATFORM = "wayland";
+              # QT_WAYLAND_DISABLE_WINDOWDECORATION = "1";
+              # QT_QPA_PLATFORMTHEME = "qt5ct";
+              # MOZ_ENABLE_WAYLAND = "1";
+              # WLR_BACKEND = "vulkan";
+              # CLUTTER_BACKEND = "wayland";
+              # WLR_DRM_DEVICES = "/dev/dri/card1:/dev/dri/card0";
+            };
+          };
+          # obviously
+          services.xserver.videoDrivers = ["nvidia"];
+
+          hardware = {
+            nvidia = {
+              open = true;
+              powerManagement.enable = true;
+              modesetting.enable = true;
+            };
+
+            opengl = {
+              enable = true;
+              driSupport = true;
+              driSupport32Bit = true;
+              extraPackages = with pkgs; [
+                vaapiVdpau
+                libvdpau-va-gl
+                nvidia-vaapi-driver
+              ];
+            };
+            pulseaudio.support32Bit = true;
+          };
           nix.settings = {
             substituters = ["https://hyprland.cachix.org"];
             trusted-public-keys = ["hyprland.cachix.org-1:a7pgxzMz7+chwVL3/pzj6jIBMioiJM7ypFP8PwtkuGc="];
