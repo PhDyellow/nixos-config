@@ -18,6 +18,11 @@
       url = "github:nix-community/lanzaboote";
       inputs.nixpkgs.follows = "nixpkgs-unstable"; #needs unstable
     };
+
+    hyprland = {
+      url = "github:hyprwm/Hyprland";
+      #not following nixpkgs to get caching
+    };
   };
 
   outputs = {self, nixpkgs-unstable, ...}@inputs:
@@ -311,6 +316,19 @@
             askPassword = "systemd-ask-password";
           };
         };
+      hyprland-desktop = {config, pkgs, ...}:
+{
+        imports = [
+          inputs.hyprland.nixosModules.default
+        ];
+
+        programs.hyprland.enable = true;
+
+        nix.settings = {
+          substituters = ["https://hyprland.cachix.org"];
+          trusted-public-keys = ["hyprland.cachix.org-1:a7pgxzMz7+chwVL3/pzj6jIBMioiJM7ypFP8PwtkuGc="];
+        };
+      };
     };
     devShells."x86_64-linux" = {
       secureboot-tools = let
