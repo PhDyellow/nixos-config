@@ -291,12 +291,13 @@
 
           time.timeZone = "Australia/Brisbane";
 
-          services.xserver = {
-            enable = true;
-            displayManager.lightdm.enable = true;
-            displayManager.defaultSession = "none+dwm";
-            windowManager.dwm.enable = true;
-          };
+
+          # services.xserver = {
+          #   enable = true;
+          #   displayManager.lightdm.enable = true;
+          #   displayManager.defaultSession = "none+dwm";
+          #   windowManager.dwm.enable = true;
+          # };
 
           sound.enable = true;
           hardware.pulseaudio.enable = true;
@@ -360,6 +361,14 @@
             nvidiaPatches = true;
           };
 
+          services.greetd = {
+            enable = true;
+            package = pkgs.greetd.wlgreet;
+            settings = {
+                default_session = {
+                  command = "${pkgs.greetd.wlgreet}/bin/wlgreet --cmd Hyprland";
+                  user = "phil";
+                };
           environment = {
 
             systemPackages = with pkgs; [
@@ -369,6 +378,7 @@
               fnott #desktop notifications. see also mako, dunst
               polkit #request root priveliges
               polkit_gnome #gnome app for polkit requests
+              waylock
             ];
             sessionVariables = {
               _JAVA_AWT_WM_NONREPARENTING="1";
