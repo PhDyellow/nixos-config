@@ -54,6 +54,7 @@
             };
             kernelModules = [
               "kvm-amd"
+              "msr" #for zenstates
             ];
             extraModulePackages = [ ];
             bootspec.enable = true; #needed for lanzaboote secureboot
@@ -82,6 +83,8 @@
             ryzenadj
             linuxPackages.zenpower
             zenmonitor
+            lm_sensors
+            psensor
             #amdctl #not in nixos, but does same job as zenstates
           ];
         };
