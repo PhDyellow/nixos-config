@@ -9,6 +9,11 @@
 Set up system according to NixOS installation guide: https://nixos.org/manual/nixos/stable/index.html#sec-installation
 
 Add swap as a btrfs subvolume, which should allow hibernate
+#+begin_src sh
+btrfs subvolume create /swap
+#+end_src
+
+The setting ~boot.kernelParams~ needs an entry ~"resume_offset=XXXXXX"~ where ~XXXXXX~ is the number given by ~sudo btrfs inspect-internal map-swapfile -r /swap/swapfile~. The swapfile has to exist first.
 
 When asked to call ~nixos-install~, instead use:
 
