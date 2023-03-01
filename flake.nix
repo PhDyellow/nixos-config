@@ -381,6 +381,7 @@
               polkit #request root priveliges
               polkit_gnome #gnome app for polkit requests
               waylock
+              swaylock
             ];
             sessionVariables = {
               _JAVA_AWT_WM_NONREPARENTING="1";
