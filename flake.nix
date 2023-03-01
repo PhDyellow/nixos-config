@@ -338,6 +338,11 @@
 
             systemPackages = with pkgs; [
               kitty
+              pipewire #Audio
+              wireplumber
+              fnott #desktop notifications. see also mako, dunst
+              polkit #request root priveliges
+              polkit_gnome #gnome app for polkit requests
             ];
             sessionVariables = {
               _JAVA_AWT_WM_NONREPARENTING="1";
@@ -364,9 +369,25 @@
               # WLR_DRM_DEVICES = "/dev/dri/card1:/dev/dri/card0";
             };
           };
-          # obviously
           services.xserver.videoDrivers = ["nvidia"];
 
+          #Enable polkit for passwords, and activate agent
+          security.polkit.enable = true;
+          systemd = {
+            user.services.polkit-gnome-authentication-agent-1 = {
+              description = "polkit-gnome-authentication-agent-1";
+              wantedBy = [ "graphical-session.target" ];
+              wants = [ "graphical-session.target" ];
+              after = [ "graphical-session.target" ];
+              serviceConfig = {
+                  Type = "simple";
+                  ExecStart = "${pkgs.polkit_gnome}/libexec/polkit-gnome-authentication-agent-1";
+                  Restart = "on-failure";
+                  RestartSec = 1;
+                  TimeoutStopSec = 10;
+                };
+            };
+          };
           hardware = {
             nvidia = {
               open = true;
