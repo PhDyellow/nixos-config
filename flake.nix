@@ -369,6 +369,8 @@
                   command = "${pkgs.greetd.wlgreet}/bin/wlgreet --cmd Hyprland";
                   user = "phil";
                 };
+            };
+          };
           environment = {
 
             systemPackages = with pkgs; [
