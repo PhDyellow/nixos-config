@@ -80,7 +80,7 @@
           hardware = {
             video.hidpi.enable = lib.mkDefault true;
           };
-
+          services.logind.lidSwitch = "ignore";
           environment.systemPackages = with pkgs; [
             zenstates
             ryzenadj
