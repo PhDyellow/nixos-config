@@ -366,7 +366,7 @@
             package = pkgs.greetd.wlgreet;
             settings = {
                 default_session = {
-                  command = "${pkgs.greetd.wlgreet}/bin/wlgreet --cmd Hyprland";
+                  command = "${pkgs.greetd.wlgreet}/bin/wlgreet --command Hyprland";
                   user = "phil";
                 };
             };
