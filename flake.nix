@@ -382,6 +382,7 @@
               polkit_gnome #gnome app for polkit requests
               waylock
               swaylock
+              swayimg
             ];
             sessionVariables = {
               _JAVA_AWT_WM_NONREPARENTING="1";
