@@ -361,12 +361,12 @@
             nvidiaPatches = true;
           };
 
+
           services.greetd = {
             enable = true;
-            package = pkgs.greetd.wlgreet;
             settings = {
                 default_session = {
-                  command = "${pkgs.greetd.wlgreet}/bin/wlgreet --command Hyprland";
+                  command = "${pkgs.greetd.tuigreet}/bin/tuigreet -t- r -g 'Init: Prime-AI' --cmd Hyprland";
                   user = "phil";
                 };
             };
