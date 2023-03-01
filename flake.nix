@@ -412,6 +412,10 @@
 
           #Enable polkit for passwords, and activate agent
           security.polkit.enable = true;
+          security.pam.services = {
+            swaylock = {};
+            waylock = {};
+          };
           systemd = {
             user.services.polkit-gnome-authentication-agent-1 = {
               description = "polkit-gnome-authentication-agent-1";
