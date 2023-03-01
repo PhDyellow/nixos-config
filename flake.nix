@@ -55,6 +55,9 @@
             kernelModules = [
               "kvm-amd"
               "msr" #for zenstates
+              "k10temp"
+              "cpuid"
+              "lm92"
             ];
             extraModulePackages = [ ];
             bootspec.enable = true; #needed for lanzaboote secureboot
