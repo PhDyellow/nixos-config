@@ -102,7 +102,7 @@
             }
           ];
           boot.kernelParams = ["resume_offset=4503599627370495"];
-          boot.resumeDevice = "/dev/disk/by-uuid/${rootUUID}";
+          boot.resumeDevice = "/dev/mapper/nixos-crypt";
           hardware = {
             video.hidpi.enable = lib.mkDefault true;
           };
