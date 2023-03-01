@@ -7,6 +7,9 @@
 :ID:       org:20a5c6cb-fd41-443d-8784-e94a18484f3a
 :END:
 Set up system according to NixOS installation guide: https://nixos.org/manual/nixos/stable/index.html#sec-installation
+
+Add swap as a btrfs subvolume, which should allow hibernate
+
 When asked to call ~nixos-install~, instead use:
 
 #+begin_src sh

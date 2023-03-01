@@ -76,7 +76,33 @@
               fsType = "vfat";
             };
           };
-          swapDevices = [ ];
+          #Swapfile
+          #Swapfile is created by
+          #sudo btrfs subvolume create /swap
+          systemd.services = {
+            create-swapfile = {
+              serviceConfig.Type = "oneshot";
+              wantedBy = [ "swap-swapfile.swap" ];
+              script = ''
+                swapfile="/swap/swapfile"
+                if [[ -f "$swapfile" ]]; then
+                  echo "Swap file $swapfile already exists, taking no action"
+                else
+                  echo "Setting up swap file $swapfile"
+                  ${pkgs.coreutils}/bin/truncate -s 0 "$swapfile"
+                  ${pkgs.e2fsprogs}/bin/chattr +C "$swapfile"
+                fi
+              '';
+            };
+          };
+          swapDevices = [
+            {
+            device = "/swap/swapfile";
+            size = (1024 * 64) * 2; # Double RAM size. RHEL recommends 1.5x
+            }
+          ];
+          boot.kernelParams = ["resume_offset=4503599627370495"];
+          boot.resumeDevice = "/dev/disk/by-uuid/${rootUUID}";
           hardware = {
             video.hidpi.enable = lib.mkDefault true;
           };
