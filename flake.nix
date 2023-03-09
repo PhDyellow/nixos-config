@@ -17,15 +17,17 @@
       url = "github:nix-community/lanzaboote";
       inputs.nixpkgs.follows = "nixpkgs-unstable"; #needs unstable
     };
-
+    home-manager = {
+      url = "github:nix-community/home-manager";
+      inputs.nixpkgs.follows = "nixpkgs-unstable";
+    };
     hyprland = {
       url = "github:hyprwm/Hyprland";
       #not following nixpkgs to get caching
     };
   };
 
-  outputs = {self, nixpkgs-unstable, ...}@inputs:
-    {
+  outputs = {self, nixpkgs-unstable, ...}@inputs: {
     nixosModules = {
       prime-ai_hardware_config = { config, lib, pkgs, modulesPath, ...}:
         {
@@ -455,6 +457,25 @@
             trusted-public-keys = ["hyprland.cachix.org-1:a7pgxzMz7+chwVL3/pzj6jIBMioiJM7ypFP8PwtkuGc="];
           };
       };
+      phil_home = {config, pkgs, ...}: {
+        imports = [
+          inputs.hyprland.homeManagerModules.default
+        ];
+        wayland.windowManager.hyprland = {
+          enable = true;
+          package = null;
+          extraConfig = ''
+#Are we here yet?
+'';
+
+        };
+
+        home = {
+          username = "phil";
+          homeDirectory = "/home/phil";
+          stateVersion = "23.05";
+        };
+      };
     };
     devShells."x86_64-linux" = {
       secureboot-tools = let
@@ -470,31 +491,42 @@
           ];
         };
     };
-      nixosConfigurations = {
-        prime-ai-bootstrap = nixpkgs-unstable.lib.nixosSystem {
-          system = "x86_64-linux";
-          modules = [
-            self.nixosModules.prime-ai_hardware_config
-            self.nixosModules.system_config
-            self.nixosModules.bootstrap_user
-            inputs.ragenix.nixosModules.age
-          ];
-        };
-        prime-ai = nixpkgs-unstable.lib.nixosSystem {
-          system = "x86_64-linux";
-          modules = [
-            self.nixosModules.prime-ai_hardware_config
-            self.nixosModules.system_config
-            self.nixosModules.phil_user
-            self.nixosModules.wifi_secrets
-            self.nixosModules.secure_boot
-            self.nixosModules.prime-ai_hardware_shared_crypt
-            inputs.ragenix.nixosModules.age
-            self.nixosModules.prime_ai_tailscale
-            self.nixosModules.network_fs
-            self.nixosModules.hyprland-prime-ai
-          ];
-        };
+    nixosConfigurations = {
+      prime-ai-bootstrap = nixpkgs-unstable.lib.nixosSystem {
+        system = "x86_64-linux";
+        modules = [
+          self.nixosModules.prime-ai_hardware_config
+          self.nixosModules.system_config
+          self.nixosModules.bootstrap_user
+          inputs.ragenix.nixosModules.age
+        ];
+      };
+      prime-ai = nixpkgs-unstable.lib.nixosSystem {
+        system = "x86_64-linux";
+        modules = [
+          self.nixosModules.prime-ai_hardware_config
+          self.nixosModules.system_config
+          self.nixosModules.phil_user
+          self.nixosModules.wifi_secrets
+          self.nixosModules.secure_boot
+          self.nixosModules.prime-ai_hardware_shared_crypt
+          inputs.ragenix.nixosModules.age
+          self.nixosModules.prime_ai_tailscale
+          self.nixosModules.network_fs
+          self.nixosModules.hyprland-prime-ai
+
+        ];
+      };
+    };
+    homeConfigurations = {
+      "phil@prime-ai-nixos" = inputs.home-manager.lib.homeManagerConfiguration {
+        pkgs = nixpkgs-unstable.legacyPackages.x86_64-linux;
+
+        modules = [
+          self.nixosModules.phil_home
+        ];
+
+      };
     };
   };
 }
