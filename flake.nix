@@ -459,17 +459,21 @@
       };
       phil_home = {config, pkgs, ...}: {
         imports = [
-          inputs.hyprland.homeManagerModules.default
+           inputs.home-manager.nixosModules.home-manager
+           inputs.hyprland.homeManagerModules.default
         ];
-        wayland.windowManager.hyprland = {
-          enable = true;
-          package = null;
-          extraConfig = ''
-#Are we here yet?
-'';
+        home-manager.useGlobalPkgs = true;
+        home-manager.useUserPackages = true;
+        home-manager.users.phil = {
+          wayland.windowManager.hyprland = {
+            enable = true;
+            package = null;
+            extraConfig = ''
+              #Are we here yet?
+              '';
 
+          };
         };
-
         home = {
           username = "phil";
           homeDirectory = "/home/phil";
@@ -514,7 +518,7 @@
           self.nixosModules.prime_ai_tailscale
           self.nixosModules.network_fs
           self.nixosModules.hyprland-prime-ai
-
+          self.nixosModules.phil_home
         ];
       };
     };
