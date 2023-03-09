@@ -467,7 +467,7 @@
         home.stateVersion = "23.05";
         home.users.phil = {
           wayland.windowManager.hyprland = {
-            enable = true;
+            enable = false;
             package = null;
             extraConfig = ''
               #Are we here yet?
