@@ -462,17 +462,19 @@
            inputs.home-manager.nixosModules.home-manager
            inputs.hyprland.homeManagerModules.default
         ];
-        home-manager.users.phil = {
-          home.useGlobalPkgs = true;
-          home.useUserPackages = true;
-          home.stateVersion = "23.05";
-          wayland.windowManager.hyprland = {
-            enable = false;
-            package = null;
-            extraConfig = ''
-              #Are we here yet?
-              '';
-          };
+        home-manager = {
+          useGlobalPkgs = true;
+          useUserPackages = true;
+          stateVersion = "23.05";
+
+          users.phil = {
+            wayland.windowManager.hyprland = {
+              enable = false;
+              package = null;
+              extraConfig = ''
+                #Are we here yet?
+                '';
+            };
 
         };
 
