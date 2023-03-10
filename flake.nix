@@ -684,7 +684,7 @@ gestures {
 }
 
 misc {
-   enable_swallow = true
+   #enable_swallow = true
    swallow_regex = ^(Alacritty|kitty)$
 }
 
