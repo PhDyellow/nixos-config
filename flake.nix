@@ -460,9 +460,11 @@
       phil_home = {config, pkgs, ...}: {
         imports = [
            inputs.home-manager.nixosModules.home-manager
-           inputs.hyprland.homeManagerModules.default
         ];
         home-manager = {
+          imports = [
+            inputs.hyprland.homeManagerModules.default
+          ];
           useGlobalPkgs = true;
           useUserPackages = true;
 
