@@ -460,7 +460,7 @@
       phil_home = {config, pkgs, ...}: {
         imports = [
            inputs.home-manager.nixosModules.home-manager
-           #inputs.hyprland.homeManagerModules.default
+           inputs.hyprland.homeManagerModules.default
         ];
         home-manager = {
           useGlobalPkgs = true;
@@ -470,13 +470,13 @@
             home = {
               stateVersion = "23.05";
             };
-            # wayland.windowManager.hyprland = {
-            #   enable = false;
-            #   package = null;
-            #   extraConfig = ''
-            #     #Are we here yet?
-            #     '';
-            # };
+            wayland.windowManager.hyprland = {
+              enable = false;
+              package = null;
+              extraConfig = ''
+                #Are we here yet?
+                '';
+            };
           };
         };
       };
