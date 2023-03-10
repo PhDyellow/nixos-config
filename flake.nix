@@ -473,7 +473,108 @@
             ];
             home = {
               stateVersion = "23.05";
+              file = {
+                r-config = {
+                  target = ".Rprofile";
+                  text = ''
+                  ##Always install from csiro cran mirror when calling install.packages()
+                  local({r <- getOption("repos")
+                    r["CRAN"] <- "https://cran.csiro.au/"
+                    options(repos=r)})
+
+                    ##Dont ask to save workspace...actually, really I should just alias R to "R --no-save"
+                    #q <- function (save="no", ...) {
+                    #        quit(save=save, ...)}
+
+                    GITHUB_PAT = "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"
+
+                    ##Get tab completion on library names
+                    utils::rc.settings(ipck=TRUE)
+
+                  '';
+                };
+              };
             };
+            services = {
+              gpg-agent = {
+                enable = true;
+                defaultCacheTtl = 72000;
+              extraConfig = ''
+                  pinentry-program ${pkgs.pinentry-curses}/bin/pinentry-curses
+                '';
+              maxCacheTtl = 72000;
+
+              };
+            };
+
+            programs = {
+              gpg = {
+                enable = true;
+              };
+              git ={
+                enable = true;
+                package = pkgs.gitAndTools.gitFull;
+                userName = "Phil Dyer";
+                userEmail = "phildyer@protonmail.com";
+                extraConfig = {
+                  core = {
+                    editor = "nvim";
+                    autocrlf = "input";
+                  };
+                  github.user = "PhDyellow";
+                };
+              };
+              ssh = {
+                enable = true;
+                matchBlocks = {
+                  rdm = {
+                    hostname = "data.qriscloud.org.au";
+                    user = "uqpdyer";
+                    forwardX11Trusted = true;
+                    identitiesOnly = true;
+                    identityFile = ["/home/phil/id_phil_prime_ai_nixos_ed25519"];
+                  };
+                  getafix = {
+                    hostname = "getafix.smp.uq.edu.au";
+                    user = "uqpdyer";
+                    forwardX11Trusted = true;
+                    identitiesOnly = true;
+                    identityFile = ["/home/phil/id_phil_prime_ai_nixos_ed25519"];
+                    port = 2022;
+                  };
+                  getafix0 = {
+                    hostname = "getafix1.smp.uq.edu.au";
+                    user = "uqpdyer";
+                    forwardX11Trusted = true;
+                    identitiesOnly = true;
+                    identityFile = ["/home/phil/id_phil_prime_ai_nixos_ed25519"];
+                    port = 2022;
+                  };
+                  getafix1 = {
+                    hostname = "getafix2.smp.uq.edu.au";
+                    user = "uqpdyer";
+                    forwardX11Trusted = true;
+                    identitiesOnly = true;
+                    identityFile = ["/home/phil/id_phil_prime_ai_nixos_ed25519"];
+                    port = 2022;
+                  };
+                  github = {
+                    hostname = "github.com";
+                    identitiesOnly = true;
+                    identityFile = ["/home/phil/id_phil_prime_ai_nixos_ed25519"];
+                  };
+                  dogmatix = {
+                    hostname = "dogmatix.smp.uq.edu.au";
+                    user = "uqpdyer";
+                    forwardX11Trusted = true;
+                    identitiesOnly = true;
+                    identityFile = ["/home/phil/id_phil_prime_ai_nixos_ed25519"];
+                  };
+
+                };
+              };
+            };
+
             wayland.windowManager.hyprland = {
               enable = true;
               package = null;
