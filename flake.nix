@@ -475,7 +475,7 @@
               stateVersion = "23.05";
             };
             wayland.windowManager.hyprland = {
-              enable = false;
+              enable = true;
               package = null;
               extraConfig = ''
                 #Are we here yet?
