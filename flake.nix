@@ -465,6 +465,8 @@
           useGlobalPkgs = true;
           useUserPackages = true;
 
+          #home-manager.users.<name> is an attribute set {} of users. Each user is a hmModule, so I can import
+          #modules to it. Any modules imported by all users can go in home-manager.sharedModules
           users.phil = {
             imports = [
               inputs.hyprland.homeManagerModules.default
@@ -472,13 +474,13 @@
             home = {
               stateVersion = "23.05";
             };
-            # wayland.windowManager.hyprland = {
-            #   enable = false;
-            #   package = null;
-            #   extraConfig = ''
-            #     #Are we here yet?
-            #     '';
-            # };
+            wayland.windowManager.hyprland = {
+              enable = false;
+              package = null;
+              extraConfig = ''
+                #Are we here yet?
+                '';
+            };
           };
         };
       };
