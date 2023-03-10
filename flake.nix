@@ -462,7 +462,7 @@
            inputs.home-manager.nixosModules.home-manager
         ];
         home-manager = {
-          imports = [
+          modules = [
             inputs.hyprland.homeManagerModules.default
           ];
           useGlobalPkgs = true;
