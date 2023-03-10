@@ -460,7 +460,7 @@
       phil_home = {config, pkgs, ...}: {
         imports = [
            inputs.home-manager.nixosModules.home-manager
-           inputs.hyprland.homeManagerModules.default
+           #inputs.hyprland.homeManagerModules.default
         ];
         home-manager = {
           useGlobalPkgs = true;
@@ -516,7 +516,7 @@
           self.nixosModules.prime_ai_tailscale
           self.nixosModules.network_fs
           self.nixosModules.hyprland-prime-ai
-          #self.nixosModules.phil_home
+          self.nixosModules.phil_home
         ];
       };
     };
