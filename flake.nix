@@ -462,13 +462,13 @@
            inputs.home-manager.nixosModules.home-manager
         ];
         home-manager = {
-          modules = [
-            inputs.hyprland.homeManagerModules.default
-          ];
           useGlobalPkgs = true;
           useUserPackages = true;
 
           users.phil = {
+            imports = [
+              inputs.hyprland.homeManagerModules.default
+            ];
             home = {
               stateVersion = "23.05";
             };
