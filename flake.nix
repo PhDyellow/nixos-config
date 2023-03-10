@@ -516,7 +516,7 @@
           self.nixosModules.prime_ai_tailscale
           self.nixosModules.network_fs
           self.nixosModules.hyprland-prime-ai
-          self.nixosModules.phil_home
+          #self.nixosModules.phil_home
         ];
       };
     };
