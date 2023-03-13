@@ -41,6 +41,12 @@
           ];
 
           boot = {
+            #The next line may fix a system crash in nvidia 525.xx.xx
+            #Nvidia has enabled a new feature in 510, GSP, but logs
+            #show it was the cause of failure in my laptop.
+            extraModprobeConfig = ''
+              options nvidia NVreg_EnableGpuFirmware=0\n
+              '';
             initrd = {
               luks.devices."nixos-crypt".device =
                 "dev/disk/by-uuid/c4129dcf-90da-4d0c-8da9-880b9c111e6f";
