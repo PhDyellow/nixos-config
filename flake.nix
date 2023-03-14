@@ -333,6 +333,9 @@
               system-features = [
                 "recursive-nix"
                 "kvm"
+                "big-parallel"
+                "nixos-test"
+                "benchmark"
               ];
               experimental-features = [
                 "nix-command"
