@@ -45,7 +45,8 @@
             #Nvidia has enabled a new feature in 510, GSP, but logs
             #show it was the cause of failure in my laptop.
             extraModprobeConfig = ''
-              options nvidia NVreg_EnableGpuFirmware=0\n
+              options nvidia NVreg_EnableGpuFirmware=0
+
               '';
             initrd = {
               luks.devices."nixos-crypt".device =
