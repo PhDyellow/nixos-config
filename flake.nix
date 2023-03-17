@@ -111,14 +111,26 @@
           ];
           boot.kernelParams = ["resume_offset=4503599627370495"];
           boot.resumeDevice = "/dev/mapper/nixos-crypt";
+          services.xserver.videoDrivers = ["nvidia"];
           hardware = {
+            nvidia = {
+              #open = true;
+              powerManagement.enable = true;
+              modesetting.enable = true;
+              nvidiaPersistenced = true;
+            };
+
+            opengl = {
+              enable = true;
+              driSupport = true;
+              driSupport32Bit = true;
+              extraPackages = with pkgs; [
+                            vaapiVdpau
+                            libvdpau-va-gl
+                            nvidia-vaapi-driver
+                          ];
+            };
             video.hidpi.enable = lib.mkDefault true;
-            extraPackages = with pkgs; [
-              vaapiVdpau
-              libvdpau-va-gl
-              nvidia-vaapi-driver
-            ];
-          };
           services.logind.lidSwitch = "ignore";
           environment.systemPackages = with pkgs; [
             zenstates
@@ -427,7 +439,6 @@
               # WLR_DRM_DEVICES = "/dev/dri/card1:/dev/dri/card0";
             };
           };
-          services.xserver.videoDrivers = ["nvidia"];
 
           #pipewire specific config
           security.rtkit.enable = true;
@@ -461,21 +472,6 @@
                   TimeoutStopSec = 10;
                 };
             };
-          };
-          hardware = {
-            nvidia = {
-              #open = true;
-              powerManagement.enable = true;
-              modesetting.enable = true;
-              nvidiaPersistenced = true;
-            };
-
-            opengl = {
-              enable = true;
-              driSupport = true;
-              driSupport32Bit = true;
-            };
-            #pulseaudio.support32Bit = true;
           };
           nix.settings = {
             substituters = ["https://hyprland.cachix.org"];
