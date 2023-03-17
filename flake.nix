@@ -354,6 +354,8 @@
               waylock
               #swaylock
               swayimg
+            pqiv
+            gthumb
           ];
 
           nix = {
