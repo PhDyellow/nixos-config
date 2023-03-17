@@ -392,7 +392,7 @@
               polkit #request root priveliges
               polkit_gnome #gnome app for polkit requests
               waylock
-              swaylock
+              #swaylock
               swayimg
             ];
             sessionVariables = {
@@ -719,11 +719,12 @@ misc {
 #}
 
 # trigger when the switch is toggled
-bindl=,switch:Lid Switch,exec,waylock
+#bindl=,switch:Lid Switch,exec,waylock
+bindl=,switch:off:Lid Switch,exec,waylock
 # trigger when the switch is turning on
-bindl=,switch:on:Lid Switch,exec,hyprctl keyword monitor "eDP-1, 2560x1600, 0x0, 1"
+#bindl=,switch:on:Lid Switch,exec,hyprctl keyword monitor "eDP-1,2560x1440@165,0x0,1"
 # trigger when the switch is turning off
-bindl=,switch:off:Lid Switch,exec,hyprctl keyword monitor "eDP-1, disable"
+#bindl=,switch:off:Lid Switch,exec,hyprctl keyword monitor "eDP-1, disable"
 
 # Example windowrule v1
 # windowrule = float, ^(kitty)$
