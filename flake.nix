@@ -386,6 +386,8 @@
 
             systemPackages = with pkgs; [
               kitty
+              foot
+              geekbench_6
               pipewire #Audio
               wireplumber
               fnott #desktop notifications. see also mako, dunst
