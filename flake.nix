@@ -307,7 +307,7 @@
           #   windowManager.dwm.enable = true;
           # };
 
-          sound.enable = true;
+          #sound.enable = true;
           hardware.pulseaudio.enable = true;
 
           users.mutableUsers = false;
@@ -457,9 +457,10 @@
           };
           hardware = {
             nvidia = {
-              open = true;
+              #open = true;
               powerManagement.enable = true;
               modesetting.enable = true;
+              nvidiaPersistenced = true;
             };
 
             opengl = {
