@@ -308,7 +308,7 @@
           # };
 
           #sound.enable = true;
-          hardware.pulseaudio.enable = true;
+          #hardware.pulseaudio.enable = true;
 
           users.mutableUsers = false;
           users.users = {
