@@ -113,6 +113,11 @@
           boot.resumeDevice = "/dev/mapper/nixos-crypt";
           hardware = {
             video.hidpi.enable = lib.mkDefault true;
+            extraPackages = with pkgs; [
+              vaapiVdpau
+              libvdpau-va-gl
+              nvidia-vaapi-driver
+            ];
           };
           services.logind.lidSwitch = "ignore";
           environment.systemPackages = with pkgs; [
@@ -325,6 +330,17 @@
             #agenix.packages.x86_64-linux.default #nix run github:ryantm/agenix -- --help
             python3
             openssl
+              kitty
+              foot
+              geekbench_6
+              pipewire #Audio
+              wireplumber
+              fnott #desktop notifications. see also mako, dunst
+              polkit #request root priveliges
+              polkit_gnome #gnome app for polkit requests
+              waylock
+              #swaylock
+              swayimg
           ];
 
           nix = {
@@ -385,17 +401,6 @@
           environment = {
 
             systemPackages = with pkgs; [
-              kitty
-              foot
-              geekbench_6
-              pipewire #Audio
-              wireplumber
-              fnott #desktop notifications. see also mako, dunst
-              polkit #request root priveliges
-              polkit_gnome #gnome app for polkit requests
-              waylock
-              #swaylock
-              swayimg
             ];
             sessionVariables = {
               _JAVA_AWT_WM_NONREPARENTING="1";
@@ -469,13 +474,8 @@
               enable = true;
               driSupport = true;
               driSupport32Bit = true;
-              extraPackages = with pkgs; [
-                vaapiVdpau
-                libvdpau-va-gl
-                nvidia-vaapi-driver
-              ];
             };
-            pulseaudio.support32Bit = true;
+            #pulseaudio.support32Bit = true;
           };
           nix.settings = {
             substituters = ["https://hyprland.cachix.org"];
