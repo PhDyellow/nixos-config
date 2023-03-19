@@ -44,7 +44,7 @@
               inputs.nixos-hardware.nixosModules.common-pc-ssd
               inputs.nixos-hardware.nixosModules.common-pc
               inputs.nixos-hardware.nixosModules.common-gpu-nvidia-nonprime
-              inputs.tuxedo-nixos.nixosModule
+              inputs.tuxedo-nixos.nixosModules
           ];
           hardware.tuxedo-control-center.enable = true;
           boot = {
