@@ -25,6 +25,12 @@
       url = "github:hyprwm/Hyprland";
       #not following nixpkgs to get caching
     };
+    tuxedo-nixos = {
+      url = "github:blitz/tuxedo-nixos";
+      # Avoid pulling in the nixpkgs that we pin in the tuxedo-nixos repo.
+      # This should give the least surprises and saves on disk space.
+      inputs.nixpkgs.follows = "nixpkgs-unstable";
+    };
   };
 
   outputs = {self, nixpkgs-unstable, ...}@inputs: {
@@ -38,8 +44,9 @@
               inputs.nixos-hardware.nixosModules.common-pc-ssd
               inputs.nixos-hardware.nixosModules.common-pc
               inputs.nixos-hardware.nixosModules.common-gpu-nvidia-nonprime
+              inputs.tuxedo-nixos.nixosModule
           ];
-
+          hardware.tuxedo-control-center.enable = true;
           boot = {
             #The next line may fix a system crash in nvidia 525.xx.xx
             #Nvidia has enabled a new feature in 510, GSP, but logs
