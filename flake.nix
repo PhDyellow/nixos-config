@@ -132,10 +132,12 @@
             };
             video.hidpi.enable = lib.mkDefault true;
           };
+          powerManagement.cpuFreqGovernor = "schedutil";
+          services.cpupower-gui.enable = true;
           services.logind.lidSwitch = "ignore";
           environment.systemPackages = with pkgs; [
             zenstates
-            ryzenadj
+            #ryzenadj #rejects the 5900X as "not mobile" and won't run
             linuxPackages.zenpower
             zenmonitor
             lm_sensors
