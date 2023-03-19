@@ -29,7 +29,7 @@
       url = "github:blitz/tuxedo-nixos";
       # Avoid pulling in the nixpkgs that we pin in the tuxedo-nixos repo.
       # This should give the least surprises and saves on disk space.
-      inputs.nixpkgs.follows = "nixpkgs-unstable";
+      # inputs.nixpkgs.follows = "nixpkgs-unstable"; # not working with nixpkgs unstable yet
     };
   };
 
