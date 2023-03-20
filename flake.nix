@@ -334,7 +334,7 @@ systemd = {
               allowedUDPPorts = [ ];
             };
             wireless = {
-              enable = true;
+             # enable = true;
             };
             interfaces = {
               enp4s0.useDHCP = true;
@@ -353,7 +353,7 @@ systemd = {
           # };
 
           #sound.enable = true;
-          #hardware.pulseaudio.enable = true;
+          hardware.pulseaudio.enable = true;
 
           users.mutableUsers = false;
           users.users = {
@@ -373,8 +373,8 @@ systemd = {
               kitty
               foot
               geekbench_6
-              pipewire #Audio
-              wireplumber
+              #pipewire #Audio
+              #wireplumber
               fnott #desktop notifications. see also mako, dunst
               polkit #request root priveliges
               polkit_gnome #gnome app for polkit requests
@@ -471,7 +471,7 @@ systemd = {
           };
 
           #pipewire specific config
-          security.rtkit.enable = true;
+          #security.rtkit.enable = true;
           services.pipewire = {
             #enable = true;
             alsa.enable = true;
