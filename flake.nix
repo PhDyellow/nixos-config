@@ -46,7 +46,7 @@
               inputs.nixos-hardware.nixosModules.common-gpu-nvidia-nonprime
               inputs.tuxedo-nixos.nixosModules.default
           ];
-          hardware.tuxedo-control-center.enable = true;
+          #hardware.tuxedo-control-center.enable = true;
 #          services.xserver.windowManager.dwm.enable = true;
           # services.xserver = {
           #   enable = true;
