@@ -49,6 +49,8 @@
           hardware.tuxedo-control-center.enable = true;
           services.xserver.enable = true;
           services.xserver.displayManager.gdm.enable = true;
+
+          services.xserver.displayManager.gdm.wayland = false;
 services.xserver.desktopManager.gnome.enable = true;
 systemd = {
   user.services.polkit-gnome-authentication-agent-1 = {
