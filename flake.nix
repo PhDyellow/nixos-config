@@ -46,16 +46,17 @@
               inputs.nixos-hardware.nixosModules.common-gpu-nvidia-nonprime
               inputs.tuxedo-nixos.nixosModules.default
           ];
-          #hardware.tuxedo-control-center.enable = true;
-#          services.xserver.windowManager.dwm.enable = true;
-          # services.xserver = {
-          #   enable = true;
-          #   desktopManager = {
-          #     xterm.enable = false;
-          #     xfce.enable = true;
-          #   };
-          #   displayManager.defaultSession = "xfce";
-          # };
+          powerManagement.cpuFreqGovernor = "performance"; #forced to schedutil by tuxedo control center
+          hardware.tuxedo-control-center.enable = true;
+          services.xserver.windowManager.dwm.enable = true;
+          services.xserver = {
+            enable = true;
+            desktopManager = {
+              xterm.enable = false;
+              xfce.enable = true;
+            };
+            displayManager.defaultSession = "xfce";
+          };
           boot = {
             #The next line may fix a system crash in nvidia 525.xx.xx
             #Nvidia has enabled a new feature in 510, GSP, but logs
@@ -148,7 +149,6 @@
             };
             video.hidpi.enable = lib.mkDefault true;
           };
-          powerManagement.cpuFreqGovernor = "performance";
           services.cpupower-gui.enable = true;
           services.logind.lidSwitch = "ignore";
           environment.systemPackages = with pkgs; [
