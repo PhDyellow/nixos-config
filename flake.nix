@@ -47,26 +47,7 @@
               inputs.tuxedo-nixos.nixosModules.default
           ];
           hardware.tuxedo-control-center.enable = true;
-          services.xserver.enable = true;
-          services.xserver.displayManager.gdm.enable = true;
-
-          services.xserver.displayManager.gdm.wayland = false;
-services.xserver.desktopManager.gnome.enable = true;
-systemd = {
-  user.services.polkit-gnome-authentication-agent-1 = {
-    description = "polkit-gnome-authentication-agent-1";
-    wantedBy = [ "graphical-session.target" ];
-    wants = [ "graphical-session.target" ];
-    after = [ "graphical-session.target" ];
-    serviceConfig = {
-        Type = "simple";
-        ExecStart = "${pkgs.polkit_gnome}/libexec/polkit-gnome-authentication-agent-1";
-        Restart = "on-failure";
-        RestartSec = 1;
-        TimeoutStopSec = 10;
-      };
-  };
-};
+          services.xserver.windowManager.dwm.enable = true;
           boot = {
             #The next line may fix a system crash in nvidia 525.xx.xx
             #Nvidia has enabled a new feature in 510, GSP, but logs
@@ -336,7 +317,7 @@ systemd = {
               allowedUDPPorts = [ ];
             };
             wireless = {
-             # enable = true;
+              enable = true;
             };
             interfaces = {
               enp4s0.useDHCP = true;
@@ -355,7 +336,7 @@ systemd = {
           # };
 
           #sound.enable = true;
-          hardware.pulseaudio.enable = true;
+          #hardware.pulseaudio.enable = true;
 
           users.mutableUsers = false;
           users.users = {
@@ -375,8 +356,8 @@ systemd = {
               kitty
               foot
               geekbench_6
-              #pipewire #Audio
-              #wireplumber
+              pipewire #Audio
+              wireplumber
               fnott #desktop notifications. see also mako, dunst
               polkit #request root priveliges
               polkit_gnome #gnome app for polkit requests
@@ -473,15 +454,15 @@ systemd = {
           };
 
           #pipewire specific config
-          #security.rtkit.enable = true;
-          # services.pipewire = {
-          #   #enable = true;
-          #   alsa.enable = true;
-          #   alsa.support32Bit = true;
-          #   pulse.enable = true;
-          #   # If you want to use JACK applications, uncomment this
-          #   #jack.enable = true;
-          # };
+          security.rtkit.enable = true;
+          services.pipewire = {
+            enable = true;
+            alsa.enable = true;
+            alsa.support32Bit = true;
+            pulse.enable = true;
+            # If you want to use JACK applications, uncomment this
+            #jack.enable = true;
+          };
 
 
           #Enable polkit for passwords, and activate agent
@@ -850,7 +831,7 @@ bindm = $mainMod, mouse:273, resizewindow
           self.nixosModules.prime-ai_hardware_config
           self.nixosModules.system_config
           self.nixosModules.phil_user
-          #self.nixosModules.wifi_secrets
+          self.nixosModules.wifi_secrets
           self.nixosModules.secure_boot
           self.nixosModules.prime-ai_hardware_shared_crypt
           inputs.ragenix.nixosModules.age
