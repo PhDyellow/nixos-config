@@ -845,7 +845,7 @@ bindm = $mainMod, mouse:273, resizewindow
           inputs.ragenix.nixosModules.age
           self.nixosModules.prime_ai_tailscale
           self.nixosModules.network_fs
-          self.nixosModules.hyprland-prime-ai
+          #self.nixosModules.hyprland-prime-ai
           self.nixosModules.phil_home
         ];
       };
