@@ -50,6 +50,21 @@
           services.xserver.windowManager.dwm.enable = true;
           services.xserver.enable = true;
           services.xserver.displayManager.gdm.enable = true;
+systemd = {
+  user.services.polkit-gnome-authentication-agent-1 = {
+    description = "polkit-gnome-authentication-agent-1";
+    wantedBy = [ "graphical-session.target" ];
+    wants = [ "graphical-session.target" ];
+    after = [ "graphical-session.target" ];
+    serviceConfig = {
+        Type = "simple";
+        ExecStart = "${pkgs.polkit_gnome}/libexec/polkit-gnome-authentication-agent-1";
+        Restart = "on-failure";
+        RestartSec = 1;
+        TimeoutStopSec = 10;
+      };
+  };
+};
           boot = {
             #The next line may fix a system crash in nvidia 525.xx.xx
             #Nvidia has enabled a new feature in 510, GSP, but logs
