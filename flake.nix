@@ -54,8 +54,8 @@
               xterm.enable = false;
               xfce.enable = true;
             };
+            displayManager.defaultSession = "xfce";
           };
-          displayManager.defaultSession = "xfce";
           boot = {
             #The next line may fix a system crash in nvidia 525.xx.xx
             #Nvidia has enabled a new feature in 510, GSP, but logs
