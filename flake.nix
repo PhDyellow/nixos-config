@@ -148,7 +148,7 @@
             };
             video.hidpi.enable = lib.mkDefault true;
           };
-          powerManagement.cpuFreqGovernor = "schedutil";
+          powerManagement.cpuFreqGovernor = "performance";
           services.cpupower-gui.enable = true;
           services.logind.lidSwitch = "ignore";
           environment.systemPackages = with pkgs; [
