@@ -47,7 +47,6 @@
               inputs.tuxedo-nixos.nixosModules.default
           ];
           hardware.tuxedo-control-center.enable = true;
-          services.xserver.windowManager.dwm.enable = true;
           services.xserver.enable = true;
           services.xserver.displayManager.gdm.enable = true;
 services.xserver.desktopManager.gnome.enable = true;
