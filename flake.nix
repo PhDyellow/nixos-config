@@ -85,6 +85,9 @@
               "lm92"
               "zenpower"
             ];
+            blacklistedKernelModules = [
+              "k10temp"
+            ];
             extraModulePackages = [
               config.boot.kernelPackages.zenpower];
             bootspec.enable = true; #needed for lanzaboote secureboot
