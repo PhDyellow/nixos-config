@@ -86,7 +86,7 @@
               "zenpower"
             ];
             extraModulePackages = [
-              boot.kernelPackages.zenpower];
+              config.boot.kernelPackages.zenpower];
             bootspec.enable = true; #needed for lanzaboote secureboot
             supportedFilesystems = [
               "ntfs" #needed for NTFS support
