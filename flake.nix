@@ -80,7 +80,7 @@
             kernelModules = [
               "kvm-amd"
               "msr" #for zenstates
-              "k10temp"
+              #"k10temp"
               "cpuid"
               "lm92"
             ];
