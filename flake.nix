@@ -159,6 +159,7 @@
             lm_sensors
             psensor
             #amdctl #not in nixos, but does same job as zenstates
+            cpu-x
           ];
         };
       prime-ai_hardware_shared_crypt = { config, lib, pkgs, ...}:
