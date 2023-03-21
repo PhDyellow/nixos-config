@@ -83,8 +83,10 @@
               #"k10temp"
               "cpuid"
               "lm92"
+              "zenpower"
             ];
-            extraModulePackages = [ ];
+            extraModulePackages = [
+              boot.kernelPackages.zenpower];
             bootspec.enable = true; #needed for lanzaboote secureboot
             supportedFilesystems = [
               "ntfs" #needed for NTFS support
