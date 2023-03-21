@@ -39,7 +39,7 @@
         {
           imports = [
               (modulesPath + "/installer/scan/not-detected.nix")
-              #inputs.nixos-hardware.nixosModules.common-cpu-amd-pstate
+              inputs.nixos-hardware.nixosModules.common-cpu-amd-pstate
               inputs.nixos-hardware.nixosModules.common-cpu-amd
               inputs.nixos-hardware.nixosModules.common-pc-ssd
               inputs.nixos-hardware.nixosModules.common-pc
@@ -154,7 +154,7 @@
             };
             video.hidpi.enable = lib.mkDefault true;
           };
-          services.cpupower-gui.enable = true;
+          #services.cpupower-gui.enable = true;
           services.logind.lidSwitch = "ignore";
           environment.systemPackages = with pkgs; [
             zenstates
@@ -162,9 +162,9 @@
             linuxPackages.zenpower
             zenmonitor
             lm_sensors
-            psensor
+            #psensor
             #amdctl #not in nixos, but does same job as zenstates
-            cpu-x
+            #cpu-x
           ];
         };
       prime-ai_hardware_shared_crypt = { config, lib, pkgs, ...}:
