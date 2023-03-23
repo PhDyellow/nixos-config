@@ -375,16 +375,16 @@
     },
     "nixpkgs-unstable": {
       "locked": {
-        "lastModified": 1679535498,
-        "narHash": "sha256-jG6nH7YfHxawIsAaLdbppgioPu6hYglMiKh+FwffcT8=",
-        "owner": "NixOS",
+        "lastModified": 1679539693,
+        "narHash": "sha256-sX9FsvYVjUlXxZVKdNKO/3TMi6tbeohOWFHxr4dA2GM=",
+        "owner": "PhDyellow",
         "repo": "nixpkgs",
-        "rev": "e5a5eff8a76cee351ccf0c966212786ecc2ad289",
+        "rev": "c7e91d6a831b11b32a4b0e1786c79d75ae4a692c",
         "type": "github"
       },
       "original": {
-        "owner": "NixOS",
-        "ref": "master",
+        "owner": "PhDyellow",
+        "ref": "fix_tuxedo_keyboard",
         "repo": "nixpkgs",
         "type": "github"
       }
