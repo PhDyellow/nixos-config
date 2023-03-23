@@ -36,6 +36,83 @@
   outputs = {self, nixpkgs-unstable, ...}@inputs: {
     nixosModules = {
       prime-ai_hardware_config = { config, lib, pkgs, modulesPath, ...}:
+        let
+          tcc-profile = pkgs.writeTextFile {
+            name = "tcc-profile";
+            text =  ''
+            [
+              {
+                "id": "__default_custom_profile__",
+                "name": "TUXEDO Defaults",
+                "description": "Edit profile to change behaviour",
+                "display": {
+                  "brightness": 100,
+                  "useBrightness": false
+                },
+                "cpu": {
+                  "useMaxPerfGov": false,
+                  "governor": "powersave",
+                  "energyPerformancePreference": "balance_performance",
+                  "noTurbo": false,
+                  "onlineCores": 24,
+                  "scalingMinFrequency": 2200000,
+                  "scalingMaxFrequency": 4700000
+                },
+                "webcam": {
+                  "status": true,
+                  "useStatus": true
+                },
+                "fan": {
+                  "useControl": true,
+                  "fanProfile": "Balanced",
+                  "minimumFanspeed": 0,
+                  "offsetFanspeed": 0
+                },
+                "odmProfile": {
+                  "name": "performance"
+                },
+                "odmPowerLimits": {
+                  "tdpValues": []
+                }
+              },
+              {
+                "name": "freezy",
+                "description": "Edit profile to change behaviour",
+                "display": {
+                  "brightness": 5,
+                  "useBrightness": false
+                },
+                "cpu": {
+                  "useMaxPerfGov": false,
+                  "governor": "powersave",
+                  "energyPerformancePreference": "balance_performance",
+                  "noTurbo": false,
+                  "onlineCores": 24,
+                  "scalingMinFrequency": 550000,
+                  "scalingMaxFrequency": 5074000
+                },
+                "webcam": {
+                  "status": false,
+                  "useStatus": true
+                },
+                "fan": {
+                  "useControl": true,
+                  "fanProfile": "Freezy",
+                  "minimumFanspeed": 0,
+                  "offsetFanspeed": 37
+                },
+                "odmProfile": {
+                  "name": "performance"
+                },
+                "odmPowerLimits": {
+                  "tdpValues": []
+                },
+                "id": "0350erinz8o9lfg6puqi"
+              }
+            ]
+            '';
+          };
+        in
         {
           imports = [
               (modulesPath + "/installer/scan/not-detected.nix")
@@ -46,8 +123,18 @@
               inputs.nixos-hardware.nixosModules.common-gpu-nvidia-nonprime
               inputs.tuxedo-nixos.nixosModules.default
           ];
-          powerManagement.cpuFreqGovernor = "performance"; #forced to schedutil by tuxedo control center
+          #powerManagement.cpuFreqGovernor = "performance"; #forced to schedutil by tuxedo control center
           hardware.tuxedo-control-center.enable = true;
+          systemd.services = {
+            create-tcc-profile = {
+              serviceConfig.Type = "oneshot";
+              Before = [ "tccd.service" ];
+              script = ''
+                mkdir -p /var/lib/tcc
+                ln -s ${tcc-profile} /var/lib/tcc/profiles
+              '';
+            };
+          };
           services.xserver.windowManager.dwm.enable = true;
           services.xserver = {
             enable = true;
