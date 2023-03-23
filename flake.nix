@@ -137,14 +137,15 @@
             };
           };
           #services.xserver.windowManager.dwm.enable = true;
-          # services.xserver = {
-          #   enable = true;
-          #   desktopManager = {
-          #     xterm.enable = false;
-          #     xfce.enable = true;
-          #   };
-          #   displayManager.defaultSession = "xfce";
-          # };
+          services.xserver = {
+            enable = true;
+            desktopManager = {
+              xterm.enable = false;
+              xfce.enable = true;
+            };
+            displayManager.defaultSession = "xfce";
+            dpi = 200;
+          };
           boot = {
             #The next line may fix a system crash in nvidia 525.xx.xx
             #Nvidia has enabled a new feature in 510, GSP, but logs
@@ -240,8 +241,8 @@
                             nvidia-vaapi-driver
                           ];
             };
-            video.hidpi.enable = lib.mkDefault true;
           };
+          fonts.optimiseForVeryHighDPI = true;
           #services.cpupower-gui.enable = true;
           services.logind.lidSwitch = "ignore";
           environment.systemPackages = with pkgs; [
