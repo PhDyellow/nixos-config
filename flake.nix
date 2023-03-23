@@ -242,7 +242,7 @@
                           ];
             };
           };
-          fonts.optimiseForVeryHighDPI = true;
+          fonts.optimizeForVeryHighDPI = true;
           #services.cpupower-gui.enable = true;
           services.logind.lidSwitch = "ignore";
           environment.systemPackages = with pkgs; [
