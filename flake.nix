@@ -128,7 +128,8 @@
           systemd.services = {
             create-tcc-profile = {
               serviceConfig.Type = "oneshot";
-              Before = [ "tccd.service" ];
+              before = [ "tccd.service" ];
+              wantedBy = [ "multi-user.target" ];
               script = ''
                 mkdir -p /var/lib/tcc
                 ln -s ${tcc-profile} /var/lib/tcc/profiles
