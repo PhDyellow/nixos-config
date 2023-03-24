@@ -753,7 +753,7 @@
                       enable = true;
                     };
                     forge = {
-                      enable = true;
+                      enable = false;
                       extraPackages = [pkgs.git];
                     };
                     vterm = {
