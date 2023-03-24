@@ -4,8 +4,7 @@
   inputs  = {
     nixpkgs-unstable = {
       #url = "github:NixOS/nixpkgs/nixos-unstable";
-      #url = "github:NixOS/nixpkgs/master"; #temporary change for bug in nixos
-      url = "github:PhDyellow/nixpkgs/fix_tuxedo_keyboard"; #temporary change for bug in nixos
+      url = "github:NixOS/nixpkgs/master"; #temporary change for bug in nixos
     };
 
     nixos-hardware.url = "github:NixOS/nixos-hardware/master";
@@ -32,6 +31,12 @@
       # Avoid pulling in the nixpkgs that we pin in the tuxedo-nixos repo.
       # This should give the least surprises and saves on disk space.
       # inputs.nixpkgs.follows = "nixpkgs-unstable"; # not working with nixpkgs unstable yet
+    };
+    nur = {
+      url = github:nix-community/NUR;
+    };
+    emacs-overlay = {
+      url = "github:nix-community/emacs-overlay";
     };
   };
 
@@ -601,10 +606,22 @@
             trusted-public-keys = ["hyprland.cachix.org-1:a7pgxzMz7+chwVL3/pzj6jIBMioiJM7ypFP8PwtkuGc="];
           };
       };
+      prime_overlays = {config, pkgs, ...}:
+        {
+          nixpkgs.overlays = [
+            inputs.emacs-overlay.overlays.default
+          ];
+
+          nix.settings = {
+            substituters = ["https://nix-community.cachix.org"];
+            trusted-public-keys = ["nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="];
+          };
+        };
       phil_home = {config, pkgs, ...}: {
-        imports = [
+         imports = [
            inputs.home-manager.nixosModules.home-manager
         ];
+
         home-manager = {
           useGlobalPkgs = true;
           useUserPackages = true;
@@ -612,8 +629,11 @@
           #home-manager.users.<name> is an attribute set {} of users. Each user is a hmModule, so I can import
           #modules to it. Any modules imported by all users can go in home-manager.sharedModules
           users.phil = {
-            imports = [
+             imports = let
+              nurNoPkgs = import inputs.nur { pkgs = null; nurpkgs = pkgs; };
+            in [
               inputs.hyprland.homeManagerModules.default
+              nurNoPkgs.repos.rycee.hmModules.emacs-init
             ];
             home = {
               stateVersion = "23.05";
@@ -652,9 +672,315 @@
               maxCacheTtl = 72000;
 
               };
+              emacs = {
+                enable = true;
+                defaultEditor = true;
+              };
             };
 
             programs = {
+              emacs = {
+                enable = true;
+                package = pkgs.emacsPgtk;
+                extraPackages = epkgs: [
+                  epkgs.vterm
+                  epkgs.eat
+
+                ];
+                overrides = final: prev: {
+
+                };
+                init = {
+                  enable = true;
+                  recommendedGcSettings = true;
+                  startupTimer = true;
+                  earlyInit = "";
+                  #config inserted before use-package
+                  prelude = ''
+                    ;;(setq my-user-emacs-directory "/storage/emulated/0/memx/repos/phone_emacs/")
+
+                    https://vernon-grant.com/emacs/tmux-emacs-and-the-system-clipboard-on-wayland/
+                    ;; Checks if the session type is in fact for Wayland.
+                    (if (string= (getenv "XDG_SESSION_TYPE") "wayland")
+                    ;; credit: yorickvP on Github
+                      (progn (setq wl-copy-process nil)
+
+                        (defun wl-copy (text)
+                          (setq wl-copy-process (make-process :name "wl-copy"
+                                                              :buffer nil
+                                                              :command '("wl-copy" "-f" "-n")
+                                                              :connection-type 'pipe))
+                          (process-send-string wl-copy-process text)
+                          (process-send-eof wl-copy-process))
+
+                        (defun wl-paste ()
+                          (if (and wl-copy-process (process-live-p wl-copy-process))
+                              nil ; should return nil if we're the current paste owner
+                            (shell-command-to-string "wl-paste -n | tr -d \r")))
+
+                        (setq interprogram-cut-function 'wl-copy)
+                        (setq interprogram-paste-function 'wl-paste))
+                       #else set up x clipboard sharing
+                      (setq x-select-enable-clipboard t)
+                      (setq x-select-enable-primary t)
+                     )
+
+
+                  '';
+                  postlude = ""; #config inserted after use-package
+                  #Packages configured
+                  usePackage = {
+                    emacs = {
+                      config = ''
+                        (defun crm-indicator (args)
+                          (cons (format "[CRM%s] %s"
+                                        (replace-regexp-in-string
+                                        "\\`\\[.*?]\\*\\|\\[.*?]\\*\\'" ""
+                                        crm-separator)
+                                        (car args))
+                                (cdr args)))
+                        (advice-add #'completing-read-multiple :filter-args #'crm-indicator)
+
+
+                        (setq read-extended-command-predicate
+                              #'command-completion-default-include-p)
+
+
+                        (setq enable-recursive-minibuffers t)
+                      '';
+                    };
+                    magit = {};
+                    forge = {};
+                    vterm = {};
+                    eat = {};
+                    consult = {
+                      hook = [
+                         "(completion-list-mode . consult-preview-at-point-mode)"
+                      ];
+                      init = ''
+                        ;; Optionally configure the register formatting. This improves the register
+                        ;; preview for `consult-register', `consult-register-load',
+                        ;; `consult-register-store' and the Emacs built-ins.
+                        (setq register-preview-delay 0.5
+                              register-preview-function #'consult-register-format)
+
+                        ;; Optionally tweak the register preview window.
+                        ;; This adds thin lines, sorting and hides the mode line of the window.
+                        (advice-add #'register-preview :override #'consult-register-window)
+
+                        ;; Use Consult to select xref locations with preview
+                        (setq xref-show-xrefs-function #'consult-xref
+                              xref-show-definitions-function #'consult-xref)
+                      '';
+                      config = ''
+                        ;; Optionally configure preview. The default value
+                        ;; is 'any, such that any key triggers the preview.
+                        ;; (setq consult-preview-key 'any)
+                        ;; (setq consult-preview-key (kbd "M-."))
+                        ;; (setq consult-preview-key (list (kbd "<S-down>") (kbd "<S-up>")))
+                        ;; For some commands and buffer sources it is useful to configure the
+                        ;; :preview-key on a per-command basis using the `consult-customize' macro.
+                        (consult-customize
+                        consult-theme :preview-key '(:debounce 0.2 any)
+                        consult-ripgrep consult-git-grep consult-grep
+                        consult-bookmark consult-recent-file consult-xref
+                        consult--source-bookmark consult--source-file-register
+                        consult--source-recent-file consult--source-project-recent-file
+                        ;; :preview-key (kbd "M-.")
+                        :preview-key '(:debounce 0.4 any))
+
+                        ;; Optionally configure the narrowing key.
+                        ;; Both < and C-+ work reasonably well.
+                        (setq consult-narrow-key "<") ;; (kbd "C-+")
+                      '';
+                    };
+                    marginalia = {
+                      init = ''
+                        (marginalia-mode)
+                        '';
+                      bindLocal = {
+                        minibuffer-local-map = {
+                          "M-A" = "marginalia-cycle";
+                        };
+                      };
+                    };
+                    orderless = {
+                      init = ''
+                        (setq completion-styles '(orderless basic)
+                              completion-category-defaults nil
+                              completion-category-overrides '((file (styles partial-completion)))))
+                      '';
+                    };
+                    autorevert = {
+                      config = ''
+                        (setq global-auto-revert-non-file-buffers t)
+                        (global-auto-revert-mode 1)
+                      '';
+                    };
+                    saveplace = {
+                      config = ''
+                        (save-place-mode 1)
+                      '';
+                    };
+                    recentf = {
+                      config = ''
+                      (recentf-mode 1)
+                      '';
+                    };
+                    savehist = {
+                      config = ''
+                        (setq savehist-additional-variables
+                              '(search-ring
+                                regexp-search-ring
+                                mark-ring
+                                global-mark-ring
+                                )
+                              )
+                        (setq history-length 250)
+                        (savehist-mode)
+                      '';
+                    };
+                    vertico = {
+                      config = ''
+                        (vertico-mode)
+                      '';
+                    };
+                    org = {
+                      init = ''
+                      '';
+                      config = ''
+                      '';
+                      demand = true;
+                    };
+                    zenburn-theme = {
+                      init = ''
+                        (setq zenburn-use-variable-pitch t)
+                      '';
+                      config = ''
+                        (if (daemonp)
+                          (add-hook 'after-make-frame-functions
+                                    (lambda (frame)
+                                      (select-frame frame)
+                                      (load-theme 'zenburn t)
+                                      <<set-x-font>>
+                                    (exwm-layout-set-fullscreen)
+                        (menu-bar-mode -1)
+                        (tool-bar-mode -1)
+                        (scroll-bar-mode -1)
+                        (fringe-mode 1)
+
+                                      )
+                                    )
+                          (load-theme 'zenburn t)
+                                      <<set-x-font>>
+                          )
+                      '';
+                    };
+                    which-key = {
+                      config = ''
+                        (which-key-mode)
+                        '';
+                    };
+                    meow = {
+                      config = ''
+                        (require 'meow)
+                        (meow-setup)
+                        (meow-global-mode 1)
+                        (setq meow-cursor-type-normal '(bar . 6))
+                      '';
+                      init = ''
+(defun meow-setup ()
+  (setq meow-cheatsheet-layout meow-cheatsheet-layout-qwerty)
+  (meow-motion-overwrite-define-key
+   '("j" . meow-next)
+   '("k" . meow-prev)
+   '("<escape>" . ignore))
+  (meow-leader-define-key
+   ;; SPC j/k will run the original command in MOTION state.
+   '("j" . "H-j")
+   '("k" . "H-k")
+   ;; Use SPC (0-9) for digit arguments.
+   '("1" . meow-digit-argument)
+   '("2" . meow-digit-argument)
+   '("3" . meow-digit-argument)
+   '("4" . meow-digit-argument)
+   '("5" . meow-digit-argument)
+   '("6" . meow-digit-argument)
+   '("7" . meow-digit-argument)
+   '("8" . meow-digit-argument)
+   '("9" . meow-digit-argument)
+   '("0" . meow-digit-argument)
+   '("/" . meow-keypad-describe-key)
+   '("?" . meow-cheatsheet))
+  (meow-normal-define-key
+   '("0" . meow-expand-0)
+   '("9" . meow-expand-9)
+   '("8" . meow-expand-8)
+   '("7" . meow-expand-7)
+   '("6" . meow-expand-6)
+   '("5" . meow-expand-5)
+   '("4" . meow-expand-4)
+   '("3" . meow-expand-3)
+   '("2" . meow-expand-2)
+   '("1" . meow-expand-1)
+   '("-" . negative-argument)
+   '(";" . meow-reverse)
+   '("," . meow-inner-of-thing)
+   '("." . meow-bounds-of-thing)
+   '("[" . meow-beginning-of-thing)
+   '("]" . meow-end-of-thing)
+   '("a" . meow-append)
+   '("A" . meow-open-below)
+   '("b" . meow-back-word)
+   '("B" . meow-back-symbol)
+   '("c" . meow-change)
+   '("d" . meow-delete)
+   '("D" . meow-backward-delete)
+   '("e" . meow-next-word)
+   '("E" . meow-next-symbol)
+   '("f" . meow-find)
+   '("g" . meow-cancel-selection)
+   '("G" . meow-grab)
+   '("h" . meow-left)
+   '("H" . meow-left-expand)
+   '("i" . meow-insert)
+   '("I" . meow-open-above)
+   '("j" . meow-next)
+   '("J" . meow-next-expand)
+   '("k" . meow-prev)
+   '("K" . meow-prev-expand)
+   '("l" . meow-right)
+   '("L" . meow-right-expand)
+   '("m" . meow-join)
+   '("n" . meow-search)
+   '("o" . meow-block)
+   '("O" . meow-to-block)
+   '("p" . meow-yank)
+   '("q" . meow-quit)
+   '("Q" . meow-goto-line)
+   '("r" . meow-replace)
+   '("R" . meow-swap-grab)
+   '("s" . meow-kill)
+   '("t" . meow-till)
+   '("u" . meow-undo)
+   '("U" . meow-undo-in-selection)
+   '("v" . meow-visit)
+   '("w" . meow-mark-word)
+   '("W" . meow-mark-symbol)
+   '("x" . meow-line)
+   '("X" . meow-goto-line)
+   '("y" . meow-save)
+   '("Y" . meow-sync-grab)
+   '("z" . meow-pop-selection)
+   '("'" . repeat)
+   '("<escape>" . ignore)))
+                      '';
+                  };
+                };
+
+              };
+              };
+
               gpg = {
                 enable = true;
               };
@@ -950,6 +1276,7 @@ bindm = $mainMod, mouse:273, resizewindow
           self.nixosModules.hyprland-prime-ai
           #self.nixosModules.xfce_desktop
           self.nixosModules.phil_home
+          self.nixosModules.prime_overlays
         ];
       };
     };
