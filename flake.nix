@@ -698,7 +698,7 @@
                   prelude = ''
                     ;;(setq my-user-emacs-directory "/storage/emulated/0/memx/repos/phone_emacs/")
 
-                    https://vernon-grant.com/emacs/tmux-emacs-and-the-system-clipboard-on-wayland/
+                    ;;https://vernon-grant.com/emacs/tmux-emacs-and-the-system-clipboard-on-wayland/
                     ;; Checks if the session type is in fact for Wayland.
                     (if (string= (getenv "XDG_SESSION_TYPE") "wayland")
                     ;; credit: yorickvP on Github
