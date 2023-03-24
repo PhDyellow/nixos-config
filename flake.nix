@@ -730,6 +730,7 @@
                   #Packages configured
                   usePackage = {
                     emacs = {
+                      enable = true;
                       config = ''
                         (defun crm-indicator (args)
                           (cons (format "[CRM%s] %s"
@@ -748,11 +749,20 @@
                         (setq enable-recursive-minibuffers t)
                       '';
                     };
-                    magit = {};
-                    forge = {};
-                    vterm = {};
-                    eat = {};
+                    magit = {
+                      enable = true;
+                    };
+                    forge = {
+                      enable = true;
+                    };
+                    vterm = {
+                      enable = true;
+                    };
+                    eat = {
+                      enable = true;
+                    };
                     consult = {
+                      enable = true;
                       hook = [
                          "(completion-list-mode . consult-preview-at-point-mode)"
                       ];
@@ -794,6 +804,7 @@
                       '';
                     };
                     marginalia = {
+                      enable = true;
                       init = ''
                         (marginalia-mode)
                         '';
@@ -804,6 +815,7 @@
                       };
                     };
                     orderless = {
+                      enable = true;
                       init = ''
                         (setq completion-styles '(orderless basic)
                               completion-category-defaults nil
@@ -811,22 +823,26 @@
                       '';
                     };
                     autorevert = {
+                      enable = true;
                       config = ''
                         (setq global-auto-revert-non-file-buffers t)
                         (global-auto-revert-mode 1)
                       '';
                     };
                     saveplace = {
+                      enable = true;
                       config = ''
                         (save-place-mode 1)
                       '';
                     };
                     recentf = {
+                      enable = true;
                       config = ''
                       (recentf-mode 1)
                       '';
                     };
                     savehist = {
+                      enable = true;
                       config = ''
                         (setq savehist-additional-variables
                               '(search-ring
@@ -840,11 +856,13 @@
                       '';
                     };
                     vertico = {
+                      enable = true;
                       config = ''
                         (vertico-mode)
                       '';
                     };
                     org = {
+                      enable = true;
                       init = ''
                       '';
                       config = ''
@@ -852,6 +870,7 @@
                       demand = true;
                     };
                     zenburn-theme = {
+                      enable = true;
                       init = ''
                         (setq zenburn-use-variable-pitch t)
                       '';
@@ -876,11 +895,13 @@
                       '';
                     };
                     which-key = {
+                      enable = true;
                       config = ''
                         (which-key-mode)
                         '';
                     };
                     meow = {
+                      enable = true;
                       config = ''
                         (require 'meow)
                         (meow-setup)
