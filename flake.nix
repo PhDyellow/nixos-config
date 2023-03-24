@@ -763,6 +763,7 @@
                       enable = true;
                     };
                     consult = {
+                      after = ["xref"];
                       enable = true;
                       hook = [
                          "(completion-list-mode . consult-preview-at-point-mode)"
@@ -820,7 +821,7 @@
                       init = ''
                         (setq completion-styles '(orderless basic)
                               completion-category-defaults nil
-                              completion-category-overrides '((file (styles partial-completion)))))
+                              completion-category-overrides '((file (styles partial-completion))))
                       '';
                     };
                     autorevert = {
