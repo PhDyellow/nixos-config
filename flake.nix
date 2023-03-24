@@ -462,17 +462,7 @@
             #agenix.packages.x86_64-linux.default #nix run github:ryantm/agenix -- --help
             python3
             openssl
-              kitty
-              foot
               geekbench_6
-              pipewire #Audio
-              wireplumber
-              fnott #desktop notifications. see also mako, dunst
-              polkit #request root priveliges
-              polkit_gnome #gnome app for polkit requests
-              waylock
-              #swaylock
-              swayimg
             pqiv
             gthumb
           ];
@@ -535,6 +525,17 @@
           environment = {
 
             systemPackages = with pkgs; [
+              pipewire #Audio
+              wireplumber
+              fnott #desktop notifications. see also mako, dunst
+              polkit #request root priveliges
+              polkit_gnome #gnome app for polkit requests
+              waylock
+              #swaylock
+              swayimg
+              kitty
+              foot
+              wl-clipboard
             ];
             sessionVariables = {
               _JAVA_AWT_WM_NONREPARENTING="1";
