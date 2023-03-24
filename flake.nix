@@ -139,7 +139,7 @@
               wantedBy = [ "multi-user.target" ];
               script = ''
                 mkdir -p /var/lib/tcc
-                rm /var/lib/tcc/profiles
+                rm -f /var/lib/tcc/profiles
                 ln -s ${tcc-profile} /var/lib/tcc/profiles
               '';
             };
