@@ -138,16 +138,6 @@
               '';
             };
           };
-          #services.xserver.windowManager.dwm.enable = true;
-          services.xserver = {
-            enable = true;
-            desktopManager = {
-              xterm.enable = false;
-              xfce.enable = true;
-            };
-            displayManager.defaultSession = "xfce";
-            dpi = 200;
-          };
           boot = {
             #The next line may fix a system crash in nvidia 525.xx.xx
             #Nvidia has enabled a new feature in 510, GSP, but logs
@@ -259,6 +249,19 @@
             mprime
           ];
         };
+      xfce_desktop = {config, pkgs, ...}:
+        {
+          services.xserver.windowManager.dwm.enable = true;
+          services.xserver = {
+            enable = true;
+            desktopManager = {
+              xterm.enable = false;
+              xfce.enable = true;
+            };
+            displayManager.defaultSession = "xfce";
+            dpi = 300;
+          };
+      };
       prime-ai_hardware_shared_crypt = { config, lib, pkgs, ...}:
         {
           fileSystems = {
@@ -943,7 +946,8 @@ bindm = $mainMod, mouse:273, resizewindow
           inputs.ragenix.nixosModules.age
           self.nixosModules.prime_ai_tailscale
           self.nixosModules.network_fs
-          #self.nixosModules.hyprland-prime-ai
+          self.nixosModules.hyprland-prime-ai
+          #self.nixosModules.xfce_desktop
           self.nixosModules.phil_home
         ];
       };
