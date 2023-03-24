@@ -719,7 +719,7 @@
 
                         (setq interprogram-cut-function 'wl-copy)
                         (setq interprogram-paste-function 'wl-paste))
-                       #else set up x clipboard sharing
+                       ;;else set up x clipboard sharing
                       (setq x-select-enable-clipboard t)
                       (setq x-select-enable-primary t)
                      )
