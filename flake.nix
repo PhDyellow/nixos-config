@@ -702,7 +702,7 @@
                     ;; Checks if the session type is in fact for Wayland.
                     (if (string= (getenv "XDG_SESSION_TYPE") "wayland")
                     ;; credit: yorickvP on Github
-                      (progn (setq wl-copy-process nil)
+                      (let ((wl-copy-process nil))
 
                         (defun wl-copy (text)
                           (setq wl-copy-process (make-process :name "wl-copy"
@@ -720,8 +720,8 @@
                         (setq interprogram-cut-function 'wl-copy)
                         (setq interprogram-paste-function 'wl-paste))
                        ;;else set up x clipboard sharing
-                      (setq x-select-enable-clipboard t)
-                      (setq x-select-enable-primary t)
+                      (setq select-enable-clipboard t)
+                      (setq select-enable-primary t)
                      )
 
 
@@ -754,6 +754,7 @@
                     };
                     forge = {
                       enable = true;
+                      extraPackages = [pkgs.git];
                     };
                     vterm = {
                       enable = true;
