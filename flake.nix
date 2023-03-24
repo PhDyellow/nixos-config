@@ -883,7 +883,7 @@
                                     (lambda (frame)
                                       (select-frame frame)
                                       (load-theme 'zenburn t)
-                                      <<set-x-font>>
+                                      (set-frame-font "DejaVu Sans 20" t t t)
                                     (exwm-layout-set-fullscreen)
                         (menu-bar-mode -1)
                         (tool-bar-mode -1)
@@ -893,7 +893,7 @@
                                       )
                                     )
                           (load-theme 'zenburn t)
-                                      <<set-x-font>>
+                                      (set-frame-font "DejaVu Sans 20" t t t)
                           )
                       '';
                     };
