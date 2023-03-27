@@ -887,6 +887,12 @@
                       config = ''
                       '';
                     };
+                    image-dired = {
+                      enable = true;
+                      config = ''
+                        (setq image-dired-thumbnail-storage 'standard-large)
+                      '';
+                    };
                     org = {
                       enable = true;
                       init = ''
