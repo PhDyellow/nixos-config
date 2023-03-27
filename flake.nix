@@ -766,7 +766,28 @@
                       enable = true;
                       config = ''
                         (setq enable-recursive-minibuffers t)
+
+                        (setq ring-bell-function
+                              (lambda ()
+                                (let ((orig-fg (face-foreground 'mode-line)))
+                                  (set-face-foreground 'mode-line "#F2804F")
+                                  (run-with-idle-timer 0.1 nil
+                                                      (lambda (fg) (set-face-foreground 'mode-line fg))
+                                                      orig-fg))))
+
                       '';
+                    };
+                    isend-mode = {
+                      enable = true;
+                    };
+                    nix-mode = {
+                      enable = false;
+                    };
+                    company-nixos-options = {
+                      enable = false;
+                    };
+                    ob-nix = {
+                      enable = false;
                     };
                     magit = {
                       enable = true;
@@ -875,6 +896,9 @@
                         (setq history-length 250)
                         (savehist-mode)
                       '';
+                    };
+                    better-defaults = {
+                      enable = true;
                     };
                     vertico = {
                       enable = true;
