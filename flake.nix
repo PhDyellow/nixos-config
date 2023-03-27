@@ -819,7 +819,7 @@
                     };
                     marginalia = {
                       enable = true;
-                      init = ''
+                      config = ''
                         (marginalia-mode)
                         '';
                       bindLocal = {
@@ -871,7 +871,7 @@
                     };
                     vertico = {
                       enable = true;
-                      init = ''
+                      config = ''
                         (vertico-mode)
                       '';
                     };
