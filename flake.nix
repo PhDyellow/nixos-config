@@ -755,6 +755,7 @@
                     };
                     forge = {
                       enable = true;
+                      after = ["magit"];
                     };
                     vterm = {
                       enable = true;
