@@ -887,10 +887,16 @@
                       init = ''
                       '';
                       config = ''
+                      ;;Add R to org-babel
                         (org-babel-do-load-languages
                         'org-babel-load-languages
                         '((emacs-lisp . t)
                           (R . t)))
+
+                          ;;Allow code blocks to execute without asking me every time
+                          ;; for safetly though, don't allow C-c C-c to evaluate blocks
+                          (setq org-confirm-babel-evaluate (lambda (lang src) (if (string= lang "R") nil t))
+                                org-babel-no-eval-on-ctrl-c-ctrl-c t)
                       '';
                       demand = true;
                     };
