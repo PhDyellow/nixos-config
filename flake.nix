@@ -909,6 +909,7 @@
                     ess = {
                       enable = true;
                       config = ''
+                        (setq inferior-ess-r-program "radian")
                       '';
                     };
                     image-dired = {
