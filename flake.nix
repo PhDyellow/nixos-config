@@ -609,7 +609,7 @@
       prime_overlays = {config, pkgs, ...}:
         {
           nixpkgs.overlays = [
-            inputs.emacs-overlay.overlays.default
+            inputs.emacs-overlay.overlays.emacs
           ];
 
           nix.settings = {
@@ -683,8 +683,8 @@
                 enable = true;
                 package = pkgs.emacsPgtk;
                 extraPackages = epkgs: [
-                  epkgs.vterm
-                  epkgs.eat
+                  #epkgs.vterm
+                  #epkgs.eat
 
                 ];
                 overrides = final: prev: {
@@ -754,8 +754,7 @@
                       enable = true;
                     };
                     forge = {
-                      enable = false;
-                      extraPackages = [pkgs.git];
+                      enable = true;
                     };
                     vterm = {
                       enable = true;
