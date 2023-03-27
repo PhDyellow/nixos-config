@@ -731,6 +731,12 @@
                   postlude = ""; #config inserted after use-package
                   #Packages configured
                   usePackage = {
+                    frame = {
+                      enable = true;
+                      config = ''
+                        (blink-cursor-mode 0)
+                        '';
+                    };
                     crm = {
                       enable = true;
                       config = ''
