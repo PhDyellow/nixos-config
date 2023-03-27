@@ -681,7 +681,7 @@
             programs = {
               emacs = {
                 enable = true;
-                package = pkgs.emacs-gtk;
+                package = pkgs.emacs;
                 extraPackages = epkgs: [
                   #epkgs.vterm
                   #epkgs.eat
@@ -880,6 +880,10 @@
                       init = ''
                       '';
                       config = ''
+                        (org-babel-do-load-languages
+                        'org-babel-load-languages
+                        '((emacs-lisp . t)
+                          (R . t)))
                       '';
                       demand = true;
                     };
