@@ -882,6 +882,11 @@
                         (vertico-mode)
                       '';
                     };
+                    ess = {
+                      enable = true;
+                      config = ''
+                      '';
+                    };
                     org = {
                       enable = true;
                       init = ''
