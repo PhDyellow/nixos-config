@@ -893,7 +893,7 @@
                         (setq image-dired-thumbnail-storage 'standard-large)
                       '';
                     };
-                    "image-dired+" =
+                    "image-dired+" = {
                       enable = true;
                       config = ''
                         (image-diredx-async-mode 1)
