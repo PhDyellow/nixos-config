@@ -730,7 +730,7 @@
                   postlude = ""; #config inserted after use-package
                   #Packages configured
                   usePackage = {
-                    emacs = {
+                    crm = {
                       enable = true;
                       config = ''
                         (defun crm-indicator (args)
@@ -745,8 +745,18 @@
 
                         (setq read-extended-command-predicate
                               #'command-completion-default-include-p)
-
-
+                        '';
+                    };
+                    simple = {
+                      enable = true;
+                      config = ''
+                              (setq read-extended-command-predicate
+                              #'command-completion-default-include-p)
+                      '';
+                    };
+                    emacs = {
+                      enable = true;
+                      config = ''
                         (setq enable-recursive-minibuffers t)
                       '';
                     };
@@ -884,7 +894,7 @@
                                       (select-frame frame)
                                       (load-theme 'zenburn t)
                                       (set-frame-font "DejaVu Sans 20" t t t)
-                                    (exwm-layout-set-fullscreen)
+                                    ;;(exwm-layout-set-fullscreen)
                         (menu-bar-mode -1)
                         (tool-bar-mode -1)
                         (scroll-bar-mode -1)
