@@ -692,6 +692,7 @@
                 };
                 init = {
                   enable = true;
+                  packageQuickstart = false;
                   recommendedGcSettings = true;
                   startupTimer = true;
                   earlyInit = "";
@@ -870,7 +871,7 @@
                     };
                     vertico = {
                       enable = true;
-                      config = ''
+                      init = ''
                         (vertico-mode)
                       '';
                     };
