@@ -681,7 +681,7 @@
             programs = {
               emacs = {
                 enable = true;
-                package = pkgs.emacsPgtk;
+                package = pkgs.emacs;
                 extraPackages = epkgs: [
                   #epkgs.vterm
                   #epkgs.eat
@@ -915,7 +915,7 @@
                         '';
                     };
                     meow = {
-                      enable = false;
+                      enable = true;
                       config = ''
                         (require 'meow)
                         (meow-setup)
