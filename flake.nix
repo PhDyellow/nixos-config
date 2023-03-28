@@ -696,9 +696,9 @@
                 };
                 init = {
                   enable = true;
-                  packageQuickstart = false;
-                  recommendedGcSettings = false;
-                  startupTimer = false;
+                  packageQuickstart = true;
+                  recommendedGcSettings = true;
+                  startupTimer = true;
                   earlyInit = "";
                   #config inserted before use-package
                   prelude = ''
