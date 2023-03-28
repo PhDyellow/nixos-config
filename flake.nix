@@ -220,15 +220,15 @@
           ];
           boot.kernelParams = ["resume_offset=4503599627370495"];
           boot.resumeDevice = "/dev/mapper/nixos-crypt";
-          services.xserver.videoDrivers = ["nvidia"];
+          services.xserver.videoDrivers = ["nouveau"];
           hardware = {
             nvidia = {
               open = true;
               powerManagement.enable = true;
               modesetting.enable = true;
-              nvidiaPersistenced = true;
+              forceFullCompositionPipeline = true;
+             nvidiaPersistenced = true;
             };
-
             opengl = {
               enable = true;
               driSupport = true;
