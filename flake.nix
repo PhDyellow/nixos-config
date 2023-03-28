@@ -471,6 +471,7 @@
               geekbench_6
             pqiv
             gthumb
+            gtk3
           ];
 
           nix = {
