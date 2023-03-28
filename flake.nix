@@ -967,6 +967,13 @@
                           )
                       '';
                     };
+                    browse-url = {
+                      enable = true;
+                      config = ''
+                        (setq browse-url-generic-program "nyxt"
+                          browse-url-browser-function 'browse-url-generic)
+                      '';
+                    };
                     which-key = {
                       enable = true;
                       config = ''
