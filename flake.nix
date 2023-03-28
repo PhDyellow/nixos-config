@@ -929,6 +929,7 @@
                       init = ''
                       '';
                       config = ''
+                      (modify-all-frames-parameters '((inhibit-double-buffering . t)))
                       ;;Add R to org-babel
                         (org-babel-do-load-languages
                         'org-babel-load-languages
