@@ -237,7 +237,7 @@
                             vaapiVdpau
                             libvdpau-va-gl
                             libva
-                            qt5.full
+                            qt5.qtwayland
                             nvidia-vaapi-driver
                           ];
             };
