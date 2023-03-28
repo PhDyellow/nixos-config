@@ -226,7 +226,7 @@
               open = true;
               powerManagement.enable = true;
               modesetting.enable = true;
-              forceFullCompositionPipeline = true;
+              #forceFullCompositionPipeline = true;
              nvidiaPersistenced = true;
             };
             opengl = {
@@ -236,6 +236,8 @@
               extraPackages = with pkgs; [
                             vaapiVdpau
                             libvdpau-va-gl
+                            libva
+                            qt5.full
                             nvidia-vaapi-driver
                           ];
             };
