@@ -223,7 +223,7 @@
           services.xserver.videoDrivers = ["nvidia"];
           hardware = {
             nvidia = {
-              #open = true;
+              open = true;
               powerManagement.enable = true;
               modesetting.enable = true;
               nvidiaPersistenced = true;
@@ -517,7 +517,7 @@
           programs.hyprland = {
             enable = true;
             hidpi = true;
-            nvidiaPatches = false;
+            nvidiaPatches = true;
           };
 
 
