@@ -516,7 +516,6 @@
 
           programs.hyprland = {
             enable = true;
-            hidpi = true;
             nvidiaPatches = true;
           };
 
