@@ -685,7 +685,7 @@
             programs = {
               emacs = {
                 enable = true;
-                package = pkgs.emacsPgtk;
+                package = pkgs.emacs-gtk;
                 extraPackages = epkgs: [
                   #epkgs.vterm
                   #epkgs.eat
@@ -779,6 +779,9 @@
                                                       orig-fg))))
 
                       '';
+                      bind = {
+                        "<f5>" = "redraw-display";
+                      };
                     };
                     isend-mode = {
                       enable = true;
