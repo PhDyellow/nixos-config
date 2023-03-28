@@ -682,7 +682,7 @@
             programs = {
               emacs = {
                 enable = true;
-                package = pkgs.emacs;
+                package = pkgs.emacs-gtk;
                 extraPackages = epkgs: [
                   #epkgs.vterm
                   #epkgs.eat
@@ -929,7 +929,6 @@
                       init = ''
                       '';
                       config = ''
-                      #(modify-all-frames-parameters '((inhibit-double-buffering . t)))
                       ;;Add R to org-babel
                         (org-babel-do-load-languages
                         'org-babel-load-languages
