@@ -36,7 +36,7 @@
       url = github:nix-community/NUR;
     };
     emacs-overlay = {
-      url = "github:nix-community/emacs-overlay";
+      url = "github:nix-community/emacs-overlay?rev=0acd590f3b518dfc8354bf9ed5c82e1401c4e6b0";
     };
   };
 
@@ -685,7 +685,7 @@
             programs = {
               emacs = {
                 enable = true;
-                package = pkgs.emacs-gtk;
+                package = pkgs.emacsPgtk;
                 extraPackages = epkgs: [
                   #epkgs.vterm
                   #epkgs.eat
@@ -740,6 +740,9 @@
                       config = ''
                         (blink-cursor-mode 0)
                         '';
+                    };
+                    htmlize = {
+                      enable = true;
                     };
                     crm = {
                       enable = true;
