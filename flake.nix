@@ -4,7 +4,8 @@
   inputs  = {
     nixpkgs-unstable = {
       #url = "github:NixOS/nixpkgs/nixos-unstable";
-      url = "github:NixOS/nixpkgs/master"; #temporary change for bug in nixos
+      #url = "github:NixOS/nixpkgs/master"; #temporary change for bug in nixos
+      url = "github:NixOS/nixpkgs?rev=fb96f99cce403d2012f7353f6691aa91f7462b2c";
     };
 
     nixos-hardware.url = "github:NixOS/nixos-hardware/master";
