@@ -796,10 +796,10 @@
                       enable = false;
                     };
                     magit = {
-                      enable = true;
+                      enable = false;
                     };
                     forge = {
-                      enable = true;
+                      enable = false;
                       after = ["magit"];
                     };
                     vterm = {
