@@ -987,7 +987,7 @@
                         '';
                     };
                     meow = {
-                      enable = false;
+                      enable = true;
                       config = ''
                         (require 'meow)
                         (meow-setup)
