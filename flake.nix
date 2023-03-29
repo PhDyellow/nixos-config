@@ -471,7 +471,7 @@
             #agenix.packages.x86_64-linux.default #nix run github:ryantm/agenix -- --help
             python3
             openssl
-              geekbench_6
+              #geekbench_6
             pqiv
             gthumb
             gtk3
