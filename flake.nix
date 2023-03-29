@@ -4,8 +4,7 @@
   inputs  = {
     nixpkgs-unstable = {
       #url = "github:NixOS/nixpkgs/nixos-unstable";
-      #url = "github:NixOS/nixpkgs/master"; #temporary change for bug in nixos
-      url = "github:NixOS/nixpkgs?rev=fb96f99cce403d2012f7353f6691aa91f7462b2c";
+      url = "github:NixOS/nixpkgs/master"; #temporary change for bug in nixos
     };
 
     nixos-hardware.url = "github:NixOS/nixos-hardware/master";
@@ -16,7 +15,7 @@
     };
 
     lanzaboote = {
-      url = "github:nix-community/lanzaboote?rev=bdcada4bc2c62ba633e3a9b50746cbba6c9c32a3";
+      url = "github:nix-community/lanzaboote";
       inputs.nixpkgs.follows = "nixpkgs-unstable"; #needs unstable
     };
     home-manager = {
@@ -37,7 +36,7 @@
       url = github:nix-community/NUR;
     };
     emacs-overlay = {
-      url = "github:nix-community/emacs-overlay?rev=0acd590f3b518dfc8354bf9ed5c82e1401c4e6b0";
+      url = "github:nix-community/emacs-overlay";
     };
   };
 
@@ -471,7 +470,7 @@
             #agenix.packages.x86_64-linux.default #nix run github:ryantm/agenix -- --help
             python3
             openssl
-              #geekbench_6
+              geekbench_6
             pqiv
             gthumb
             gtk3
@@ -543,7 +542,7 @@
               waylock
               #swaylock
               swayimg
-              #kitty #failing to build under master
+              kitty
               foot
               wl-clipboard
             ];
@@ -686,7 +685,7 @@
             programs = {
               emacs = {
                 enable = true;
-                package = pkgs.emacsPgtk;
+                package = pkgs.emacs-gtk;
                 extraPackages = epkgs: [
                   #epkgs.vterm
                   #epkgs.eat
@@ -741,9 +740,6 @@
                       config = ''
                         (blink-cursor-mode 0)
                         '';
-                    };
-                    htmlize = {
-                      enable = true;
                     };
                     crm = {
                       enable = true;
@@ -1265,7 +1261,7 @@ gestures {
 
 misc {
    #enable_swallow = true
-   swallow_regex = ^(Alacritty|kitty|foot)$
+   swallow_regex = ^(Alacritty|kitty)$
 }
 
 
@@ -1294,7 +1290,7 @@ bindl=,switch:on:Lid Switch,exec,waylock
 $mainMod = SUPER
 
 # Example binds, see https://wiki.hyprland.org/Configuring/Binds/ for more
-bind = $mainMod, Q, exec, foot
+bind = $mainMod, Q, exec, kitty
 bind = $mainMod, C, killactive,
 bind = $mainMod, M, exit,
 bind = $mainMod, L, exec, waylock
