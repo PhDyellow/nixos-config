@@ -737,6 +737,22 @@
         "type": "github"
       }
     },
+    "org-super-links": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1670961363,
+        "narHash": "sha256-OWHUQBKp74sVIFbk8f7Xw7K11jPcR3HIVjpp5xiNwzs=",
+        "owner": "toshism",
+        "repo": "org-super-links",
+        "rev": "0dd9ed22b4785f50c61051170db7c78b522a37ee",
+        "type": "github"
+      },
+      "original": {
+        "owner": "toshism",
+        "repo": "org-super-links",
+        "type": "github"
+      }
+    },
     "pre-commit-hooks-nix": {
       "inputs": {
         "flake-compat": "flake-compat_3",
@@ -792,6 +808,7 @@
         "nixpkgs-unstable": "nixpkgs-unstable",
         "nur": "nur",
         "org-sltypes": "org-sltypes",
+        "org-super-links": "org-super-links",
         "ragenix": "ragenix",
         "tuxedo-nixos": "tuxedo-nixos"
       }

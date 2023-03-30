@@ -713,7 +713,7 @@
                       version = "git";
                       src = inputs.org-sltypes;
                       packageRequires = [
-                        final.melpaPackages.org-super-links
+                        final.org-super-links
                       ];
                     };
                   };
