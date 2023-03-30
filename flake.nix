@@ -711,14 +711,12 @@
                   epkgs.org-sltypes
                 ];
                 overrides = final: prev: {
-
-                  emacsPackages = prev.emacs.pkgs // {
                     org-sltypes = prev.emacs.pkgs.trivialBuild {
                       pname = "org-sltypes";
                       version = "git";
                       src = inputs.org-sltypes;
                       packageRequires = [
-                        prev.emacs.pkgs.org-super-links
+                        final.emacs.pkgs.org-super-links
                       ];
                     };
                   };
