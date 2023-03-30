@@ -716,7 +716,7 @@
                       version = "git";
                       src = inputs.org-sltypes;
                       packageRequires = [
-                        final.emacs.pkgs.org-super-links
+                        final.melpaPackages.org-super-links
                       ];
                     };
                   };
