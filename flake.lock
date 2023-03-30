@@ -724,11 +724,11 @@
     "org-sltypes": {
       "flake": false,
       "locked": {
-        "lastModified": 1680066330,
-        "narHash": "sha256-dimOfQkcyJAASRSj9uwCLTdmEnnRLzynZu+L4bOSvhA=",
+        "lastModified": 1680144820,
+        "narHash": "sha256-Mo7Lf3FEcSRX26iOHVEAXb45PysChyds45xotDFbAQA=",
         "owner": "PhDyellow",
         "repo": "org-sltypes",
-        "rev": "c8b3fb7aa5e1ed39e3fa7b003a538e46aa612386",
+        "rev": "34b6e5fea9bf82316db4a6e3783afcfa5d76d3bc",
         "type": "github"
       },
       "original": {
