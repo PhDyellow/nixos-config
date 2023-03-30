@@ -45,22 +45,15 @@
       url = "github:PhDyellow/org-sltypes";
       flake = false;
     };
+
+    org-super-links = {
+      url = "github:toshism/org-super-links";
+      flake = false;
+    };
   };
 
   outputs = {self, nixpkgs-unstable, ...}@inputs: {
     overlays = {
-      emacspkg-org-sltypes = final: prev: {
-        emacsPackages = prev.emacs.pkgs // {
-          org-sltypes = prev.emacs.pkgs.trivialBuild {
-            pname = "org-sltypes";
-            version = "git";
-            src = inputs.org-sltypes;
-            packageRequires = [
-              prev.emacs.pkgs.org-super-links
-            ];
-          };
-        };
-      };
     };
     nixosModules = {
       prime-ai_hardware_config = { config, lib, pkgs, modulesPath, ...}:
@@ -706,11 +699,16 @@
                 enable = true;
                 package = pkgs.emacsPgtk;
                 extraPackages = epkgs: [
-                  #epkgs.vterm
-                  #epkgs.eat
-                  epkgs.org-sltypes
                 ];
                 overrides = final: prev: {
+                  org-super-links = prev.emacs.pkgs.trivialBuild {
+                      pname = "org-super-links";
+                      version = "git";
+                      src = inputs.org-super-links;
+                      packageRequires = [
+                      ];
+                    };
+
                     org-sltypes = prev.emacs.pkgs.trivialBuild {
                       pname = "org-sltypes";
                       version = "git";
