@@ -821,7 +821,7 @@
                       enable = false;
                     };
                     forge = {
-                      enable = true;
+                      enable = false;
                       #after = ["magit"];
                     };
                     vterm = {
