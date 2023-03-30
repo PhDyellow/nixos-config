@@ -50,13 +50,13 @@
   outputs = {self, nixpkgs-unstable, ...}@inputs: {
     overlays = {
       emacspkg-org-sltypes = final: prev: {
-        emacsPackages = prev.emacsPackages // {
-          org-sltypes = prev.emacsPackages.trivialBuild {
+        emacsPackages = prev.emacs.pkgs // {
+          org-sltypes = prev.emacs.pkgs.trivialBuild {
             pname = "org-sltypes";
             version = "git";
             src = inputs.org-sltypes;
             packageRequires = [
-              prev.emacsPackages.org-super-links
+              prev.emacs.pkgs.org-super-links
             ];
           };
         };
@@ -708,7 +708,7 @@
                 extraPackages = epkgs: [
                   #epkgs.vterm
                   #epkgs.eat
-
+                  epkgs.org-sltypes
                 ];
                 overrides = final: prev: {
 
