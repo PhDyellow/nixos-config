@@ -720,7 +720,6 @@
                       ];
                     };
                   };
-                };
                 init = {
                   enable = true;
                   packageQuickstart = true;
