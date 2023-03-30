@@ -721,6 +721,22 @@
         "type": "github"
       }
     },
+    "org-sltypes": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1680066330,
+        "narHash": "sha256-dimOfQkcyJAASRSj9uwCLTdmEnnRLzynZu+L4bOSvhA=",
+        "owner": "PhDyellow",
+        "repo": "org-sltypes",
+        "rev": "c8b3fb7aa5e1ed39e3fa7b003a538e46aa612386",
+        "type": "github"
+      },
+      "original": {
+        "owner": "PhDyellow",
+        "repo": "org-sltypes",
+        "type": "github"
+      }
+    },
     "pre-commit-hooks-nix": {
       "inputs": {
         "flake-compat": "flake-compat_3",
@@ -775,6 +791,7 @@
         "nixos-hardware": "nixos-hardware",
         "nixpkgs-unstable": "nixpkgs-unstable",
         "nur": "nur",
+        "org-sltypes": "org-sltypes",
         "ragenix": "ragenix",
         "tuxedo-nixos": "tuxedo-nixos"
       }

@@ -38,9 +38,30 @@
     emacs-overlay = {
       url = "github:nix-community/emacs-overlay?rev=0acd590f3b518dfc8354bf9ed5c82e1401c4e6b0";
     };
+
+
+    #Emacs packages
+    org-sltypes = {
+      url = "github:PhDyellow/org-sltypes";
+      flake = false;
+    };
   };
 
   outputs = {self, nixpkgs-unstable, ...}@inputs: {
+    overlays = {
+      emacspkg-org-sltypes = final: prev: {
+        emacsPackages = prev.emacsPackages // {
+          org-sltypes = prev.emacsPackages.trivialBuild {
+            pname = "org-sltypes";
+            version = "git";
+            src = inputs.org-sltypes;
+            packageRequires = [
+              prev.emacsPackages.org-super-links
+            ];
+          };
+        };
+      };
+    };
     nixosModules = {
       prime-ai_hardware_config = { config, lib, pkgs, modulesPath, ...}:
         let
@@ -610,22 +631,20 @@
             trusted-public-keys = ["hyprland.cachix.org-1:a7pgxzMz7+chwVL3/pzj6jIBMioiJM7ypFP8PwtkuGc="];
           };
       };
-      prime_overlays = {config, pkgs, ...}:
-        {
-          nixpkgs.overlays = [
-            inputs.emacs-overlay.overlays.emacs
-          ];
-
-          nix.settings = {
-            substituters = ["https://nix-community.cachix.org"];
-            trusted-public-keys = ["nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="];
-          };
-        };
       phil_home = {config, pkgs, ...}: {
          imports = [
            inputs.home-manager.nixosModules.home-manager
         ];
 
+        nixpkgs.overlays = [
+          inputs.emacs-overlay.overlays.emacs
+          self.overlays.emacspkg-org-sltypes
+        ];
+
+        nix.settings = {
+          substituters = ["https://nix-community.cachix.org"];
+          trusted-public-keys = ["nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="];
+        };
         home-manager = {
           useGlobalPkgs = true;
           useUserPackages = true;
@@ -735,6 +754,9 @@
                   postlude = ""; #config inserted after use-package
                   #Packages configured
                   usePackage = {
+                    org-sltypes = {
+                      enable = true;
+                    };
                     frame = {
                       enable = true;
                       config = ''
@@ -1382,7 +1404,6 @@ bindm = $mainMod, mouse:273, resizewindow
           self.nixosModules.hyprland-prime-ai
           #self.nixosModules.xfce_desktop
           self.nixosModules.phil_home
-          self.nixosModules.prime_overlays
         ];
       };
     };
