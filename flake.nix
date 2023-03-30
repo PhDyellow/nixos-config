@@ -630,8 +630,7 @@
         ];
 
         nixpkgs.overlays = [
-          inputs.emacs-overlay.overlays.emacs
-          self.overlays.emacspkg-org-sltypes
+          inputs.emacs-overlay.overlays.default
         ];
 
         nix.settings = {
