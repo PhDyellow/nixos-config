@@ -1391,6 +1391,7 @@ bindm = $mainMod, mouse:273, resizewindow
           self.nixosModules.system_config
           self.nixosModules.bootstrap_user
           inputs.ragenix.nixosModules.age
+          self.nixosModules.secure_boot
         ];
       };
       prime-ai = nixpkgs-unstable.lib.nixosSystem {
