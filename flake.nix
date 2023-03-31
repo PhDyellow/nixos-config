@@ -312,6 +312,45 @@
               '';
           };
       };
+      bootstrap_hardware = {config, pkgs, ...}:
+        {
+
+          imports = [
+              (modulesPath + "/installer/scan/not-detected.nix")
+          ];
+          boot = {
+            loader = {
+              systemd-boot.enable = true;
+              efi.canTouchEfiVariables = true;
+            };
+            initrd = {
+              luks.devices."nixos-crypt".device =
+                "dev/disk/by-uuid/c4129dcf-90da-4d0c-8da9-880b9c111e6f";
+
+              availableKernelModules = [
+                "nvme"
+                "xhci_pci"
+                "ahci"
+                "sdhci_pci"
+              ];
+              kernelModules = [ ];
+            };
+
+            supportedFilesystems = [
+              "ntfs" #needed for NTFS support
+              "btrfs"
+            ];
+          };
+          fileSystems = {
+            "/" = {
+              device = "/dev/mapper/nixos-crypt";
+              fsType = "btrfs";
+            };
+            "/boot" = {
+              device = "/dev/disk/by-partuuid/5a687aae-d3c0-4f4e-b580-5ce32bec51b2";
+              fsType = "vfat";
+            };
+      };
 
       bootstrap_user = {config, pkgs, ...}:
         {
@@ -1387,11 +1426,10 @@ bindm = $mainMod, mouse:273, resizewindow
       prime-ai-bootstrap = nixpkgs-unstable.lib.nixosSystem {
         system = "x86_64-linux";
         modules = [
-          self.nixosModules.prime-ai_hardware_config
+          self.nixosModules.bootstrap_hardware
           self.nixosModules.system_config
           self.nixosModules.bootstrap_user
           inputs.ragenix.nixosModules.age
-          self.nixosModules.secure_boot
         ];
       };
       prime-ai = nixpkgs-unstable.lib.nixosSystem {
