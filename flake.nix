@@ -917,6 +917,9 @@
                         (setq consult-narrow-key "<") ;; (kbd "C-+")
                       '';
                     };
+                    consult-dir = {
+                      enable = true;
+                    };
                     marginalia = {
                       enable = true;
                       config = ''
@@ -1011,8 +1014,19 @@
                           ;; for safetly though, don't allow C-c C-c to evaluate blocks
                           (setq org-confirm-babel-evaluate (lambda (lang src) (if (string= lang "R") nil t))
                                 org-babel-no-eval-on-ctrl-c-ctrl-c t)
+
+
                       '';
                       demand = true;
+                    };
+                    #org link library
+                    ol = {
+                      enable = true;
+                      after = [ "org" ];
+                      config = ''
+                      (setq org-link-abbrev-alist
+                            '(("websearch"      . "https://start.duckduckgo.com/?q=%s")))
+                      '';
                     };
                     zenburn-theme = {
                       enable = true;
