@@ -312,7 +312,7 @@
               '';
           };
       };
-      bootstrap_hardware = {config, pkgs, ...}:
+      bootstrap_hardware = {config, pkgs, modulesPath, ...}:
         {
 
           imports = [
