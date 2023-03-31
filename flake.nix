@@ -350,6 +350,7 @@
               device = "/dev/disk/by-partuuid/5a687aae-d3c0-4f4e-b580-5ce32bec51b2";
               fsType = "vfat";
             };
+          };
       };
 
       bootstrap_user = {config, pkgs, ...}:
