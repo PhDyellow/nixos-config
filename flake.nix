@@ -1016,10 +1016,10 @@
                           ;;Allow code blocks to execute without asking me every time
                           ;; for safetly though, don't allow C-c C-c to evaluate blocks
                           (setq org-confirm-babel-evaluate (lambda (lang src) (if (string= lang "R") nil t))
-                                org-babel-no-eval-on-ctrl-c-ctrl-c t
-                                org-export-use-babel nil ;;never run blocks on export. Creates consisent results for R async session blocks.
-                                )
+                                org-babel-no-eval-on-ctrl-c-ctrl-c t)
 
+                          ;;never run blocks on export. Creates consisent results for R async session blocks.
+                          (add-to-list 'org-babel-default-header-args '(:eval . "never-export"))
 
                       '';
                       demand = true;
