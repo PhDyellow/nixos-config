@@ -798,6 +798,9 @@
                   postlude = ""; #config inserted after use-package
                   #Packages configured
                   usePackage = {
+                    vundo = {
+                      enable = true;
+                    };
                     org-sltypes = {
                       enable = true;
                     };
@@ -1013,7 +1016,9 @@
                           ;;Allow code blocks to execute without asking me every time
                           ;; for safetly though, don't allow C-c C-c to evaluate blocks
                           (setq org-confirm-babel-evaluate (lambda (lang src) (if (string= lang "R") nil t))
-                                org-babel-no-eval-on-ctrl-c-ctrl-c t)
+                                org-babel-no-eval-on-ctrl-c-ctrl-c t
+                                org-export-use-babel nil ;;never run blocks on export. Creates consisent results for R async session blocks.
+                                )
 
 
                       '';
