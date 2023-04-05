@@ -598,6 +598,7 @@
               swayimg
               kitty
               foot
+              lsix
               wl-clipboard
             ];
             sessionVariables = {
@@ -1345,8 +1346,8 @@ gestures {
 }
 
 misc {
-   #enable_swallow = true
-   swallow_regex = ^(Alacritty|kitty)$
+   enable_swallow = true
+   swallow_regex = ^(Alacritty|kitty|foot)$
 }
 
 
@@ -1375,7 +1376,7 @@ bindl=,switch:on:Lid Switch,exec,waylock
 $mainMod = SUPER
 
 # Example binds, see https://wiki.hyprland.org/Configuring/Binds/ for more
-bind = $mainMod, Q, exec, kitty
+bind = $mainMod, Q, exec, foot
 bind = $mainMod, C, killactive,
 bind = $mainMod, M, exit,
 bind = $mainMod, L, exec, waylock
