@@ -33,7 +33,7 @@
       # inputs.nixpkgs.follows = "nixpkgs-unstable"; # not working with nixpkgs unstable yet
     };
     nur = {
-      url = github:nix-community/NUR;
+      url = "github:nix-community/NUR?rev=6f73d65236ad198ffeafd131a33b96c9cad85248";
     };
     emacs-overlay = {
       url = "github:nix-community/emacs-overlay?rev=0acd590f3b518dfc8354bf9ed5c82e1401c4e6b0";
