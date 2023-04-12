@@ -54,6 +54,14 @@
 
   outputs = {self, nixpkgs-unstable, ...}@inputs: {
     overlays = {
+      lsix_configured = final: prev: {
+        lsix = prev.pkgs.lsix.overrideAttrs (oldAttrs: {
+          postInstall = ''
+            substituteInPlace $out/bin/lsix \
+              --replace tilesize=120 tilesize=500
+          ''
+        });
+      };
     };
     nixosModules = {
       prime-ai_hardware_config = { config, lib, pkgs, modulesPath, ...}:
@@ -569,6 +577,10 @@
           imports = [
             inputs.hyprland.nixosModules.default
           ];
+
+        nixpkgs.overlays = [
+          self.overlays.lsix_configured
+        ];
 
           programs.hyprland = {
             enable = true;
