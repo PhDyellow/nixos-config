@@ -780,6 +780,20 @@
                   prelude = ''
                     ;;(setq my-user-emacs-directory "/storage/emulated/0/memx/repos/phone_emacs/")
 
+                    (setq make-backup-files nil
+                          vc-make-backup-files nil
+                          tramp-backup-directory-alist `(("." . ,(concat user-emacs-directory ".local/cache/backup/"))
+                          create-lockfiles nil
+                          backup-directory-alist `(("." . ,(concat user-emacs-directory
+                                                 ".local/cache/backups")))
+                          save-place-file (concat user-emacs-directory ".local/cache/places")
+
+
+
+
+
+
+                    )
                     ;;https://vernon-grant.com/emacs/tmux-emacs-and-the-system-clipboard-on-wayland/
                     ;; Checks if the session type is in fact for Wayland.
                     (if (string= (getenv "XDG_SESSION_TYPE") "wayland")
@@ -811,6 +825,84 @@
                   postlude = ""; #config inserted after use-package
                   #Packages configured
                   usePackage = {
+                    undo-fu-session = {
+                      enable = true;
+                      config = ''
+                        (undo-fu-session-global-mode)
+                      '';
+                    };
+                    windmove = {
+
+                    };
+                    files = {
+                      enable = true;
+                      config = ''
+                        (setq auto-save-default t
+                              auto-save-include-big-deletions t
+                              auto-save-list-file-prefix (concat user-emacs-directory ".local/cache/autosave/")
+                              auto-save-file-name-transforms (list (list ".*" auto-save-list-file-prefix t)))
+                      '';
+                    };
+                    tramp = {
+                      enable = true;
+                      config = ''
+                          (add-to-list 'backup-directory-alist (cons tramp-file-name-regexp nil))
+                          ;; Add the remote's PATH to tramp's search path (why isn't this the default?)
+                          (add-to-list 'tramp-remote-path 'tramp-own-remote-path))
+                      '';
+                    };
+                    mouse = {
+                      enable = true;
+                      config =  ''
+                        (setq mouse-yank-at-point t)
+                      '';
+                    };
+                    apropros = {
+                      enable = true;
+                      config =  ''
+                        (setq apropos-do-all t)
+                      '';
+                    };
+
+                    menu-bar = {
+                      enable = true;
+                      config = ''
+                        (menu-bar-mode -1)
+                      '';
+                    };
+                    tool-bar = {
+                      enable = true;
+                      config = ''
+                        (when (fboundp 'tool-bar-mode)
+                          (tool-bar-mode -1))
+                      '';
+                    };
+                    scroll-bar = {
+                      enable = true;
+                      config = ''
+                        (when (fboundp 'scroll-bar-mode)
+                          (scroll-bar-mode -1))
+                      '';
+                    };
+                    ido = {
+                      enable = true;
+                      config = ''
+                        (ido-mode t)
+                        (setq ido-enable-flex-matching t)
+                      '';
+                    };
+                    uniquify = {
+                      enable = true;
+                      config = ''
+                        (setq uniquify-buffer-name-style 'forward)
+                      '';
+                    };
+                    paren = {
+                      enable = true;
+                      config = ''
+                        (show-paren-mode 1)
+                      '';
+                    };
                     vundo = {
                       enable = true;
                     };
@@ -844,7 +936,11 @@
                       enable = true;
                       config = ''
                               (setq read-extended-command-predicate
-                              #'command-completion-default-include-p)
+                                  #'command-completion-default-include-p
+                                  save-interprogram-paste-before-kill t
+                              )
+                              (setq-default indent-tabs-mode -1)
+
                       '';
                     };
                     emacs = {
@@ -987,9 +1083,6 @@
                         (setq history-length 250)
                         (savehist-mode)
                       '';
-                    };
-                    better-defaults = {
-                      enable = true;
                     };
                     vertico = {
                       enable = true;
