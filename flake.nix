@@ -59,7 +59,7 @@
           postInstall = ''
             substituteInPlace $out/bin/lsix \
               --replace tilesize=120 tilesize=500
-          ''
+          '';
         });
       };
     };
