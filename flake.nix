@@ -579,7 +579,7 @@
           ];
 
         nixpkgs.overlays = [
-          self.overlays.lsix_configured
+          #self.overlays.lsix_configured
         ];
 
           programs.hyprland = {
