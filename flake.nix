@@ -869,7 +869,7 @@
                       chords = {
                         "ii" = "god-local-mode-resume";
                       };
-                      bindlocal = {
+                      bindLocal = {
                         god-local-mode-map = {
                           "i" = "god-local-mode-pause";
                         };
