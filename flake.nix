@@ -50,6 +50,14 @@
       url = "github:toshism/org-super-links";
       flake = false;
     };
+    objed = {
+      url = "github:taylorgrinn/objed";
+      flake = false;
+    };
+    color-theme-buffer-local = {
+      url = "github:matogoro/color-theme-buffer-local";
+      flake = false;
+    };
   };
 
   outputs = {self, nixpkgs-unstable, ...}@inputs: {
@@ -772,6 +780,21 @@
                         final.org-super-links
                       ];
                     };
+                   objed = prev.emacs.pkgs.trivialBuild {
+                      pname = "objed";
+                      version = "git";
+                      src = inputs.objed;
+                      packageRequires = [
+                        final.avy
+                      ];
+                    };
+                  color-theme-buffer-local = prev.emacs.pkgs.trivialBuild {
+                      pname = "color-theme-buffer-local";
+                      version = "git";
+                      src = inputs.color-theme-buffer-local;
+                      packageRequires = [
+                      ];
+                    };
                   };
                 init = {
                   enable = true;
@@ -828,14 +851,54 @@
                   postlude = ""; #config inserted after use-package
                   #Packages configured
                   usePackage = {
+                    god-mode = {
+                      after = ["color-theme-buffer-local"];
+                      enable = true;
+                      init = ''
+                        ;;(setq god-mode-enable-function-key-translation nil)
+                      '';
+                      config = ''
+                        (setq god-exempt-major-modes nil)
+                        (setq god-exempt-predicates nil)
+                        (god-mode)
+                        (add-hook 'god-mode-enabled-hook (lambda () (load-theme-buffer-local 'one-light (current-buffer))))
+                        (add-hook 'god-mode-disabled-hook (lambda () (load-theme-buffer-local 'zenburn (current-buffer))))
+                      '';
+                      chords = {
+                        "ii" = "god-local-mode-resume";
+                      };
+                      bindlocal = {
+                        god-local-mode-map = {
+                          "i" = "god-local-mode-pause";
+                        };
+                      };
+
+                    };
+
                     undo-fu-session = {
                       enable = true;
                       config = ''
                         (undo-fu-session-global-mode)
                       '';
                     };
-                    windmove = {
+                    free-keys = {
+                      enable = true;
+                    };
+                    bind-key = {
+                      enable = true;
+                    };
+                    objed = {
+                      after = [ "avy" ];
+                      enable = true;
+                      config = ''
+                        (objed-mode)
+                      '';
+                    };
+                    avy = {
+                      enable = true;
+                      config = ''
 
+                      '';
                     };
                     files = {
                       enable = true;
@@ -965,7 +1028,7 @@
                       };
                     };
                     isend-mode = {
-                      enable = true;
+                      enable = false;
                     };
                     nix-mode = {
                       enable = false;
@@ -1142,6 +1205,9 @@
                             '(("websearch"      . "https://start.duckduckgo.com/?q=%s")))
                       '';
                     };
+                    one-themes = {
+                      enable = true;
+                    };
                     zenburn-theme = {
                       enable = true;
                       init = ''
@@ -1155,9 +1221,6 @@
                                       (load-theme 'zenburn t)
                                       (set-frame-font "DejaVu Sans 20" t t t)
                                     ;;(exwm-layout-set-fullscreen)
-                        (menu-bar-mode -1)
-                        (tool-bar-mode -1)
-                        (scroll-bar-mode -1)
                         (fringe-mode 1)
 
                                       )
@@ -1181,7 +1244,7 @@
                         '';
                     };
                     meow = {
-                      enable = true;
+                      enable = false;
                       config = ''
                         (require 'meow)
                         (meow-setup)
