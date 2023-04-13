@@ -55,7 +55,7 @@
   outputs = {self, nixpkgs-unstable, ...}@inputs: {
     overlays = {
       lsix_configured = final: prev: {
-        lsix = prev.pkgs.lsix.overrideAttrs (oldAttrs: {
+        lsix = prev.lsix.overrideAttrs (oldAttrs: {
           postInstall = ''
             substituteInPlace $out/bin/lsix \
               --replace tilesize=120 tilesize=500
@@ -579,7 +579,7 @@
           ];
 
         nixpkgs.overlays = [
-          #self.overlays.lsix_configured
+          self.overlays.lsix_configured
         ];
 
           programs.hyprland = {
