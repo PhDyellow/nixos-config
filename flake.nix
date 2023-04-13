@@ -698,6 +698,7 @@
           inputs.emacs-overlay.overlays.default
         ];
 
+        age.secrets.github_pat.file = "/secrets/agenix/github_pat.age";
         nix.settings = {
           substituters = ["https://nix-community.cachix.org"];
           trusted-public-keys = ["nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="];
@@ -733,7 +734,7 @@
                     #Stop Rstudio from checking for updates. Leave that to the nix shell
                     RSTUDIO_DISABLE_CHECK_FOR_UPDATES=1
 
-                    GITHUB_PAT = ""
+                    GITHUB_PAT = readLines("${config.age.secrets.github_pat.path}", n=1)
 
                     ##Get tab completion on library names
                     utils::rc.settings(ipck=TRUE)
