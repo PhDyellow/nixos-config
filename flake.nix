@@ -546,6 +546,7 @@
             pqiv
             gthumb
             gtk3
+            imagemagickBig
           ];
 
           nix = {
@@ -732,7 +733,7 @@
                     #Stop Rstudio from checking for updates. Leave that to the nix shell
                     RSTUDIO_DISABLE_CHECK_FOR_UPDATES=1
 
-                    GITHUB_PAT = "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"
+                    GITHUB_PAT = ""
 
                     ##Get tab completion on library names
                     utils::rc.settings(ipck=TRUE)
