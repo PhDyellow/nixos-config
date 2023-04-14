@@ -3,8 +3,9 @@
 
   inputs  = {
     nixpkgs-unstable = {
-      url = "github:NixOS/nixpkgs/nixos-unstable";
+      #url = "github:NixOS/nixpkgs/nixos-unstable";
       #url = "github:NixOS/nixpkgs/master"; #temporary change for bug in nixos
+      url = "github:NixOS/nixpkgs?rev=809b0fa27933b6bc7d2b08a1cebc760b3bc6f83b"; #temporary change for bug in nixos
     };
 
     nixos-hardware.url = "github:NixOS/nixos-hardware/master";
@@ -15,7 +16,7 @@
     };
 
     lanzaboote = {
-      url = "github:nix-community/lanzaboote?rev=e0005b077a8bfc771aea6ef8a3b654565e36d360";
+      url = "github:nix-community/lanzaboote?rev=d751d13b0ae8f9c4afb9d9118822f31542ed5f9c";
       inputs.nixpkgs.follows = "nixpkgs-unstable"; #needs unstable
     };
     home-manager = {
@@ -33,7 +34,7 @@
       # inputs.nixpkgs.follows = "nixpkgs-unstable"; # not working with nixpkgs unstable yet
     };
     nur = {
-      url = "github:nix-community/NUR"; #Last good commit before syntax error
+      url = "github:nix-community/NUR";
     };
     emacs-overlay = {
       url = "github:nix-community/emacs-overlay?rev=0acd590f3b518dfc8354bf9ed5c82e1401c4e6b0";
