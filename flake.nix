@@ -15,7 +15,7 @@
     };
 
     lanzaboote = {
-      url = "github:nix-community/lanzaboote";
+      url = "github:nix-community/lanzaboote?rev=e0005b077a8bfc771aea6ef8a3b654565e36d360";
       inputs.nixpkgs.follows = "nixpkgs-unstable"; #needs unstable
     };
     home-manager = {
