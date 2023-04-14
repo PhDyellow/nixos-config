@@ -921,10 +921,10 @@
                     tramp = {
                       enable = true;
                       config = ''
-                          ;;(add-to-list 'backup-directory-alist (cons tramp-file-name-regexp nil))
+                          (add-to-list 'backup-directory-alist (cons tramp-file-name-regexp nil))
                           ;; Add the remote's PATH to tramp's search path (why isn't this the default?)
-                          ;;(add-to-list 'tramp-remote-path 'tramp-own-remote-path)
-                          tramp-backup-directory-alist `(("." . ,(concat user-emacs-directory ".local/cache/backup/")))
+                          (add-to-list 'tramp-remote-path 'tramp-own-remote-path)
+                          (setq tramp-backup-directory-alist `(("." . ,(concat user-emacs-directory ".local/cache/backup/"))))
                       '';
                     };
                     mouse = {
@@ -1057,7 +1057,6 @@
                       #after = ["magit"];
                     };
                     vterm = {
-                      after = ["tramp"];
                       enable = true;
                     };
                     eat = {
