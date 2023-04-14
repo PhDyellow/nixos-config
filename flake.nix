@@ -854,7 +854,11 @@
                       (setq select-enable-clipboard t)
                       (setq select-enable-primary t)
                      )
-
+                     ;; tramp may not play well with use-package
+                          (add-to-list 'backup-directory-alist (cons tramp-file-name-regexp nil))
+                          ;; Add the remote's PATH to tramp's search path (why isn't this the default?)
+                          (add-to-list 'tramp-remote-path 'tramp-own-remote-path)
+                          (setq tramp-backup-directory-alist `(("." . ,(concat user-emacs-directory ".local/cache/backup/"))))
 
                   '';
                   postlude = ""; #config inserted after use-package
@@ -919,7 +923,7 @@
                       '';
                     };
                     tramp = {
-                      enable = true;
+                      enable = false;
                       config = ''
                           (add-to-list 'backup-directory-alist (cons tramp-file-name-regexp nil))
                           ;; Add the remote's PATH to tramp's search path (why isn't this the default?)
