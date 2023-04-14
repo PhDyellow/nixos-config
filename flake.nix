@@ -5,7 +5,7 @@
     nixpkgs-unstable = {
       #url = "github:NixOS/nixpkgs/nixos-unstable";
       #url = "github:NixOS/nixpkgs/master"; #temporary change for bug in nixos
-      url = "github:NixOS/nixpkgs?rev=809b0fa27933b6bc7d2b08a1cebc760b3bc6f83b"; #temporary change for bug in nixos
+      url = "github:NixOS/nixpkgs?rev=5abc896edad307816c03d9a672cc8fcf683e8f35"; #temporary change for bug in nixos
     };
 
     nixos-hardware.url = "github:NixOS/nixos-hardware/master";
@@ -16,7 +16,7 @@
     };
 
     lanzaboote = {
-      url = "github:nix-community/lanzaboote?rev=d751d13b0ae8f9c4afb9d9118822f31542ed5f9c";
+      url = "github:nix-community/lanzaboote?rev=f0cc345caa9eb3f8e033ddd74865f57b35825170";
       inputs.nixpkgs.follows = "nixpkgs-unstable"; #needs unstable
     };
     home-manager = {
