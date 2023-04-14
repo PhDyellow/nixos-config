@@ -55,6 +55,10 @@
       url = "github:taylorgrinn/objed";
       flake = false;
     };
+    key-game = {
+      url = "gitlab:tygrdev/key-game";
+      flake = false;
+    };
     color-theme-buffer-local = {
       url = "github:matogoro/color-theme-buffer-local";
       flake = false;
@@ -789,6 +793,15 @@
                       src = inputs.objed;
                       packageRequires = [
                         final.avy
+                        final.key-game
+                      ];
+                    };
+                   key-game = prev.emacs.pkgs.trivialBuild {
+                      pname = "key-game";
+                      version = "git";
+                      src = inputs.key-game;
+                      packageRequires = [
+
                       ];
                     };
                   color-theme-buffer-local = prev.emacs.pkgs.trivialBuild {
@@ -891,7 +904,7 @@
                       enable = true;
                     };
                     objed = {
-                      after = [ "avy" ];
+                      after = [ "avy" "key-game" ];
                       enable = true;
                       config = ''
                         (objed-mode)

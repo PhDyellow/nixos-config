@@ -315,6 +315,22 @@
         "type": "github"
       }
     },
+    "key-game": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1661521370,
+        "narHash": "sha256-gev6XUlpCZw2IZ18AN8/4123bJL6rjL0bpWY+rwzuPM=",
+        "owner": "tygrdev",
+        "repo": "key-game",
+        "rev": "64602d9feac520dfca1aa0c0bf5d0d854d6d20c1",
+        "type": "gitlab"
+      },
+      "original": {
+        "owner": "tygrdev",
+        "repo": "key-game",
+        "type": "gitlab"
+      }
+    },
     "lanzaboote": {
       "inputs": {
         "crane": "crane",
@@ -621,6 +637,7 @@
         "emacs-overlay": "emacs-overlay",
         "home-manager": "home-manager",
         "hyprland": "hyprland",
+        "key-game": "key-game",
         "lanzaboote": "lanzaboote",
         "nixos-hardware": "nixos-hardware",
         "nixpkgs-unstable": "nixpkgs-unstable",
