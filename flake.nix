@@ -861,8 +861,15 @@
                   postlude = ""; #config inserted after use-package
                   #Packages configured
                   usePackage = {
-                    noflet = {
+                    dash = {
                       enable = true;
+                    };
+                    noflet = {
+                      after = ["dash"];
+                      enable = true;
+                      init = ''
+                        (require 'dash)
+                        '';
                     };
                     load-theme-buffer-local = {
                       after = ["noflet"];
