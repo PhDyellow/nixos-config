@@ -865,6 +865,9 @@
                   postlude = ""; #config inserted after use-package
                   #Packages configured
                   usePackage = {
+                    color-theme-buffer-local = {
+                      enable = true;
+                    };
                     god-mode = {
                       after = ["color-theme-buffer-local"];
                       enable = true;
@@ -879,11 +882,11 @@
                         (add-hook 'god-mode-disabled-hook (lambda () (load-theme-buffer-local 'zenburn (current-buffer))))
                       '';
                       chords = {
-                        "ii" = "god-local-mode-resume";
+                        "ii" = "god-local-mode";
                       };
                       bindLocal = {
                         god-local-mode-map = {
-                          "i" = "god-local-mode-pause";
+                          "i" = "god-local-mode";
                         };
                       };
 
