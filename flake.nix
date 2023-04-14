@@ -804,14 +804,10 @@
 
                       ];
                     };
-                  color-theme-buffer-local = prev.emacs.pkgs.trivialBuild {
-                      pname = "color-theme-buffer-local";
-                      version = "git";
+                  load-theme-buffer-local = prev.load-theme-buffer-local.overrideAttrs (oldAttrs: {
                       src = inputs.color-theme-buffer-local;
-                      packageRequires = [
-                      ];
-                    };
-                  };
+                  });
+                };
                 init = {
                   enable = true;
                   packageQuickstart = true;
@@ -865,7 +861,7 @@
                   postlude = ""; #config inserted after use-package
                   #Packages configured
                   usePackage = {
-                    color-theme-buffer-local = {
+                    load-theme-buffer-local = {
                       enable = true;
                     };
                     god-mode = {
