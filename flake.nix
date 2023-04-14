@@ -933,7 +933,7 @@
                         (setq mouse-yank-at-point t)
                       '';
                     };
-                    apropros = {
+                    apropos = {
                       enable = true;
                       config =  ''
                         (setq apropos-do-all t)
