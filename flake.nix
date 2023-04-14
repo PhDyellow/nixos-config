@@ -897,7 +897,8 @@
                       };
                       bindLocal = {
                         god-local-mode-map = {
-                          "i" = "god-local-mode";
+                          "j" = "god-local-mode";
+                          "." = "repeat";
                         };
                       };
 
@@ -1123,6 +1124,10 @@
                         ;; Both < and C-+ work reasonably well.
                         (setq consult-narrow-key "<") ;; (kbd "C-+")
                       '';
+                      bind = {
+                        "C-c C-b" = "consult-buffer";
+                        "C-c C-y" = "consult-yank-from-kill-ring";
+
                     };
                     consult-dir = {
                       enable = true;
