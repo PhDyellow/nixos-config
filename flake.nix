@@ -824,17 +824,11 @@
 
                     (setq make-backup-files nil
                           vc-make-backup-files nil
-                          tramp-backup-directory-alist `(("." . ,(concat user-emacs-directory ".local/cache/backup/"))
+                          tramp-backup-directory-alist `(("." . ,(concat user-emacs-directory ".local/cache/backup/")))
                           create-lockfiles nil
                           backup-directory-alist `(("." . ,(concat user-emacs-directory
                                                  ".local/cache/backups")))
                           save-place-file (concat user-emacs-directory ".local/cache/places")
-
-
-
-
-
-
                     )
                     ;;https://vernon-grant.com/emacs/tmux-emacs-and-the-system-clipboard-on-wayland/
                     ;; Checks if the session type is in fact for Wayland.
