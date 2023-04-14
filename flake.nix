@@ -1127,7 +1127,7 @@
                       bind = {
                         "C-c C-b" = "consult-buffer";
                         "C-c C-y" = "consult-yank-from-kill-ring";
-
+                      };
                     };
                     consult-dir = {
                       enable = true;
