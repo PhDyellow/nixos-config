@@ -552,6 +552,7 @@
             gthumb
             gtk3
             imagemagickBig
+            ripgrep
           ];
 
           nix = {
