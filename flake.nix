@@ -861,8 +861,15 @@
                   postlude = ""; #config inserted after use-package
                   #Packages configured
                   usePackage = {
-                    load-theme-buffer-local = {
+                    noflet = {
                       enable = true;
+                    };
+                    load-theme-buffer-local = {
+                      after = ["noflet"];
+                      enable = true;
+                      init = ''
+                        (require 'noflet)
+                        '';
                     };
                     god-mode = {
                       after = ["color-theme-buffer-local"];
