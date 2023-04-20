@@ -1204,7 +1204,8 @@
                     };
                     "image-dired+" = {
                       enable = true;
-                      config = ''
+		      functions = ["image-diredx-async-mode"];
+		      config = ''
                         (image-diredx-async-mode 1)
                     '';
                     };
