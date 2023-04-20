@@ -878,7 +878,7 @@
                         '';
                     };
                     god-mode = {
-                      after = ["color-theme-buffer-local"];
+                      after = ["load-theme-buffer-local"];
                       enable = true;
                       init = ''
                         ;;(setq god-mode-enable-function-key-translation nil)
