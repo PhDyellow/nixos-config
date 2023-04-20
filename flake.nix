@@ -914,13 +914,14 @@
                       enable = true;
                     };
                     objed = {
-                      after = [ "avy" "key-game" ];
+                      after = [ "avy" ];
                       enable = true;
                       config = ''
                         (objed-mode)
                       '';
                     };
-		    key-game = {
+		    objed-game = {
+		      after = ["objed"];
 		      enable = true;
 		    };
                     avy = {
