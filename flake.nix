@@ -1127,8 +1127,8 @@
                         (setq consult-narrow-key "<") ;; (kbd "C-+")
                       '';
                       bind = {
-                        "C-c C-b" = "consult-buffer";
-                        "C-c C-y" = "consult-yank-from-kill-ring";
+                        "C-x C-b" = "consult-buffer";
+                        "C-x C-y" = "consult-yank-from-kill-ring";
                       };
                     };
                     consult-dir = {
