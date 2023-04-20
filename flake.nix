@@ -887,21 +887,20 @@
                         (setq god-exempt-major-modes nil)
                         (setq god-exempt-predicates nil)
                         (god-mode)
-                        (add-hook 'god-mode-enabled-hook (lambda () (load-theme-buffer-local 'one-light (current-buffer))))
-                        (add-hook 'god-mode-disabled-hook (lambda () (load-theme-buffer-local 'zenburn (current-buffer))))
-                        (define-key god-local-mode-map (kbd "i") #'god-local-mode)
-                        (define-key god-local-mode-map (kbd ".") #'god-local-mode)
+                        ;;(add-hook 'god-mode-enabled-hook (lambda () (load-theme-buffer-local 'one-light (current-buffer))))
+                        ;;(add-hook 'god-mode-disabled-hook (lambda () (load-theme-buffer-local 'zenburn (current-buffer))))
+                        ;;(define-key god-local-mode-map (kbd "i") #'god-local-mode)
+                        ;;(define-key god-local-mode-map (kbd ".") #'god-local-mode)
                       '';
                       chords = {
                         "ii" = "god-local-mode";
                       };
-                      # bindLocal = {
-                      #   god-local-mode-map = {
-                      #     "j" = "god-local-mode";
-                      #     "." = "repeat";
-                      #   };
-                      # };
-
+                      bindLocal = {
+                        god-local-mode-map = {
+                          "j" = "god-local-mode";
+                          "." = "repeat";
+                        };
+                      };
                     };
 
                     undo-fu-session = {
@@ -923,6 +922,9 @@
                         (objed-mode)
                       '';
                     };
+		    key-game = {
+		      enable = true;
+		    };
                     avy = {
                       enable = true;
                       config = ''
