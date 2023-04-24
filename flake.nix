@@ -1111,7 +1111,7 @@
                       enable = false;
                     };
                     magit = {
-                      enable = false;
+                      enable = true;
                     };
                     forge = {
                       enable = false;
