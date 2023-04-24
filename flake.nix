@@ -920,6 +920,9 @@
                         (objed-mode)
 			;; make objed-copy and objed-kill append to kill-ring
 			(objed-append-mode)
+
+			;; rebind switch to buffer with consult
+			(keymap-set objed-op-map "b" '#consult-buffer)
 			'';
                     };
 		    objed-game = {
