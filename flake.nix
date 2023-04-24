@@ -940,13 +940,16 @@
 			      (embark-act))
 			      (select-window (cdr (ring-ref avy-ring 0))))
 			      t)
-			(setf (alist-get ?. avy-dispatch-alist) 'avy-action-embark)
+			(setf (alist-get ?o avy-dispatch-alist) 'avy-action-embark)
                       '';
                     };
                   embark = {
 		      enable = true;
 		      bind = {
 		        "C-h B" = "embark-bindings";
+			"M-o" = "embark-act";
+			"M-O" = "embark-export";
+			"C-;" = "embark-dwim";
                       };
 		      config = ''
 			    ;; Hide the mode line of the Embark live/completions buffers
