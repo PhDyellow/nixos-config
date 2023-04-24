@@ -914,22 +914,55 @@
                       enable = true;
                     };
                     objed = {
-                      after = [ "avy" ];
+                      after = [ "avy" "expand-region"];
                       enable = true;
                       config = ''
                         (objed-mode)
-                      '';
+			;; make objed-copy and objed-kill append to kill-ring
+			(objed-append-mode)
+			'';
                     };
 		    objed-game = {
 		      after = ["objed"];
 		      enable = true;
 		    };
+		    expand-region = {
+		      enable = true;
+		    };
                     avy = {
                       enable = true;
+		      after = [ "embark" ];
                       config = ''
-
+		        (defun avy-action-embark (pt)
+			  (unwind-protect
+			    (save-excursion
+ 			      (goto-char pt)
+			      (embark-act))
+			      (select-window (cdr (ring-ref avy-ring 0))))
+			      t)
+			(setf (alist-get ?. avy-dispatch-alist) 'avy-action-embark)
                       '';
                     };
+                  embark = {
+		      enable = true;
+		      bind = {
+		        "C-h B" = "embark-bindings";
+			};
+			config = ''
+			    ;; Hide the mode line of the Embark live/completions buffers
+  (add-to-list 'display-buffer-alist
+               '("\\`\\*Embark Collect \\(Live\\|Completions\\)\\*"
+                 nil
+                 (window-parameters (mode-line-format . none)))))
+
+			''};
+		    };
+		    embark-consult = {
+		      enable = true;
+		      hook = [
+		        "(embark-collect-mode . consult-preview-at-point-mode)"
+		      ];
+		    };
                     files = {
                       enable = true;
                       config = ''
@@ -1191,6 +1224,15 @@
                         (vertico-mode)
                       '';
                     };
+		    vertico-quick = {
+		      after = [ "vertico" ];
+		      enable = true;
+		      bindLocal =
+		        vertico-map = {
+			  "M-q" = "vertico-quick-insert";
+			  "C-q" = "vertico-quick-exit";
+			};
+		    };
                     ess = {
                       enable = true;
                       config = ''
