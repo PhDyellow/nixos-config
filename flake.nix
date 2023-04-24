@@ -1239,7 +1239,8 @@
                       enable = true;
                       config = ''
                       (recentf-mode 1)
-                      '';
+		      (setq recentf-max-saved-items nil)
+                    '';
                     };
                     savehist = {
                       enable = true;
