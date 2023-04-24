@@ -977,9 +977,16 @@
 		    ace-window = {
 		      after = ["avy"];
 		      enable = true;
+		      config = ''
+		        (setq aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l)
+			         aw-dispatch-always t)
+	 	       '';
 		    };
 		    origami = {
 		      enable = true;
+    		      config = ''
+		        (add-to-list 'origami-parser-alist '(r-mode . origami-c-style-parser))
+		      '';
 		    };
                     files = {
                       enable = true;
