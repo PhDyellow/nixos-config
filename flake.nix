@@ -922,7 +922,7 @@
 			(objed-append-mode)
 
 			;; rebind switch to buffer with consult
-			(keymap-set objed-op-map "b" '#consult-buffer)
+			(keymap-set objed-op-map "b" #'consult-buffer)
 			'';
                     };
 		    objed-game = {
