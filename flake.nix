@@ -947,15 +947,15 @@
 		      enable = true;
 		      bind = {
 		        "C-h B" = "embark-bindings";
-			};
-			config = ''
+                      };
+		      config = ''
 			    ;; Hide the mode line of the Embark live/completions buffers
   (add-to-list 'display-buffer-alist
                '("\\`\\*Embark Collect \\(Live\\|Completions\\)\\*"
                  nil
-                 (window-parameters (mode-line-format . none)))))
+                 (window-parameters (mode-line-format . none))))
 
-			''};
+		      '';
 		    };
 		    embark-consult = {
 		      enable = true;
