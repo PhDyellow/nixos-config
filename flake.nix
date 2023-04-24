@@ -922,7 +922,7 @@
 			(objed-append-mode)
 
 			;; rebind switch to buffer with consult
-			;; (keymap-set objed-op-map "b" #'consult-buffer)
+		        (keymap-set objed-op-map "b" #'consult-buffer)
 			'';
                     };
 		    objed-game = {
@@ -948,6 +948,7 @@
                     };
                   embark = {
 		      enable = true;
+		      demand = true;
 		      bind = {
 		        "C-h B" = "embark-bindings";
 			"M-o" = "embark-act";
