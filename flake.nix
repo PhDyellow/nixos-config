@@ -1227,11 +1227,12 @@
 		    vertico-quick = {
 		      after = [ "vertico" ];
 		      enable = true;
-		      bindLocal =
+		      bindLocal = {
 		        vertico-map = {
 			  "M-q" = "vertico-quick-insert";
 			  "C-q" = "vertico-quick-exit";
 			};
+		      };
 		    };
                     ess = {
                       enable = true;
