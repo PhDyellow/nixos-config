@@ -1112,9 +1112,13 @@
                     };
                     magit = {
                       enable = true;
+		      config = ''
+		      (setq magit-refresh-status-buffer nil)
+
+		      '';
                     };
                     forge = {
-                      enable = false;
+                      enable = true;
                       #after = ["magit"];
                     };
                     vterm = {
