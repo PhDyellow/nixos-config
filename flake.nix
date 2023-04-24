@@ -970,6 +970,17 @@
 		        "(embark-collect-mode . consult-preview-at-point-mode)"
 		      ];
 		    };
+		    avy-embark-collect = {
+		      after = [ "avy" "embark" ];
+		      enable = true;
+		    };
+		    ace-window = {
+		      after = ["avy"];
+		      enable = true;
+		    };
+		    origami = {
+		      enable = true;
+		    };
                     files = {
                       enable = true;
                       config = ''
