@@ -1121,6 +1121,9 @@
                       enable = true;
                       #after = ["magit"];
                     };
+		    git-timemachine = {
+		      enable = true;
+		    };
                     vterm = {
                       enable = true;
                     };
