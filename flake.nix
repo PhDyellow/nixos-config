@@ -980,7 +980,11 @@
 		      config = ''
 		        (setq aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l)
 			         aw-dispatch-always t)
-	 	       '';
+				 (keymap-set objed-op-map "o" #'ace-window)
+		       '';
+		       bind = {
+		         "C-x o" = "ace-window";
+		       };
 		    };
 		    origami = {
 		      enable = true;
