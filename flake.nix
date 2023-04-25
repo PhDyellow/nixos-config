@@ -989,7 +989,7 @@
 		    origami = {
 		      enable = true;
     		      config = ''
-		        (add-to-list 'origami-parser-alist '(r-mode . origami-c-style-parser))
+		        (add-to-list 'origami-parser-alist '(ess-r-mode . origami-c-style-parser))
 			(global-origami-mode)
 		      '';
 		    };
