@@ -918,9 +918,53 @@
                       enable = true;
                       config = ''
                         (objed-mode)
-			;; make objed-copy and objed-kill append to kill-ring
-			(objed-append-mode)
 
+			(objed-define-object
+				nil ;;make available for all packages
+				parens ;; a parens object 
+				;;goal is to make a text object that can jump to ANY parenthesis pair. The built-in brakcets can only select the current bracket pair you are in, or siblings of equal depth.
+				;;much of this is copied from the brackets code, only the sections marked are edited
+				:atp  (unless (objed--in-string-or-comment-p)
+				(or (looking-at "(\\|\\[\\|{")
+				(looking-back ")\\|\\]\\|}" 1)))
+				:no-skip t ;;allow parens to contain other parens
+				:get-obj
+				(unless (objed--in-string-or-comment-p)
+				(cond ((and (not (bobp))
+				(eq (char-syntax (char-before)) ?\)))
+				(let ((end (point))
+				(beg (scan-sexps (point) -1)))
+				(objed-make-object :beg beg
+				:end end
+				:ibeg #'1+
+				:iend #'1-)))
+				((and (not (eobp))
+				(eq (char-syntax (char-after)) ?\())
+				(let ((beg (point))
+				(end (scan-sexps (point) 1)))
+				(objed-make-object :beg beg
+				:end end
+				:ibeg #'1+
+				:iend #'1-)))
+				(t
+				;; changes are made to this section of cond
+				;; get next bracket
+				(let* ((beg (when (re-search-forward "(\\|\\[\\|{" nil t)
+				(forward-char -1)))
+				(end (when beg (scan-sexps beg 1))))
+				(objed-make-object :beg beg
+				:end end
+				:ibeg #'1+
+				:iend #'1-)))))
+				:try-next
+				(setq objed--obj-state 'whole)
+				(forward-char 1)
+				(when (re-search-forward "(\\|\\[\\|{" nil t)
+				(forward-char -1))
+				:try-prev
+				(when (re-search-backward "(\\|\\[\\|{" nil t)))
+
+				(keymap-set objed-object-map "r" #'objed-parens-object)
 			;; rebind switch to buffer with consult
 		        (keymap-set objed-op-map "b" #'consult-buffer)
 			'';
