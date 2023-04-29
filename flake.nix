@@ -52,7 +52,7 @@
       flake = false;
     };
     objed = {
-      url = "github:taylorgrinn/objed";
+      url = "github:PhDyellow/objed/main";
       flake = false;
     };
     key-game = {
@@ -63,6 +63,10 @@
       url = "github:matogoro/color-theme-buffer-local";
       flake = false;
     };
+    isend-mode = {
+      url = "github:PhDyellow/isend-mode.el";
+      flake = false;
+      };
   };
 
   outputs = {self, nixpkgs-unstable, ...}@inputs: {
@@ -806,7 +810,10 @@
                   load-theme-buffer-local = prev.load-theme-buffer-local.overrideAttrs (oldAttrs: {
                       src = inputs.color-theme-buffer-local;
                   });
-                };
+		  isend-mode = prev.isend-mode.overrideAttrs (oldAttrs: {
+		      src = inputs.isend-mode;
+		  });
+		};
                 init = {
                   enable = true;
                   packageQuickstart = true;
@@ -872,13 +879,16 @@
                     };
                     load-theme-buffer-local = {
                       after = ["noflet"];
-                      enable = true;
+                      enable = false;
                       init = ''
                         (require 'noflet)
                         '';
+		      config = ''
+		      (load-file (concat (string-replace "::" "" (getenv "EMACSNATIVELOADPATH")) "/../site-lisp/elpa/load-theme-buffer-local-20120702.2036/load-theme-buffer-local.el"))
+		      '';
                     };
                     god-mode = {
-                      after = ["load-theme-buffer-local"];
+                      # after = ["load-theme-buffer-local"];
                       enable = true;
                       init = ''
                         ;;(setq god-mode-enable-function-key-translation nil)
@@ -916,55 +926,15 @@
                     objed = {
                       after = [ "avy" "expand-region"];
                       enable = true;
-                      config = ''
-                        (objed-mode)
+		      config = ''
 
-			(objed-define-object
-				nil ;;make available for all packages
-				parens ;; a parens object 
-				;;goal is to make a text object that can jump to ANY parenthesis pair. The built-in brakcets can only select the current bracket pair you are in, or siblings of equal depth.
-				;;much of this is copied from the brackets code, only the sections marked are edited
-				:atp  (unless (objed--in-string-or-comment-p)
-				(or (looking-at "(\\|\\[\\|{")
-				(looking-back ")\\|\\]\\|}" 1)))
-				:no-skip t ;;allow parens to contain other parens
-				:get-obj
-				(unless (objed--in-string-or-comment-p)
-				(cond ((and (not (bobp))
-				(eq (char-syntax (char-before)) ?\)))
-				(let ((end (point))
-				(beg (scan-sexps (point) -1)))
-				(objed-make-object :beg beg
-				:end end
-				:ibeg #'1+
-				:iend #'1-)))
-				((and (not (eobp))
-				(eq (char-syntax (char-after)) ?\())
-				(let ((beg (point))
-				(end (scan-sexps (point) 1)))
-				(objed-make-object :beg beg
-				:end end
-				:ibeg #'1+
-				:iend #'1-)))
-				(t
-				;; changes are made to this section of cond
-				;; get next bracket
-				(let* ((beg (when (re-search-forward "(\\|\\[\\|{" nil t)
-				(forward-char -1)))
-				(end (when beg (scan-sexps beg 1))))
-				(objed-make-object :beg beg
-				:end end
-				:ibeg #'1+
-				:iend #'1-)))))
-				:try-next
-				(setq objed--obj-state 'whole)
-				(forward-char 1)
-				(when (re-search-forward "(\\|\\[\\|{" nil t)
-				(forward-char -1))
-				:try-prev
-				(when (re-search-backward "(\\|\\[\\|{" nil t)))
+;; (load-file (concat (getenv "EMACSNATIVELOADPATH") "../site-lisp/objed-objects.el"))
+; I can't define my own object after the function
+;; is native compiled.
 
-				(keymap-set objed-object-map "r" #'objed-parens-object)
+
+			(objed-mode)
+
 			;; rebind switch to buffer with consult
 		        (keymap-set objed-op-map "b" #'consult-buffer)
 			'';
@@ -978,7 +948,7 @@
 		    };
                     avy = {
                       enable = true;
-		      after = [ "embark" ];
+		      after = [ "embark" "objed" ];
                       config = ''
 		        (defun avy-action-embark (pt)
 			  (unwind-protect
@@ -988,8 +958,16 @@
 			      (select-window (cdr (ring-ref avy-ring 0))))
 			      t)
 			(setf (alist-get ?o avy-dispatch-alist) 'avy-action-embark)
+
+;; Avy objed combinations
+(require 'objed)
+;; action for copying/killing object
+;; action for throwing object through isend
+;; action for teleporting object (kill and yank here)
+;; all these actions are supposed to leave me where I started
+;;defun avy-action-objed-
                       '';
-                    };
+                    }
                   embark = {
 		      enable = true;
 		      demand = true;
@@ -1166,7 +1144,7 @@
                       };
                     };
                     isend-mode = {
-                      enable = false;
+                      enable = true;
                     };
                     nix-mode = {
                       enable = false;
