@@ -967,7 +967,7 @@
 ;; all these actions are supposed to leave me where I started
 ;;defun avy-action-objed-
                       '';
-                    }
+                  };
                   embark = {
 		      enable = true;
 		      demand = true;
