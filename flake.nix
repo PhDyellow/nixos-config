@@ -1086,7 +1086,7 @@
 		      after = [ "smartparens" ];
 		      enable = true;
                       config = ''
-		        (show-smartparen-global-mode)
+		        (show-smartparens-global-mode)
                       '';
                     };
                     vundo = {
