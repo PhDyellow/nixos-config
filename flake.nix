@@ -1372,7 +1372,7 @@
 		    ##Packages loaded when needed
 		    free-keys = {
                       enable = true;
-		      commands = [ "free-keys" ];
+		      command = [ "free-keys" ];
                     };
 		    ess-site = {
 		    enable= true;
