@@ -1069,6 +1069,7 @@
                     };
 		    ## May replace load-buffer-local-theme
 		    prism = {
+		      after = [ "zenburn" ];
 		      enable = true;
 		      config = ''
 		        (prism-set-colors :num 24
@@ -1078,8 +1079,12 @@
 			  :desaturations (list 0 00 0 00  ))
 		    '';
 		    };
+		    smartparens = {
+		      enable = true;
+		    };
                     smartparens-config = {
-                      enable = true;
+		      after = [ "smartparens" ];
+		      enable = true;
                       config = ''
 		        (show-smartparen-global-mode)
                       '';
