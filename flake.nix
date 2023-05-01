@@ -1276,7 +1276,7 @@
 			};
 		      };
 		    };
-		    vertico-buffer =
+		    vertico-buffer = {
 		      after = [ "vertico" ];
 		      enable = true;
 		      config = ''
@@ -1284,7 +1284,7 @@
 			  '(display-buffer-in-side-window (side . left)
 			     (window-width . 0.5)))
 		       '';
-		      };
+		    };
 		    vertico-directory = {
 		      after = [ "vertico" ];
 		      enable = true;
