@@ -867,28 +867,27 @@
                   postlude = ""; #config inserted after use-package
                   #Packages configured
                   usePackage = {
+		  ## Startup packages. 'After' needs to flow back to an always-loaded package
                     dash = {
                       enable = true;
                     };
                     noflet = {
-                      after = ["dash"];
-                      enable = true;
+		      after = ["dash"];
+		      enable = true;
                       init = ''
-                        (require 'dash)
+                        (require 'dash) ;;bug in noflet, uses dash without requiring it
                         '';
                     };
                     load-theme-buffer-local = {
-                      after = ["noflet"];
+		      after = [ "noflet" "god-mode" ];
                       enable = false;
                       init = ''
-                        (require 'noflet)
+                        (require 'noflet) ;; bug in load-theme-buffer-local: uses noflet without requiring it
                         '';
 		      config = ''
-		      (load-file (concat (string-replace "::" "" (getenv "EMACSNATIVELOADPATH")) "/../site-lisp/elpa/load-theme-buffer-local-20120702.2036/load-theme-buffer-local.el"))
 		      '';
                     };
                     god-mode = {
-                      # after = ["load-theme-buffer-local"];
                       enable = true;
                       init = ''
                         ;;(setq god-mode-enable-function-key-translation nil)
@@ -897,6 +896,7 @@
                         (setq god-exempt-major-modes nil)
                         (setq god-exempt-predicates nil)
                         (god-mode)
+			;; (require 'load-theme-buffer-local)
                         ;; (add-hook 'god-mode-enabled-hook (lambda () (load-theme-buffer-local 'tango (current-buffer))))
                         ;; (add-hook 'god-mode-disabled-hook (lambda () (load-theme-buffer-local 'zenburn (current-buffer))))
                       '';
@@ -910,33 +910,34 @@
                         };
                       };
                     };
-
                     undo-fu-session = {
                       enable = true;
                       config = ''
                         (undo-fu-session-global-mode)
                       '';
                     };
-                    free-keys = {
-                      enable = true;
-                    };
                     bind-key = {
                       enable = true;
                     };
                     objed = {
-                      after = [ "avy" "expand-region"];
+		      after = [ "avy" "expand-region" "magit" ];
                       enable = true;
 		      config = ''
-
-;; (load-file (concat (getenv "EMACSNATIVELOADPATH") "../site-lisp/objed-objects.el"))
-; I can't define my own object after the function
-;; is native compiled.
-
-
 			(objed-mode)
 
 			;; rebind switch to buffer with consult
 		        (keymap-set objed-op-map "b" #'consult-buffer)
+			;; Add magit shortcut
+			(keymap-set objed-op-map "g" #'magit-status)
+			
+
+			;; Avy objed combinations
+			;; action for copying/killing object
+			;; action for throwing object through isend
+			;; action for teleporting object (kill and yank here)
+			;; all these actions are supposed to leave me where I started
+			;;defun avy-action-objed-
+
 			'';
                     };
 		    objed-game = {
@@ -947,8 +948,8 @@
 		      enable = true;
 		    };
                     avy = {
-                      enable = true;
-		      after = [ "embark" "objed" ];
+		      after = [ "embark" ];
+		      enable = true;
                       config = ''
 		        (defun avy-action-embark (pt)
 			  (unwind-protect
@@ -959,18 +960,11 @@
 			      t)
 			(setf (alist-get ?o avy-dispatch-alist) 'avy-action-embark)
 
-;; Avy objed combinations
-(require 'objed)
-;; action for copying/killing object
-;; action for throwing object through isend
-;; action for teleporting object (kill and yank here)
-;; all these actions are supposed to leave me where I started
-;;defun avy-action-objed-
                       '';
                   };
                   embark = {
 		      enable = true;
-		      demand = true;
+		      demand = true; # bind will prevent loading otherwise
 		      bind = {
 		        "C-h B" = "embark-bindings";
 			"M-o" = "embark-act";
@@ -987,6 +981,7 @@
 		      '';
 		    };
 		    embark-consult = {
+		      after = [ "embark" "consult" ];
 		      enable = true;
 		      hook = [
 		        "(embark-collect-mode . consult-preview-at-point-mode)"
@@ -1066,19 +1061,19 @@
                           (scroll-bar-mode -1))
                       '';
                     };
-                    ido = {
-                      enable = true;
-                      config = ''
-                        (ido-mode t)
-                        (setq ido-enable-flex-matching t)
-                      '';
-                    };
                     uniquify = {
                       enable = true;
                       config = ''
                         (setq uniquify-buffer-name-style 'forward)
                       '';
                     };
+		    ## May replace load-buffer-local-theme
+		    prism = {
+		      enable = true;
+		    };
+		    rainbow-delimiters = {
+		      enable = true;
+		    };
                     paren = {
                       enable = true;
                       config = ''
@@ -1088,13 +1083,11 @@
                     vundo = {
                       enable = true;
                     };
-                    org-sltypes = {
-                      enable = true;
-                    };
                     frame = {
                       enable = true;
                       config = ''
-                        (blink-cursor-mode 0)
+                      (set-frame-font "DejaVu Sans 18" t t t)
+		      (blink-cursor-mode 0)
                         '';
                     };
                     crm = {
@@ -1139,32 +1132,18 @@
                                                       orig-fg))))
 
                       '';
-                      bind = {
-                        "<f5>" = "redraw-display";
-                      };
                     };
                     isend-mode = {
                       enable = true;
-                    };
-                    nix-mode = {
-                      enable = false;
-                    };
-                    company-nixos-options = {
-                      enable = false;
-                    };
-                    ob-nix = {
-                      enable = false;
                     };
                     magit = {
                       enable = true;
 		      config = ''
 		      (setq magit-refresh-status-buffer nil)
-
 		      '';
                     };
                     forge = {
                       enable = true;
-                      #after = ["magit"];
                     };
 		    git-timemachine = {
 		      enable = true;
@@ -1175,8 +1154,10 @@
                     eat = {
                       enable = true;
                     };
+		    xref = {
+		      enable = true;
+		    };
                     consult = {
-                      after = ["xref"];
                       enable = true;
                       hook = [
                          "(completion-list-mode . consult-preview-at-point-mode)"
@@ -1227,6 +1208,7 @@
                     };
                     marginalia = {
                       enable = true;
+		      demand = true;
                       config = ''
                         (marginalia-mode)
                         '';
@@ -1294,54 +1276,33 @@
 			};
 		      };
 		    };
-                    ess = {
-                      enable = true;
-                      config = ''
-                        ;;(setq inferior-ess-r-program "radian") ;;  ESS can't speak radian's language
-                      '';
-                    };
+		    vertico-buffer =
+		      after = [ "vertico" ];
+		      enable = true;
+		      config = ''
+		        (setq vertico-buffer-display-action
+			  '(display-buffer-in-side-window (side . left)
+			     (window-width . 0.5)))
+		       '';
+		      };
+		    vertico-directory = {
+		      after = [ "vertico" ];
+		      enable = true;
+		      bindLocal = {
+		        vertico-map = {
+			  "RET" = "vertico-directory-enter";
+			  "DEL" = "vertico-directory-delete-char";
+			  "M-DEL" = "vertico-directory-delete-word";
+			};
+		      };
+		      hook = [
+		        "(rfn-eshadow-update-overlay . vertico-directory-tidy)"
+	              ];
+		    };
                     image-dired = {
                       enable = true;
                       config = ''
                         (setq image-dired-thumbnail-storage 'standard-large)
-                      '';
-                    };
-                    "image-dired+" = {
-                      enable = false;
-		      functions = ["image-diredx-async-mode"];
-		      config = ''
-                        (image-diredx-async-mode 1)
-                    '';
-                    };
-                    org = {
-                      enable = true;
-                      init = ''
-                      '';
-                      config = ''
-                      ;;Add R to org-babel
-                        (org-babel-do-load-languages
-                        'org-babel-load-languages
-                        '((emacs-lisp . t)
-                          (R . t)))
-
-                          ;;Allow code blocks to execute without asking me every time
-                          ;; for safetly though, don't allow C-c C-c to evaluate blocks
-                          (setq org-confirm-babel-evaluate (lambda (lang src) (if (string= lang "R") nil t))
-                                org-babel-no-eval-on-ctrl-c-ctrl-c t)
-
-                          ;;never run blocks on export. Creates consisent results for R async session blocks.
-                          (add-to-list 'org-babel-default-header-args '(:eval . "never-export"))
-
-                      '';
-                      demand = true;
-                    };
-                    #org link library
-                    ol = {
-                      enable = true;
-                      after = [ "org" ];
-                      config = ''
-                      (setq org-link-abbrev-alist
-                            '(("websearch"      . "https://start.duckduckgo.com/?q=%s")))
                       '';
                     };
                     one-themes = {
@@ -1353,20 +1314,7 @@
                         (setq zenburn-use-variable-pitch t)
                       '';
                       config = ''
-                        (if (daemonp)
-                          (add-hook 'after-make-frame-functions
-                                    (lambda (frame)
-                                      (select-frame frame)
-                                      (load-theme 'zenburn t)
-                                      (set-frame-font "DejaVu Sans 20" t t t)
-                                    ;;(exwm-layout-set-fullscreen)
-                        (fringe-mode 1)
-
-                                      )
-                                    )
                           (load-theme 'zenburn t)
-                                      (set-frame-font "DejaVu Sans 20" t t t)
-                          )
                       '';
                     };
                     browse-url = {
@@ -1382,103 +1330,92 @@
                         (which-key-mode)
                         '';
                     };
-                    meow = {
-                      enable = false;
+                    org = {
+                      enable = true;
+		      demand = true
+		      init = ''
+                      '';
                       config = ''
-                        (require 'meow)
-                        (meow-setup)
-                        (meow-global-mode 1)
-                        (setq meow-cursor-type-normal '(bar . 6))
+                          ;;Add R to org-babel
+                          (org-babel-do-load-languages
+                          'org-babel-load-languages
+                          '((emacs-lisp . t)
+                             (R . t)))
+
+		          ;;Allow code blocks to execute without asking me every time
+                          ;; for safetly though, don't allow C-c C-c to evaluate blocks
+                          (setq org-confirm-babel-evaluate (lambda (lang src) (if (string= lang "R") nil t))
+                                org-babel-no-eval-on-ctrl-c-ctrl-c t)
+
+                          ;;never run blocks on export. Creates consisent results for R async session blocks.
+                          (add-to-list 'org-babel-default-header-args '(:eval . "never-export"))
+
                       '';
-                      init = ''
-(defun meow-setup ()
-  (setq meow-cheatsheet-layout meow-cheatsheet-layout-qwerty)
-  (meow-motion-overwrite-define-key
-   '("j" . meow-next)
-   '("k" . meow-prev)
-   '("<escape>" . ignore))
-  (meow-leader-define-key
-   ;; SPC j/k will run the original command in MOTION state.
-   '("j" . "H-j")
-   '("k" . "H-k")
-   ;; Use SPC (0-9) for digit arguments.
-   '("1" . meow-digit-argument)
-   '("2" . meow-digit-argument)
-   '("3" . meow-digit-argument)
-   '("4" . meow-digit-argument)
-   '("5" . meow-digit-argument)
-   '("6" . meow-digit-argument)
-   '("7" . meow-digit-argument)
-   '("8" . meow-digit-argument)
-   '("9" . meow-digit-argument)
-   '("0" . meow-digit-argument)
-   '("/" . meow-keypad-describe-key)
-   '("?" . meow-cheatsheet))
-  (meow-normal-define-key
-   '("0" . meow-expand-0)
-   '("9" . meow-expand-9)
-   '("8" . meow-expand-8)
-   '("7" . meow-expand-7)
-   '("6" . meow-expand-6)
-   '("5" . meow-expand-5)
-   '("4" . meow-expand-4)
-   '("3" . meow-expand-3)
-   '("2" . meow-expand-2)
-   '("1" . meow-expand-1)
-   '("-" . negative-argument)
-   '(";" . meow-reverse)
-   '("," . meow-inner-of-thing)
-   '("." . meow-bounds-of-thing)
-   '("[" . meow-beginning-of-thing)
-   '("]" . meow-end-of-thing)
-   '("a" . meow-append)
-   '("A" . meow-open-below)
-   '("b" . meow-back-word)
-   '("B" . meow-back-symbol)
-   '("c" . meow-change)
-   '("d" . meow-delete)
-   '("D" . meow-backward-delete)
-   '("e" . meow-next-word)
-   '("E" . meow-next-symbol)
-   '("f" . meow-find)
-   '("g" . meow-cancel-selection)
-   '("G" . meow-grab)
-   '("h" . meow-left)
-   '("H" . meow-left-expand)
-   '("i" . meow-insert)
-   '("I" . meow-open-above)
-   '("j" . meow-next)
-   '("J" . meow-next-expand)
-   '("k" . meow-prev)
-   '("K" . meow-prev-expand)
-   '("l" . meow-right)
-   '("L" . meow-right-expand)
-   '("m" . meow-join)
-   '("n" . meow-search)
-   '("o" . meow-block)
-   '("O" . meow-to-block)
-   '("p" . meow-yank)
-   '("q" . meow-quit)
-   '("Q" . meow-goto-line)
-   '("r" . meow-replace)
-   '("R" . meow-swap-grab)
-   '("s" . meow-kill)
-   '("t" . meow-till)
-   '("u" . meow-undo)
-   '("U" . meow-undo-in-selection)
-   '("v" . meow-visit)
-   '("w" . meow-mark-word)
-   '("W" . meow-mark-symbol)
-   '("x" . meow-line)
-   '("X" . meow-goto-line)
-   '("y" . meow-save)
-   '("Y" . meow-sync-grab)
-   '("z" . meow-pop-selection)
-   '("'" . repeat)
-   '("<escape>" . ignore)))
+                    };
+                    #org link library
+                    ol = {
+                      enable = true;
+                      after = [ "org" ];
+                      config = ''
+                      (setq org-link-abbrev-alist
+                            '(("websearch"      . "https://start.duckduckgo.com/?q=%s")))
                       '';
-                  };
-                };
+                    };
+		    org-super-links = {
+		      enable = true;
+		      after = [ "org" ];
+		    };
+                    org-sltypes = {
+		      after = [ "org-super-links" ];
+                    enable = true;
+                    };
+		    ##Packages loaded when needed
+		    free-keys = {
+                      enable = true;
+		      commands = [ "free-keys" ];
+                    };
+		    ess-site = {
+		    enable= true;
+		    mode = [ ''
+		      ("\\.Rd\\'" . Rd-mode)
+ 		      ("DESCRIPTION\\'" . conf-colon-mode)
+ 		      ("\\.Rd\\'" . Rd-mode)
+		      ("DESCRIPTION\\'" . conf-colon-mode)
+		      ("\\.[Rr]out\\'" . ess-r-transcript-mode)
+		      ("CITATION\\'" . ess-r-mode)
+		      ("NAMESPACE\\'" . ess-r-mode)
+		      ("\\.[rR]profile\\'" . ess-r-mode)
+		      ("\\.[rR]\\'" . ess-r-mode)
+		      ("/R/.*\\.q\\'" . ess-r-mode)
+		      ("\\.[Jj][Aa][Gg]\\'" . ess-jags-mode)
+		      ("\\.[Bb][Mm][Dd]\\'" . ess-bugs-mode)
+ 		      ("\\.[Bb][Oo][Gg]\\'" . ess-bugs-mode)
+ 		      ("\\.[Bb][Uu][Gg]\\'" . ess-bugs-mode)
+		    '' ];
+   		    extraConfig = ''
+		      :interpreter (("r" . ess-r-mode)
+ 		                   ("Rscript" . ess-r-mode))
+		    '';
+		    };
+                    ess = {
+		      after = [ "ess-site" ];
+		      enable = true;
+                      config = ''
+                        ;;(setq inferior-ess-r-program "radian") ;;  ESS can't speak radian's language
+                      '';
+                    };
+                    nix-mode = {
+                      enable = true;
+		      mode = [ "\\.nix\\'"];
+                    };
+		    nixos-options = {
+		      enable = true;
+		      mode = [ "\\.nix\\'" ];
+		    };
+                    ob-nix = {
+                      enable = true;
+                    };
+		  };
 
               };
               };
