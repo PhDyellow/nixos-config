@@ -1332,7 +1332,7 @@
                     };
                     org = {
                       enable = true;
-		      demand = true
+		      demand = true;
 		      init = ''
                       '';
                       config = ''
