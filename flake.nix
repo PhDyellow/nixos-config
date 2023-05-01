@@ -1070,14 +1070,18 @@
 		    ## May replace load-buffer-local-theme
 		    prism = {
 		      enable = true;
+		      config = ''
+		        (prism-set-colors :num 24
+			  :colors  (zenburn-with-color-variables
+			    (list zenburn-red zenburn-green zenburn-orange zenburn-blue zenburn-yellow zenburn-magenta))
+			  :lightens (list 0 5 10 20)
+			  :desaturations (list 0 00 0 00  ))
+		    '';
 		    };
-		    rainbow-delimiters = {
-		      enable = true;
-		    };
-                    paren = {
+                    smartparens-config = {
                       enable = true;
                       config = ''
-                        (show-paren-mode 1)
+		        (show-smartparen-global-mode)
                       '';
                     };
                     vundo = {
