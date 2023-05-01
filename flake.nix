@@ -895,17 +895,17 @@
                       config = ''
                         (setq god-exempt-major-modes nil)
                         (setq god-exempt-predicates nil)
-                        (god-mode)
+                        ;;(god-mode)
 			;; (require 'load-theme-buffer-local)
                         ;; (add-hook 'god-mode-enabled-hook (lambda () (load-theme-buffer-local 'tango (current-buffer))))
                         ;; (add-hook 'god-mode-disabled-hook (lambda () (load-theme-buffer-local 'zenburn (current-buffer))))
                       '';
                       chords = {
-                        "ii" = "god-local-mode";
+                        "ii" = "god-mode-all";
                       };
                       bindLocal = {
                         god-local-mode-map = {
-                          "j" = "god-local-mode";
+                          "j" = "god-mode-all";
                           "." = "repeat";
                         };
                       };
