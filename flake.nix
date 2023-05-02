@@ -936,8 +936,21 @@
 			;; action for throwing object through isend
 			;; action for teleporting object (kill and yank here)
 			;; all these actions are supposed to leave me where I started
-			;;defun avy-action-objed-
+      ;; never mind, I prefer to use embark or objed, then use 'l' (lower L) to step back
+      (defun my-objed-isend (beg end pref)
+        "Send object to associated buffer with isend"
+        (interactive "r\np")
+        (require 'isend-mode)
+        (if (not isend-mode)
+          (call-interactively #'isend-associate))
+        (isend--send-dest (filter-buffer-substring beg end) (get-buffer isend--command-buffer)))
 
+      (objed-define-op nil my-objed-isend)
+      ;;objed-define-op will return objed-<my function name>, and I bind the returned function
+      (keymap-set objed-op-map "a" #'objed-my-objed-isend)
+
+      (keymap-set objed-op-map "z" #'embark-act)
+      (keymap-set objed-op-map "Z" #'embark-export)
 			'';
                     };
 		    objed-game = {
@@ -1301,7 +1314,8 @@
 		      after = [ "vertico" ];
 		      enable = true;
 		      config = ''
-		        (setq vertico-buffer-display-action
+          (vertico-buffer-mode)
+		      (setq vertico-buffer-display-action
 			  '(display-buffer-in-side-window (side . left)
 			     (window-width . 0.5)))
 		       '';
