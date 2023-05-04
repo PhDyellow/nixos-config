@@ -1110,7 +1110,8 @@
                     smartparens-config = {
 		      after = [ "smartparens" ];
 		      enable = true;
-                      config = ''
+          config = ''
+            (smartparens-global-mode)
 		        (show-smartparens-global-mode)
                       '';
                     };
@@ -1275,9 +1276,10 @@
                     };
                     recentf = {
                       enable = true;
-                      config = ''
+                      init = ''
+		                    (setq recentf-max-saved-items nil
+                          recentf-save-file (concat user-emacs-directory ".local/cache/recentf"))
                       (recentf-mode 1)
-		      (setq recentf-max-saved-items nil)
                     '';
                     };
                     savehist = {
