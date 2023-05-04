@@ -43,10 +43,13 @@
 
     #Emacs packages
     org-sltypes = {
-      url = "github:PhDyellow/org-sltypes";
+      url = "github:PhDyellow/org-sltypes/stable";
       flake = false;
     };
-
+    org-slt-phdyellow = {
+      url = "github:PhDyellow/org-slt-phdyellow/main";
+      flake = false;
+    };
     org-super-links = {
       url = "github:toshism/org-super-links";
       flake = false;
@@ -781,8 +784,18 @@
                       packageRequires = [
                       ];
                     };
-
-                    org-sltypes = prev.emacs.pkgs.trivialBuild {
+                  org-slt-phdyellow = prev.emacs.pkgs.trivialBuild {
+                    pname = "org-slt-phdyellow";
+                    version = "git";
+                    src = inputs.org-slt-phdyellow;
+                    packageRequires = [
+                      final.org-super-links
+                      final.org-sltypes
+                      final.transient
+                      final.cl-lib
+                    ];
+                  };
+                  org-sltypes = prev.emacs.pkgs.trivialBuild {
                       pname = "org-sltypes";
                       version = "git";
                       src = inputs.org-sltypes;
@@ -1398,14 +1411,35 @@
                             '(("websearch"      . "https://start.duckduckgo.com/?q=%s")))
                       '';
                     };
-		    org-super-links = {
+                    helm = {
+                      enable = true;
+                    };
+                    helm-org-ql = {
+                      enable = true;
+                    };
+                    helm-org-rifle = {
+                      enable = true;
+                    };
+		                org-super-links = {
 		      enable = true;
 		      after = [ "org" ];
+          config = ''
+            (setq org-super-links-search-function "helm-org-rifle")
+          '';
 		    };
-                    org-sltypes = {
+        org-sltypes = {
 		      after = [ "org-super-links" ];
-                    enable = true;
-                    };
+          enable = true;
+        };
+        org-slt-phdyellow = {
+          after = ["org-sltypes"];
+          enable = true;
+          bindLocal = {
+            org-mode-map = {
+              "C-c C-i" = "org-slt-phdyellow";
+            };
+          };
+        };
 		    ##Packages loaded when needed
 		    free-keys = {
                       enable = true;
