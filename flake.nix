@@ -1249,8 +1249,7 @@
                           #'command-completion-default-include-p
                           save-interprogram-paste-before-kill t
                           )
-                          (setq-default indent-tabs-mode -1)
-
+                          (setq-default indent-tabs-mode nil)
                         '';
                       };
                       emacs = {
