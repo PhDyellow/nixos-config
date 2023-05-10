@@ -3,9 +3,9 @@
 
   inputs  = {
     nixpkgs-unstable = {
-      #url = "github:NixOS/nixpkgs/nixos-unstable";
+      url = "github:NixOS/nixpkgs/nixos-unstable";
       #url = "github:NixOS/nixpkgs/master"; #temporary change for bug in nixos
-      url = "github:NixOS/nixpkgs?rev=5abc896edad307816c03d9a672cc8fcf683e8f35"; #temporary change for bug in nixos
+      # url = "github:NixOS/nixpkgs?rev=5abc896edad307816c03d9a672cc8fcf683e8f35"; #temporary change for bug in nixos
     };
 
     nixos-hardware.url = "github:NixOS/nixos-hardware/master";
@@ -16,7 +16,8 @@
     };
 
     lanzaboote = {
-      url = "github:nix-community/lanzaboote?rev=f0cc345caa9eb3f8e033ddd74865f57b35825170";
+      # url = "github:nix-community/lanzaboote?rev=f0cc345caa9eb3f8e033ddd74865f57b35825170";
+      url = "github:nix-community/lanzaboote";
       inputs.nixpkgs.follows = "nixpkgs-unstable"; #needs unstable
     };
     home-manager = {
@@ -37,7 +38,10 @@
       url = "github:nix-community/NUR";
     };
     emacs-overlay = {
-      url = "github:nix-community/emacs-overlay?rev=0acd590f3b518dfc8354bf9ed5c82e1401c4e6b0";
+      url = "github:nix-community/emacs-overlay?rev=42a2a718bdcbe389e7ef284666d4aba09339a416";
+      # url = "github:nix-community/emacs-overlay?rev=0acd590f3b518dfc8354bf9ed5c82e1401c4e6b0";
+      #;https://github.com/nix-community/emacs-overlay/commit/e9e67599cda6f57f37178fd33ccff86cc2c2d6c4
+      #url = "github:nix-community/emacs-overlay?rev=f57192297f370f8f01b1476023ca29caf032b20a";https://github.com/nix-community/emacs-overlay/commit/#start-of-content
     };
 
 
@@ -70,6 +74,18 @@
       url = "github:PhDyellow/isend-mode.el";
       flake = false;
       };
+    org-linker-edna = {
+      url = "github:toshism/org-linker-edna";
+      flake= false;
+    };
+    org-linker = {
+      url = "github:toshism/org-linker";
+      flake = false;
+    };
+    smart-tabs-mode = {
+      url = "github:chep/smarttabs/macro-fix";
+      flake = false;
+    };
   };
 
   outputs = {self, nixpkgs-unstable, ...}@inputs: {
@@ -526,7 +542,7 @@
           };
 
           time.timeZone = "Australia/Brisbane";
-
+          i18n.defaultLocale = "en_AU.UTF-8";
 
           # services.xserver = {
           #   enable = true;
@@ -549,18 +565,29 @@
             gitSVN
             wget
             firefox
-            nyxt
+            # nyxt
             st
             #agenix.packages.x86_64-linux.default #nix run github:ryantm/agenix -- --help
             python3
             openssl
-              geekbench_6
+              # geekbench_6
             pqiv
             gthumb
             gtk3
             imagemagickBig
             ripgrep
           ];
+
+          fonts = {
+            fonts = with pkgs; [
+              (nerdfonts.override { fonts = [ "FiraCode" "RobotoMono" ]; })
+            ];
+
+            fontconfig.defaultFonts = {
+              monospace = [ "RobotoMono" ];
+            };
+          };
+
 
           nix = {
             package = pkgs.nixVersions.unstable;
@@ -701,6 +728,38 @@
             substituters = ["https://hyprland.cachix.org"];
             trusted-public-keys = ["hyprland.cachix.org-1:a7pgxzMz7+chwVL3/pzj6jIBMioiJM7ypFP8PwtkuGc="];
           };
+        };
+
+      spell_checkers = {config, pkgs, ...}: {
+        environment = {
+          sessionVariables = {
+            ENCHANT_CONFIG_DIR="/home/phil/.config/enchant";
+          };
+          systemPackages = with pkgs; [
+            (aspellWithDicts (dicts: with dicts; [ en en-computers en-science]))
+            # (hunspellWithDicts [hunspellDicts.en-gb-ise
+                                # hunspellDicts.en-au-large])
+            # hunspellDicts.en-gb-ise
+            hunspellDicts.en-au-large
+
+
+            # aspellDicts.en
+            # aspellDicts.en-computers
+            # hunspell
+            # nuspell
+            enchant
+
+            # (enchant.override {nuspell = nuspellWithDicts [ hunspellDicts.en-gb-ise ];
+                                 (nuspellWithDicts [
+              # aspellDicts.en
+              # aspellDicts.en-computers
+              # aspellDicts.en-science
+              # hunspellDicts.en-gb-ise
+              hunspellDicts.en-au-large
+                                 ])
+                              ];
+
+        };
       };
       phil_home = {config, pkgs, ...}: {
          imports = [
@@ -720,8 +779,7 @@
           useGlobalPkgs = true;
           useUserPackages = true;
 
-          #home-manager.users.<name> is an attribute set {} of users. Each user is a hmModule, so I can import
-          #modules to it. Any modules imported by all users can go in home-manager.sharedModules
+          #config inserted before use-package
           users.phil = {
              imports = let
               nurNoPkgs = import inputs.nur { pkgs = null; nurpkgs = pkgs; };
@@ -732,6 +790,13 @@
             home = {
               stateVersion = "23.05";
               file = {
+                enchant-ordering = {
+                  target = ".config/enchant/enchant.ordering";
+                  text = ''
+                    en_AU:aspell,nuspell
+                    en:aspell,nuspell
+                    en_GB:aspell,nuspell'';
+                };
                 r-config = {
                   target = ".Rprofile";
                   text = ''
@@ -817,23 +882,41 @@
                       version = "git";
                       src = inputs.key-game;
                       packageRequires = [
-
                       ];
                     };
-                  load-theme-buffer-local = prev.load-theme-buffer-local.overrideAttrs (oldAttrs: {
+                   org-linker = prev.emacs.pkgs.trivialBuild {
+                     pname = "org-linker";
+                     version = "git";
+                     src = inputs.org-linker;
+                     packageRequires = [
+                     ];
+                   };
+                   org-linker-edna = prev.emacs.pkgs.trivialBuild {
+                     pname = "org-linker-edna";
+                     version = "git";
+                     src = inputs.org-linker-edna;
+                     packageRequires = [
+                       final.org-linker
+                     ];
+                   };
+                   load-theme-buffer-local = prev.load-theme-buffer-local.overrideAttrs (oldAttrs: {
                       src = inputs.color-theme-buffer-local;
                   });
-		  isend-mode = prev.isend-mode.overrideAttrs (oldAttrs: {
-		      src = inputs.isend-mode;
-		  });
-		};
+		              isend-mode = prev.isend-mode.overrideAttrs (oldAttrs: {
+		                src = inputs.isend-mode;
+		              });
+		              smart-tabs-mode = prev.smart-tabs-mode.overrideAttrs (oldAttrs: {
+		                src = inputs.smart-tabs-mode;
+		              });
+                };
                 init = {
                   enable = true;
                   packageQuickstart = true;
                   recommendedGcSettings = true;
                   startupTimer = true;
                   earlyInit = "";
-                  #config inserted before use-package
+                  #home-manager.users.<name> is an attribute set {} of users. Each user is a hmModule, so I can import
+          #modules to it. Any modules imported by all users can go in home-manager.sharedModules
                   prelude = ''
                     ;;(setq my-user-emacs-directory "/storage/emulated/0/memx/repos/phone_emacs/")
 
@@ -877,7 +960,13 @@
                           (setq tramp-backup-directory-alist `(("." . ,(concat user-emacs-directory ".local/cache/backup/"))))
 
                   '';
-                  postlude = ""; #config inserted after use-package
+                  #config inserted after use-package
+                  postlude = ''
+;; Local Variables:
+;; no-byte-compile: t
+;; End:
+'';
+
                   #Packages configured
                   usePackage = {
 		  ## Startup packages. 'After' needs to flow back to an always-loaded package
@@ -942,7 +1031,7 @@
 		        (keymap-set objed-op-map "b" #'consult-buffer)
 			;; Add magit shortcut
 			(keymap-set objed-op-map "g" #'magit-status)
-			
+
 
 			;; Avy objed combinations
 			;; action for copying/killing object
@@ -1109,7 +1198,7 @@
 		  	;;(prism-save-colors)
 		  	;; then reading the value of prism-colors from "~/emacs-custom-hack.el"
 
-			(setq 
+			(setq
 		    	  prism-colors '("#cc9393" "#7f9f7f" "#dfaf8f" "#8cd0d3" "#f0dfaf" "#dc8cc3" "#d19e9e" "#87a587" "#e3b99d" "#98d5d7" "#f3e5c0" "#e099ca" "#d7aaaa" "#8fab8f" "#e7c3ab" "#a5dadc" "#f6ecd1" "#e4a7d1" "#e2c2c2" "#9fb79f" "#efd7c7" "#bee4e6" "#fdfaf4" "#ecc3df")
 		    	  prism-desaturations '(0 0 0 0)
 		    	  prism-lightens '(0 5 10 20)
@@ -1124,6 +1213,19 @@
 		      after = [ "smartparens" ];
 		      enable = true;
           config = ''
+            ;; Turn off smartparens auto features,
+            ;; Sometimes they don't hurt me,
+            ;; But other times I have to fight them
+            ;; I'm never glad the closing bracket has
+            ;; been inserted for me
+            (setq sp-autowrap-region nil
+              sp-autodelete-pair nil
+              sp-autodelete-opening-pair nil
+              sp-autodelete-closing-pair nil
+              sp-autoinsert-pair nil
+              sp-autodelete-wrap nil
+              sp-autoskip-opening-pair nil
+              sp-autoskip-closing-pair nil)
             (smartparens-global-mode)
 		        (show-smartparens-global-mode)
                       '';
@@ -1134,9 +1236,9 @@
                     frame = {
                       enable = true;
                       config = ''
-                      (set-frame-font "DejaVu Sans 18" t t t)
-		      (blink-cursor-mode 0)
-                        '';
+                        (setq default-frame-alist '((font . "FiraCode Nerd Font 18")))
+		                    (blink-cursor-mode 0)
+                      '';
                     };
                     crm = {
                       enable = true;
@@ -1371,7 +1473,8 @@
                       enable = true;
                       config = ''
                         (setq browse-url-generic-program "nyxt"
-                          browse-url-browser-function 'browse-url-generic)
+                          browse-url-browser-function 'eww-browse-url
+                          browse-url-secondary-browser-function 'browse-url-generic)
                       '';
                     };
                     which-key = {
@@ -1400,6 +1503,34 @@
                           ;;never run blocks on export. Creates consisent results for R async session blocks.
                           (add-to-list 'org-babel-default-header-args '(:eval . "never-export"))
 
+                          ;;set up todo entries
+                          (setq org-todo-keywords '((sequence "PROBLEM" "|" "SOLVED" "SKIP")
+                                   (sequence "ATTEMPT" "|" "FAIL" "SUCCESS")
+                                   (sequence "TODO(t)" "NEXT(n!)" "WAIT(b@/!)" "IDEA(i@)" "|" "NEVER(x@)" "DONE(d!)")
+                                   (sequence "ADD" "FIND" "SKIM(1!)" "1ST_READ(2!)" "1ST_MARG(3!)" "2ND_READ(4!)" "2ND_MARG(5!)" "3RD_READ(6!)" "3RD_MARG(7!)" "GOLD(8!)" "|" "REF(9!)" "DROP(k)")
+                          ))
+
+                          (setq org-M-RET-may-split-line nil)
+
+                          (setq org-log-into-drawer t
+                                   org-log-redeadline t
+                                   org-log-reschedule t
+                                   org-log-done t)
+
+                           (setq org-image-actual-width '(800))
+
+                      '';
+                    };
+                    org-clock = {
+                      after = [ "org" ];
+                      enable = true;
+                      config = ''
+                        (setq org-clock-auto-clock-resolution 'when-no-clock-is-running ;;enable auto-clock resolution for finding open clocks
+                                 org-clock-report-include-clocking-task t ;; include current clocking task in clock reports
+                                 org-clock-persist t ;; save the running clock and all clock history when exiting emacs, and load it on startup
+                                org-clock-in-resume t ;; resume clocking task on clock-in if the clock is open
+                                org-clock-continuously nil ;;automatically start clock from last clock out
+                        )
                       '';
                     };
                     #org link library
@@ -1440,6 +1571,190 @@
             };
           };
         };
+        org-transclusion = {
+          after = [ "org" ];
+          enable = true;
+        };
+        org-edna = {
+          after = [ "org" ];
+          enable = true;
+          config = ''
+             (org-edna-mode)
+          '';
+        };
+        org-linker-edna = {
+          after = [ "org" ];
+          enable = true;
+        };
+        org-linker = {
+          after = [ "org" ];
+          enable = true;
+        };
+        org-id = {
+          after = [ "org" ];
+          enable = true;
+          config = ''
+            (setq org-id-method 'ts
+                     org-id-prefix "org-")
+            ;;Create id's agressively
+            (setq org-id-link-to-org-use-id 'create-if-interactive-and-no-custom-id)
+            (defmacro my-add-id-to-heading (heading-func)
+              `(advice-add ,heading-func :after
+                  #'(lambda (&rest rest-var)
+                     "Add an ID to new headers automatically"
+                     (save-excursion (org-id-get-create)))))
+             (my-add-id-to-heading 'org-insert-heading)
+             (my-add-id-to-heading 'org-meta-return)
+             (my-add-id-to-heading 'org-insert-heading-respect-content)
+             (my-add-id-to-heading 'org-insert-todo-heading)
+             (my-add-id-to-heading 'org-insert-todo-heading-respect-content)
+
+             (defun my-org-add-ids-to-headings-in-file ()
+               "Add ID properties to all headlines in the current
+               file that do not already have one"
+               (interactive)
+               (org-map-entries 'org-id-get-create))
+          '';
+        };
+        smart-tabs-mode = {
+          enable = true;
+          config = ''
+            ;(setq-default indent-tabs-mode nil)
+            (setq-default tab-width 2)
+            (add-hook 'ess-r-mode-hook
+              (lambda () (setq indent-tabs-mode t)))
+          '';
+        };
+        jinx = {
+          enable = true;
+          hook = [ "(emacs-startup . global-jinx-mode)"];
+        };
+        org-remark = {
+          after = [ "org" ];
+          enable = true;
+          config = ''
+          (defun my-org-remark-notes-file-names ()
+            (concat "/para/areas/memx/"
+                         (file-name-base (org-remark-notes-file-name-function))
+                          " -- org-remark.org"))
+          (setq org-remark-notes-display-buffer-action '((display-buffer-in-side-window) (side . right) (slot . 1))
+            org-remark-notes-buffer-name "*remark file notes*"
+            org-remark-use-org-id t
+            org-remark-source-file-name #'abbreviate-file-name
+            org-remark-notes-file-name #'my-org-remark-notes-file-names)
+            (org-remark-global-tracking-mode +1)
+        '';
+        };
+        org-noter = {
+          after = [ "org" "pdf-tools" "nov" "djvu"];
+          enable = true;
+        };
+        pdf-tools = {
+          enable = true;
+        };
+        shrface = {
+          enable = true;
+          config = ''
+            (shrface-basic)
+            (shrface-trial)
+            (shrface-default-keybindings)
+            (setq shrface-href-versatile t)
+          '';
+        };
+        shr-tag-pre-highlight = {
+          after = [ "shr" "shrface" ];
+          enable = true;
+          config = ''
+(add-to-list 'shr-external-rendering-functions '(pre . shrface-shr-tag-pre-highlight))
+(defun shrface-shr-tag-pre-highlight (pre)
+    "Highlighting code in PRE."
+    (let* ((shr-folding-mode 'none)
+           (shr-current-font 'default)
+           (code (with-temp-buffer
+                   (shr-generic pre)
+                   ;; (indent-rigidly (point-min) (point-max) 2)
+                   (buffer-string)))
+           (lang (or (shr-tag-pre-highlight-guess-language-attr pre)
+                     (let ((sym (language-detection-string code)))
+                       (and sym (symbol-name sym)))))
+           (mode (and lang
+                      (shr-tag-pre-highlight--get-lang-mode lang)))
+           (light (eq (frame-parameter nil 'background-mode) 'light)))
+      (shr-ensure-newline)
+      (shr-ensure-newline)
+      (setq start (point))
+      (insert
+       (propertize (concat "#+BEGIN_SRC " lang "\n") 'face 'org-block-begin-line)
+       (or (and (fboundp mode)
+                (with-demoted-errors "Error while fontifying: %S"
+                  (shr-tag-pre-highlight-fontify code mode)))
+           code)
+       (propertize "\n#+END_SRC" 'face 'org-block-end-line ))
+      (shr-ensure-newline)
+      (setq end (point))
+      (if light
+          (add-face-text-property start end '(:background "#D8DEE9" :extend t))
+        (add-face-text-property start end `(:background  ,(zenburn-with-color-variables zenburn-bg-08) :extend t)))
+      (shr-ensure-newline)
+      (insert "\n")))
+
+            (when (version< emacs-version "26")
+              (with-eval-after-load 'eww
+                (advice-add 'eww-display-html :around
+                  'eww-display-html--override-shr-external-rendering-functions)))
+
+          '';
+        };
+        org-web-tools = {
+          after = [ "org" "shrface"  ];
+          enable = true;
+          config = ''
+            (advice-add 'org-web-tools--html-to-org-with-pandoc :override 'shrface-html-convert-as-org-string)
+
+            (defun request-url-readable (url)
+              (interactive "sRequest url: ")
+                (require 'shrface)
+                (require 'request)
+                (require 'org-web-tools)
+                (request url
+                         :parser 'buffer-string
+                         :headers '(("User-Agent" . "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2272.101 Safari/537.36"))
+                         :sync nil
+                         :success (cl-function
+                           (lambda (&key data &allow-other-keys)
+                             (let* ((web (org-web-tools--eww-readable data))
+                             (title (car web))
+                             (html (cdr web))
+                             (shrface-org-title title)
+                             (shrface-request-url url))
+                             (shrface-html-export-as-org html))))))
+            '';
+        };
+
+
+        nov = {
+          after = [ "shrface" ];
+          enable = true;
+          init = ''
+              (add-hook 'nov-mode-hook #'shrface-mode)
+          '';
+          config = ''
+            (setq nov-shr-rendering-functions '((img . nov-render-img) (title . nov-render-title)))
+  (setq nov-shr-rendering-functions (append nov-shr-rendering-functions shr-external-rendering-functions))
+          '';
+        };
+
+        djvu = {
+          enable = true;
+        };
+
+        eww = {
+          after = [ "shrface" ];
+          enable = true;
+          init = ''
+            (add-hook 'eww-after-render-hook #'shrface-mode)
+          '';
+        };
 		    ##Packages loaded when needed
 		    free-keys = {
                       enable = true;
@@ -1477,11 +1792,11 @@
                     };
                     nix-mode = {
                       enable = true;
-		      mode = [ "\\.nix\\'"];
+		                  mode = [ ''"\\\\.nix\\\\'"''];
                     };
 		    nixos-options = {
 		      enable = true;
-		      mode = [ "\\.nix\\'" ];
+		      mode = [ ''"\\\\.nix\\\\'"'' ];
 		    };
                     ob-nix = {
                       enable = true;
@@ -1786,6 +2101,7 @@ bindm = $mainMod, mouse:273, resizewindow
           self.nixosModules.hyprland-prime-ai
           #self.nixosModules.xfce_desktop
           self.nixosModules.phil_home
+          self.nixosModules.spell_checkers
         ];
       };
     };
