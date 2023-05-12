@@ -1039,6 +1039,7 @@
 
                           (keymap-set objed-op-map "z" #'embark-act)
                           (keymap-set objed-op-map "Z" #'embark-export)
+                          (keymap-set objed-op-map "l" #'consult-line)
 			                  '';
                       };
 		                  objed-game = {
@@ -1265,6 +1266,8 @@
                                       (lambda (fg) (set-face-foreground 'mode-line fg))
                                       orig-fg))))
 
+                           (setq completion-cycle-threshold 3)
+
                         '';
                       };
                       isend-mode = {
@@ -1335,6 +1338,9 @@
                         bind = {
                           "C-x C-b" = "consult-buffer";
                           "C-x C-y" = "consult-yank-from-kill-ring";
+                          "C-x j b" = "consult-buffer";
+                          "C-x j l" = "consult-line";
+                          "C-x j y" = "consult-yank-from-kill-ring";
                         };
                       };
                       consult-dir = {
@@ -1441,6 +1447,41 @@
                       };
                       one-themes = {
                         enable = true;
+                      };
+                      kind-icon = {
+                        enable = true;
+                        after = [ "corfu" ];
+                        config = ''
+                          (add-to-list 'corfu-margin-formatters #'kind-icon-margin-formatter)
+                          (setq kind-icon-default-face 'corfu-default)
+                        '';
+                      };
+                      corfu = {
+                        enable = true;
+                        init = ''
+                          (global-cofu-mode)
+                        '';
+                        config = ''
+                          (setq corfu-quit-no-match nil
+                                corfu-quit-at-boundary nil
+                          )
+                        '';
+                      };
+                      cape = {
+                        enable = true;
+                        after = [ "corfu" ];
+                        init = ''
+                          ;;Add `completion-at-point-functions' used by `completion-at-point'.
+                          ;; Order matters
+                          (add-to-list 'completion-at-point-functions #'cape-dabbrev)
+                          (add-to-list 'completion-at-point-functions #'cape-file)
+                          (add-to-list 'completion-at-point-functions #'cape-elisp-block)
+                        '';
+                        bind = {
+                          "M-n f" = "cape-file";
+                          "M-n d" = "cape-dabbrev";
+                          "M-n e" = "cape-elisp-block";
+                        };
                       };
                       zenburn-theme = {
                         enable = true;
