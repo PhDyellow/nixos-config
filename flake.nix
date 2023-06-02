@@ -815,9 +815,12 @@
               gpg-agent = {
                 enable = true;
                 defaultCacheTtl = 72000;
+                pinentryFlavor = "gtk2"; # other interesting flavours emacs tty curses
                 extraConfig = ''
-                  pinentry-program ${pkgs.pinentry-curses}/bin/pinentry-curses
+                  allow-emacs-pinentry
+                  allow-loopback-pinentry
                 '';
+
                 maxCacheTtl = 72000;
 
               };
@@ -961,6 +964,20 @@
                     #Packages configured
                     usePackage = {
 		                  ## Startup packages. 'After' needs to flow back to an always-loaded package
+
+                      epg = {
+                        enable = true;
+                        config = ''
+                          (setq epg-pinentry-mode 'loopback)
+                          (pinentry-start)
+                        '';
+                      };
+                      auth-source = {
+                        enable = true;
+                        config = ''
+                          (setq auth-sources '("/secrets/gpg/.authinfo.gpg"))
+                        '';
+                      };
                       dash = {
                         enable = true;
                       };
