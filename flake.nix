@@ -580,6 +580,7 @@
             gtk3
             imagemagickBig
             ripgrep
+            nil # nix language server
           ];
 
           fonts = {
@@ -1922,6 +1923,18 @@
 		                  };
                       ob-nix = {
                         enable = true;
+                      };
+                      elgot = {
+                        enable = true;
+                        command = [ "elgot" "elgot-ensure" ];
+                        config = ''
+                        ;; Elgot already has entries for R and nix
+                        '';
+                        hook = [
+                          "(nix-mode . elgot-ensure)"
+                          "(ess-r-mode . elgot-ensure)"
+                          "(R-mode . elgot-ensure)"
+                        ];
                       };
 		                };
 
