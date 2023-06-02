@@ -275,7 +275,11 @@
         swapDevices = [
           {
             device = "/swap/swapfile";
-            size = (1024 * 64) * 2; # Double RAM size. RHEL recommends 1.5x
+            # 8GB swap. RAM is AT LEAST 5x faster
+            # than M2 NVME. Almost always faster to
+            # just OOM, then restart the analysis
+            # either batched or sequentially.
+            size = (1024 * 1) * 8;
           }
         ];
         boot.kernelParams = ["resume_offset=4503599627370495"];
