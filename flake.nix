@@ -1448,23 +1448,114 @@
                       one-themes = {
                         enable = true;
                       };
+                      nerd-icons = {
+                        enable = true;
+                        config = ''
+                          (setq nerd-icons-font-family "FiraCode Nerd Font")
+                        '';
+                      };
                       kind-icon = {
                         enable = true;
-                        after = [ "corfu" ];
+                        after = [ "corfu" "nerd-icons" ];
                         config = ''
                           (add-to-list 'corfu-margin-formatters #'kind-icon-margin-formatter)
-                          (setq kind-icon-default-face 'corfu-default)
+                          (setq kind-icon-use-icons nil)
+                          (setq kind-icon-mapping
+                            `(
+                                (array ,(nerd-icons-codicon "nf-cod-symbol_array") :face font-lock-type-face)
+                                (boolean ,(nerd-icons-codicon "nf-cod-symbol_boolean") :face font-lock-builtin-face)
+                                (class ,(nerd-icons-codicon "nf-cod-symbol_class") :face font-lock-type-face)
+                                (color ,(nerd-icons-codicon "nf-cod-symbol_color") :face success)
+                                (command ,(nerd-icons-codicon "nf-cod-terminal") :face default)
+                                (constant ,(nerd-icons-codicon "nf-cod-symbol_constant") :face font-lock-constant-face)
+                                (constructor ,(nerd-icons-codicon "nf-cod-triangle_right") :face font-lock-function-name-face)
+                                (enummember ,(nerd-icons-codicon "nf-cod-symbol_enum_member") :face font-lock-builtin-face)
+                                (enum-member ,(nerd-icons-codicon "nf-cod-symbol_enum_member") :face font-lock-builtin-face)
+                                (enum ,(nerd-icons-codicon "nf-cod-symbol_enum") :face font-lock-builtin-face)
+                                (event ,(nerd-icons-codicon "nf-cod-symbol_event") :face font-lock-warning-face)
+                                (field ,(nerd-icons-codicon "nf-cod-symbol_field") :face font-lock-variable-name-face)
+                                (file ,(nerd-icons-codicon "nf-cod-symbol_file") :face font-lock-string-face)
+                                (folder ,(nerd-icons-codicon "nf-cod-folder") :face font-lock-doc-face)
+                                (interface ,(nerd-icons-codicon "nf-cod-symbol_interface") :face font-lock-type-face)
+                                (keyword ,(nerd-icons-codicon "nf-cod-symbol_keyword") :face font-lock-keyword-face)
+                                (macro ,(nerd-icons-codicon "nf-cod-symbol_misc") :face font-lock-keyword-face)
+                                (magic ,(nerd-icons-codicon "nf-cod-wand") :face font-lock-builtin-face)
+                                (method ,(nerd-icons-codicon "nf-cod-symbol_method") :face font-lock-function-name-face)
+                                (function ,(nerd-icons-codicon "nf-cod-symbol_method") :face font-lock-function-name-face)
+                                (module ,(nerd-icons-codicon "nf-cod-file_submodule") :face font-lock-preprocessor-face)
+                                (numeric ,(nerd-icons-codicon "nf-cod-symbol_numeric") :face font-lock-builtin-face)
+                                (operator ,(nerd-icons-codicon "nf-cod-symbol_operator") :face font-lock-comment-delimiter-face)
+                                (param ,(nerd-icons-codicon "nf-cod-symbol_parameter") :face default)
+                                (property ,(nerd-icons-codicon "nf-cod-symbol_property") :face font-lock-variable-name-face)
+                                (reference ,(nerd-icons-codicon "nf-cod-references") :face font-lock-variable-name-face)
+                                (snippet ,(nerd-icons-codicon "nf-cod-symbol_snippet") :face font-lock-string-face)
+                                (string ,(nerd-icons-codicon "nf-cod-symbol_string") :face font-lock-string-face)
+                                (struct ,(nerd-icons-codicon "nf-cod-symbol_structure") :face font-lock-variable-name-face)
+                                (text ,(nerd-icons-codicon "nf-cod-text_size") :face font-lock-doc-face)
+                                (typeparameter ,(nerd-icons-codicon "nf-cod-list_unordered") :face font-lock-type-face)
+                                (type-parameter ,(nerd-icons-codicon "nf-cod-list_unordered") :face font-lock-type-face)
+                                (unit ,(nerd-icons-codicon "nf-cod-symbol_ruler") :face font-lock-constant-face)
+                                (value ,(nerd-icons-codicon "nf-cod-symbol_field") :face font-lock-builtin-face)
+                                (variable ,(nerd-icons-codicon "nf-cod-symbol_variable") :face font-lock-variable-name-face)
+                                (t ,(nerd-icons-codicon "nf-cod-code") :face font-lock-warning-face)))
+
+                                ;(plist-put kind-icon-default-style :height 0.9)
+
+                          ;(setq kind-icon-default-face 'corfu-default)
                         '';
                       };
                       corfu = {
                         enable = true;
                         init = ''
-                          (global-cofu-mode)
+                          (global-corfu-mode)
                         '';
                         config = ''
                           (setq corfu-quit-no-match nil
-                                corfu-quit-at-boundary nil
+                                corfu-quit-at-boundary 'separator
+                                corfu-preview-current nil
+                                corfu-preselect 'prompt
+                                corfu-scroll-margin 5
                           )
+
+                          (defun corfu-enable-always-in-minibuffer ()
+                            "Enable Corfu in the minibuffer if Vertico/Mct are not active."
+                            (unless (or (bound-and-true-p mct--active)
+                                        (bound-and-true-p vertico--input)
+                                        (eq (current-local-map) read-passwd-map))
+                              ;; (setq-local corfu-auto nil) ;; Enable/disable auto completion
+                              (setq-local corfu-echo-delay nil ;; Disable automatic echo and popup
+                                          corfu-popupinfo-delay nil)
+                              (corfu-mode 1)))
+                          (add-hook 'minibuffer-setup-hook #'corfu-enable-always-in-minibuffer 1)
+
+                          (add-hook 'eshell-mode-hook
+                            (lambda ()
+                              (setq-local corfu-auto nil)
+                              (corfu-mode)))
+
+                          (defun corfu-send-shell (&rest _)
+                            "Send completion candidate when inside comint/eshell."
+                            (cond
+                             ((and (derived-mode-p 'eshell-mode) (fboundp 'eshell-send-input))
+                              (eshell-send-input))
+                             ((and (derived-mode-p 'comint-mode)  (fboundp 'comint-send-input))
+                              (comint-send-input))))
+
+                          (advice-add #'corfu-insert :after #'corfu-send-shell)
+
+                          (defun corfu-move-to-minibuffer ()
+                            (interactive)
+                            (when completion-in-region--data
+                              (let ((completion-extra-properties corfu--extra)
+                                    completion-cycle-threshold completion-cycling)
+                                (apply #'consult-completion-in-region completion-in-region--data))))
+                          (keymap-set corfu-map "M-m" #'corfu-move-to-minibuffer)
+
+                          (keymap-set corfu-map "M-q" #'corfu-quick-complete)
+                          (keymap-set corfu-map "C-q" #'corfu-quick-insert)
+
+                          (corfu-popupinfo-mode 1)
+
                         '';
                       };
                       cape = {
