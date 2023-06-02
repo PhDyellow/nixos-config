@@ -1084,6 +1084,9 @@
                         enable = true;
 		                    config = ''
 			                    (objed-mode)
+                          (setq objed-disabled-modes '(epa-key-list-mode
+                              magit-mode))
+
 
 			                    ;; rebind switch to buffer with consult
 		                      (keymap-set objed-op-map "b" #'consult-buffer)
@@ -1107,7 +1110,7 @@
 
                           (objed-define-op nil my-objed-isend)
                           ;;objed-define-op will return objed-<my function name>, and I bind the returned function
-                          (keymap-set objed-op-map "a" #'objed-my-objed-isend)
+                          (keymap-set objed-op-map "RET" #'objed-my-objed-isend)
 
                           (keymap-set objed-op-map "z" #'embark-act)
                           (keymap-set objed-op-map "Z" #'embark-export)
