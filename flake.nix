@@ -86,6 +86,10 @@
       url = "github:chep/smarttabs/macro-fix";
       flake = false;
     };
+    denote = {
+      url = "git+https://git.sr.ht/~protesilaos/denote";
+      flake = false;
+    };
   };
 
   outputs = {self, nixpkgs-unstable, ...}@inputs: {
@@ -761,6 +765,44 @@
         nixpkgs.overlays = [
           inputs.emacs-overlay.overlays.default
         ];
+        systemd.timers."bib_reorganise" = {
+          description = "Move new bib entries to main collection to improve caching";
+          wantedBy = [ "timers.target" ];
+          timerConfig = {
+            OnBootSec = "2h";
+            OnUnitActiveSec = "2h";
+            Unit = "bib-reorganise";
+          };
+        };
+        systemd.services."bib_reorganise" = {
+
+          # set this service as a oneshot job
+          serviceConfig = {
+            Type = "oneshot";
+          };
+
+          # have the job run this shell script
+          script = with pkgs; ''
+                #!/bin/bash
+
+                # large, changes less frequently
+                BIG=/para/areas/bibliography__bib/readings.bib
+                # small, changes more frequently
+                SMALL=/para/areas/bibliography__bib/new_refs.bib
+
+                # size of small before script actually does anything
+                MAXSIZE=5000
+
+                # get file size
+                FILESIZE=$(stat -c%s "$SMALL")
+
+                if ((FILESIZE > MAXSIZE)); then
+                    # when $SMALL exceeds $MAXSIZE, move its content to $BIG
+                    cat "$SMALL" >> "$BIG"
+                    echo "" > "$SMALL"
+                fi
+              '';
+        };
 
 
         nix.settings = {
@@ -903,6 +945,14 @@
 		              smart-tabs-mode = prev.smart-tabs-mode.overrideAttrs (oldAttrs: {
 		                src = inputs.smart-tabs-mode;
 		              });
+                  # denote = prev.denote.overrideAttrs (oldAttrs: {
+                    # src = inputs.denote;
+                  # });
+                  # denote = prev.emacs.pkgs.trivialBuild {
+                    # pname = "denote";
+                    # version = "1.2.0";
+                    # src = inputs.denote;
+                  # };
                 };
                 init = {
                   enable = true;
@@ -1736,9 +1786,9 @@
                         enable = true;
                         config = ''
                           (setq org-id-method 'ts
-                                org-id-prefix "org-")
+                                org-id-prefix "org")
                           ;;Create id's agressively
-                          (setq org-id-link-to-org-use-id 'create-if-interactive-and-no-custom-id)
+                          (setq org-id-link-to-org-use-id 'create-if-interactive)
                           (defmacro my-add-id-to-heading (heading-func)
                                     `(advice-add ,heading-func :after
                                       #'(lambda (&rest rest-var)
@@ -1755,6 +1805,70 @@
                             file that do not already have one"
                             (interactive)
                               (org-map-entries 'org-id-get-create))
+
+
+                          (setq org-agenda-files "/para/areas/memx"
+                                org-agenda-file-regexp "\\`[^.].*_agenda.*\\.org\\'")
+                        '';
+                      };
+                      denote = {
+                        enable = true;
+                        after = [ "org" ];
+                        config = ''
+                          (setq denote-directory "/para/areas/memx/"
+                                denote-infer-keywords t
+                                denote-sort-keywords t
+                                denote-known-keywords '("agenda" "xagenda" "xnote")
+                                denote-prompts '(title keywords date)
+                                denote-date-prompt-use-org-read-date t
+                                denote-excluded-keywords-regexp '("xnote")
+                                denote-allow-multi-word-keywords nil
+                                denote-date-format nil
+                                denote-backlinks-show-context t)
+
+                          ;; org-todo-statistics-hook could be used to auto-add
+                          ;; a denote file to the agenda buffer
+                          (defun my-add-to-agenda (state)
+                            "Add the agenda tag to any denote notes that have
+                            todo entries added to them"
+                            (when (plist-get state :to)
+                              (denote-keywords-add "agenda")))
+
+                          (add-hook 'org-trigger-hook #'my-add-to-agenda)
+
+                        '';
+                      };
+                      consult-notes = {
+                        enable = true;
+                        after = [ "denote" ];
+                        config = ''
+                          (setq consult-notes-denote-display-id nil
+                                consult-notes-denote-dir nil)
+
+                          (consult-notes-org-headings-mode)
+                          (consult-notes-denote-mode)
+                        '';
+                      };
+
+                      citar = {
+                        enable = true;
+                        after = [ "org" "oc" ];
+                        config = ''
+                            (setq org-cite-global-bibliography
+                                    '("/para/areas/bibliography__bib/new_refs.bib"
+                                      "/para/areas/bibliography__bib/readings.bib")
+                                  org-cite-insert-processor 'citar
+                                  org-cite-follow-processor 'citar
+                                  org-cite-activate-processor 'citar
+                                  citar-at-point-function 'embark-act)
+                        '';
+                      };
+                      citar-denote = {
+                        enable = true;
+                        after = [ "citar" "denote" ];
+                        config = ''
+                          ;; Use citekey as note title
+                          (setq citar-denote-title-format nil)
                         '';
                       };
                       smart-tabs-mode = {
