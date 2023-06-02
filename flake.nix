@@ -1272,7 +1272,7 @@
                           #'command-completion-default-include-p
                           save-interprogram-paste-before-kill t
                           )
-                          (setq-default indent-tabs-mode nil)
+                          (setq-default indent-tabs-mode -1)
                         '';
                       };
                       emacs = {
@@ -1762,9 +1762,26 @@
                         config = ''
                           ;(setq-default indent-tabs-mode nil)
                           (setq-default tab-width 2)
-                          (add-hook 'ess-r-mode-hook
-                          (lambda () (setq indent-tabs-mode t)))
+                          ;(add-hook 'ess-r-mode-hook
+                          ;(lambda () (setq indent-tabs-mode -1)))
                         '';
+                      };
+                      ws-butler = {
+                        enable = true;
+                        config = ''
+                          (ws-butler-global-mode)
+                        '';
+                      };
+                      whitespace = {
+                        enable = true;
+                        after = [ "zenburn-theme" ];
+                        config = ''
+                          (setq whitespace-style '(face tabs trailing lines-tail missing-newline-at-eof empty big-indent space-before-tab space-after-tab)
+                                whitespace-global-modes '(not magit-mode eat-mode))
+                          (add-hook 'whitespace-mode-hook #'(lambda ()
+                                    (face-remap-add-relative 'whitespace-big-indent (zenburn-with-color-variables `(:foreground ,zenburn-red+2 :background ,zenburn-red-2)))))
+                          (global-whitespace-mode)
+                          '';
                       };
                       jinx = {
                         enable = true;
