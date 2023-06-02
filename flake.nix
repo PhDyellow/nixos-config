@@ -939,12 +939,12 @@
                   load-theme-buffer-local = prev.load-theme-buffer-local.overrideAttrs (oldAttrs: {
                     src = inputs.color-theme-buffer-local;
                   });
-		              isend-mode = prev.isend-mode.overrideAttrs (oldAttrs: {
-		                src = inputs.isend-mode;
-		              });
-		              smart-tabs-mode = prev.smart-tabs-mode.overrideAttrs (oldAttrs: {
-		                src = inputs.smart-tabs-mode;
-		              });
+                  isend-mode = prev.isend-mode.overrideAttrs (oldAttrs: {
+                    src = inputs.isend-mode;
+                  });
+                  smart-tabs-mode = prev.smart-tabs-mode.overrideAttrs (oldAttrs: {
+                    src = inputs.smart-tabs-mode;
+                  });
                   # denote = prev.denote.overrideAttrs (oldAttrs: {
                     # src = inputs.denote;
                   # });
@@ -1013,7 +1013,7 @@
 
                     #Packages configured
                     usePackage = {
-		                  ## Startup packages. 'After' needs to flow back to an always-loaded package
+                      ## Startup packages. 'After' needs to flow back to an always-loaded package
 
                       epg = {
                         enable = true;
@@ -1032,20 +1032,20 @@
                         enable = true;
                       };
                       noflet = {
-		                    after = ["dash"];
-		                    enable = true;
+                        after = ["dash"];
+                        enable = true;
                         init = ''
                           (require 'dash) ;;bug in noflet, uses dash without requiring it
                         '';
                       };
                       load-theme-buffer-local = {
-		                    after = [ "noflet" "god-mode" ];
+                        after = [ "noflet" "god-mode" ];
                         enable = false;
                         init = ''
                           (require 'noflet) ;; bug in load-theme-buffer-local: uses noflet without requiring it
                         '';
-		                    config = ''
-		                    '';
+                        config = ''
+                        '';
                       };
                       god-mode = {
                         enable = true;
@@ -1056,7 +1056,7 @@
                           (setq god-exempt-major-modes nil)
                           (setq god-exempt-predicates nil)
                           ;;(god-mode)
-			                    ;; (require 'load-theme-buffer-local)
+                          ;; (require 'load-theme-buffer-local)
                           ;; (add-hook 'god-mode-enabled-hook (lambda () (load-theme-buffer-local 'tango (current-buffer))))
                           ;; (add-hook 'god-mode-disabled-hook (lambda () (load-theme-buffer-local 'zenburn (current-buffer))))
                         '';
@@ -1080,25 +1080,25 @@
                         enable = true;
                       };
                       objed = {
-		                    after = [ "avy" "expand-region" "magit" ];
+                        after = [ "avy" "expand-region" "magit" ];
                         enable = true;
-		                    config = ''
-			                    (objed-mode)
+                        config = ''
+                          (objed-mode)
                           (setq objed-disabled-modes '(epa-key-list-mode
                               magit-mode))
 
 
-			                    ;; rebind switch to buffer with consult
-		                      (keymap-set objed-op-map "b" #'consult-buffer)
-			                    ;; Add magit shortcut
-			                    (keymap-set objed-op-map "g" #'magit-status)
+                          ;; rebind switch to buffer with consult
+                          (keymap-set objed-op-map "b" #'consult-buffer)
+                          ;; Add magit shortcut
+                          (keymap-set objed-op-map "g" #'magit-status)
 
 
-			                    ;; Avy objed combinations
-			                    ;; action for copying/killing object
-			                    ;; action for throwing object through isend
-			                    ;; action for teleporting object (kill and yank here)
-			                    ;; all these actions are supposed to leave me where I started
+                          ;; Avy objed combinations
+                          ;; action for copying/killing object
+                          ;; action for throwing object through isend
+                          ;; action for teleporting object (kill and yank here)
+                          ;; all these actions are supposed to leave me where I started
                           ;; never mind, I prefer to use embark or objed, then use 'l' (lower L) to step back
                           (defun my-objed-isend (beg end pref)
                             "Send object to associated buffer with isend"
@@ -1115,77 +1115,77 @@
                           (keymap-set objed-op-map "z" #'embark-act)
                           (keymap-set objed-op-map "Z" #'embark-export)
                           (keymap-set objed-op-map "l" #'consult-line)
-			                  '';
+                        '';
                       };
-		                  objed-game = {
-		                    after = ["objed"];
-		                    enable = true;
-		                  };
-		                  expand-region = {
-		                    enable = true;
-		                  };
+                      objed-game = {
+                        after = ["objed"];
+                        enable = true;
+                      };
+                      expand-region = {
+                        enable = true;
+                      };
                       avy = {
-		                    after = [ "embark" ];
-		                    enable = true;
+                        after = [ "embark" ];
+                        enable = true;
                         config = ''
-		                      (defun avy-action-embark (pt)
-			                      (unwind-protect
-			                        (save-excursion
- 			                          (goto-char pt)
-			                          (embark-act))
-			                        (select-window (cdr (ring-ref avy-ring 0))))
-			                      t)
-			                    (setf (alist-get ?o avy-dispatch-alist) 'avy-action-embark)
+                          (defun avy-action-embark (pt)
+                            (unwind-protect
+                              (save-excursion
+                                (goto-char pt)
+                                (embark-act))
+                              (select-window (cdr (ring-ref avy-ring 0))))
+                            t)
+                          (setf (alist-get ?o avy-dispatch-alist) 'avy-action-embark)
                         '';
                       };
                       embark = {
-		                    enable = true;
-		                    demand = true; # bind will prevent loading otherwise
-		                    bind = {
-		                      "C-h B" = "embark-bindings";
-			                    "M-o" = "embark-act";
-			                    "M-O" = "embark-export";
-			                    "C-;" = "embark-dwim";
+                        enable = true;
+                        demand = true; # bind will prevent loading otherwise
+                        bind = {
+                          "C-h B" = "embark-bindings";
+                          "M-o" = "embark-act";
+                          "M-O" = "embark-export";
+                          "C-;" = "embark-dwim";
                         };
-		                    config = ''
-			                    ;; Hide the mode line of the Embark live/completions buffers
+                        config = ''
+                          ;; Hide the mode line of the Embark live/completions buffers
                           (add-to-list 'display-buffer-alist
                           '("\\`\\*Embark Collect \\(Live\\|Completions\\)\\*"
                           nil
                           (window-parameters (mode-line-format . none))))
 
-		                    '';
-		                  };
-		                  embark-consult = {
-		                    after = [ "embark" "consult" ];
-		                    enable = true;
-		                    hook = [
-		                      "(embark-collect-mode . consult-preview-at-point-mode)"
-		                    ];
-		                  };
-		                  avy-embark-collect = {
-		                    after = [ "avy" "embark" ];
-		                    enable = true;
-		                  };
-		                  ace-window = {
-		                    after = ["avy"];
-		                    enable = true;
-		                    config = ''
-		                      (setq aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l)
-			                          aw-dispatch-always t)
-				                  (keymap-set objed-op-map "o" #'ace-window)
-		                    '';
-		                    bind = {
-		                      "C-x o" = "ace-window";
-		                    };
-		                  };
-		                  origami = {
-		                    enable = true;
-    		                config = ''
-		                      (add-to-list 'origami-parser-alist '(ess-r-mode . origami-c-style-parser))
-			                    (global-origami-mode)
-		                    '';
-		                  };
+                        '';
+                      };
+                      embark-consult = {
+                        after = [ "embark" "consult" ];
+                        enable = true;
+                        hook = [
+                          "(embark-collect-mode . consult-preview-at-point-mode)"
+                        ];
+                      };
+                      avy-embark-collect = {
+                        after = [ "avy" "embark" ];
+                        enable = true;
+                      };
+                      ace-window = {
+                        after = ["avy"];
+                        enable = true;
+                        config = ''
+                          (setq aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l)
+                                aw-dispatch-always t)
+                          (keymap-set objed-op-map "o" #'ace-window)
+                        '';
+                        bind = {
+                          "C-x o" = "ace-window";
+                        };
+                      };
+                      origami = {
+                        enable = true;
+                        config = ''
+                          (add-to-list 'origami-parser-alist '(ess-r-mode . origami-c-style-parser))
+                          (global-origami-mode)
+                        '';
+                      };
                       files = {
                         enable = true;
                         config = ''
@@ -1243,36 +1243,36 @@
                           (setq uniquify-buffer-name-style 'forward)
                         '';
                       };
-		                  ## May replace load-buffer-local-theme
-		                  prism = {
-		                    enable = true;
-		                    config = ''
-		                      ;;prism-colors was generated by
-		                      ;;running
-         		              ;;(prism-set-colors :num 24
-			                    ;;:colors  (zenburn-with-color-variables
-			                    ;;(list zenburn-red zenburn-green zenburn-orange zenburn-blue zenburn-yellow zenburn-magenta))
-		  	                  ;;:lightens (list 0 5 10 20)
-       		  	            ;;:desaturations (list 0 00 0 00  ))
-		  	                  ;;))
-		  	                  ;;(setq custom-file "~/emacs-custom-hack.el")
-		  	                  ;;(prism-save-colors)
-		  	                  ;; then reading the value of prism-colors from "~/emacs-custom-hack.el"
+                      ## May replace load-buffer-local-theme
+                      prism = {
+                        enable = true;
+                        config = ''
+                          ;;prism-colors was generated by
+                          ;;running
+                          ;;(prism-set-colors :num 24
+                          ;;:colors  (zenburn-with-color-variables
+                          ;;(list zenburn-red zenburn-green zenburn-orange zenburn-blue zenburn-yellow zenburn-magenta))
+                          ;;:lightens (list 0 5 10 20)
+                          ;;:desaturations (list 0 00 0 00  ))
+                          ;;))
+                          ;;(setq custom-file "~/emacs-custom-hack.el")
+                          ;;(prism-save-colors)
+                          ;; then reading the value of prism-colors from "~/emacs-custom-hack.el"
 
-			                    (setq
-		    	                  prism-colors '("#cc9393" "#7f9f7f" "#dfaf8f" "#8cd0d3" "#f0dfaf" "#dc8cc3" "#d19e9e" "#87a587" "#e3b99d" "#98d5d7" "#f3e5c0" "#e099ca" "#d7aaaa" "#8fab8f" "#e7c3ab" "#a5dadc" "#f6ecd1" "#e4a7d1" "#e2c2c2" "#9fb79f" "#efd7c7" "#bee4e6" "#fdfaf4" "#ecc3df")
-		    	                  prism-desaturations '(0 0 0 0)
-		    	                  prism-lightens '(0 5 10 20)
-		    	                  prism-num-faces 24)
-		    	                (prism-set-colors)
-		                    '';
-		                  };
-		                  smartparens = {
-		                    enable = true;
-		                  };
+                          (setq
+                            prism-colors '("#cc9393" "#7f9f7f" "#dfaf8f" "#8cd0d3" "#f0dfaf" "#dc8cc3" "#d19e9e" "#87a587" "#e3b99d" "#98d5d7" "#f3e5c0" "#e099ca" "#d7aaaa" "#8fab8f" "#e7c3ab" "#a5dadc" "#f6ecd1" "#e4a7d1" "#e2c2c2" "#9fb79f" "#efd7c7" "#bee4e6" "#fdfaf4" "#ecc3df")
+                            prism-desaturations '(0 0 0 0)
+                            prism-lightens '(0 5 10 20)
+                            prism-num-faces 24)
+                          (prism-set-colors)
+                        '';
+                      };
+                      smartparens = {
+                        enable = true;
+                      };
                       smartparens-config = {
-		                    after = [ "smartparens" ];
-		                    enable = true;
+                        after = [ "smartparens" ];
+                        enable = true;
                         config = ''
                           ;; Turn off smartparens auto features,
                           ;; Sometimes they don't hurt me,
@@ -1288,7 +1288,7 @@
                                 sp-autoskip-opening-pair nil
                                 sp-autoskip-closing-pair nil)
                           (smartparens-global-mode)
-		                      (show-smartparens-global-mode)
+                          (show-smartparens-global-mode)
                         '';
                       };
                       vundo = {
@@ -1298,7 +1298,7 @@
                         enable = true;
                         config = ''
                           (setq default-frame-alist '((font . "FiraCode Nerd Font 18")))
-		                      (blink-cursor-mode 0)
+                          (blink-cursor-mode 0)
                         '';
                       };
                       crm = {
@@ -1350,25 +1350,25 @@
                       };
                       magit = {
                         enable = true;
-		                    config = ''
-		                      (setq magit-refresh-status-buffer nil)
-		                    '';
+                        config = ''
+                          (setq magit-refresh-status-buffer nil)
+                        '';
                       };
                       forge = {
                         enable = true;
                       };
-		                  git-timemachine = {
-		                    enable = true;
-		                  };
+                      git-timemachine = {
+                        enable = true;
+                      };
                       vterm = {
                         enable = true;
                       };
                       eat = {
                         enable = true;
                       };
-		                  xref = {
-		                    enable = true;
-		                  };
+                      xref = {
+                        enable = true;
+                      };
                       consult = {
                         enable = true;
                         hook = [
@@ -1423,7 +1423,7 @@
                       };
                       marginalia = {
                         enable = true;
-		                    demand = true;
+                        demand = true;
                         config = ''
                           (marginalia-mode)
                         '';
@@ -1457,7 +1457,7 @@
                       recentf = {
                         enable = true;
                         init = ''
-		                      (setq recentf-max-saved-items nil
+                          (setq recentf-max-saved-items nil
                                 recentf-save-file (concat user-emacs-directory ".local/cache/recentf"))
                           (recentf-mode 1)
                         '';
@@ -1480,40 +1480,40 @@
                           (vertico-mode)
                         '';
                       };
-		                  vertico-quick = {
-		                    after = [ "vertico" ];
-		                    enable = true;
-		                    bindLocal = {
-		                      vertico-map = {
-			                      "M-q" = "vertico-quick-insert";
-			                      "C-q" = "vertico-quick-exit";
-			                    };
-		                    };
-		                  };
-		                  vertico-buffer = {
-		                    after = [ "vertico" ];
-		                    enable = true;
-		                    config = ''
+                      vertico-quick = {
+                        after = [ "vertico" ];
+                        enable = true;
+                        bindLocal = {
+                          vertico-map = {
+                            "M-q" = "vertico-quick-insert";
+                            "C-q" = "vertico-quick-exit";
+                          };
+                        };
+                      };
+                      vertico-buffer = {
+                        after = [ "vertico" ];
+                        enable = true;
+                        config = ''
                           (vertico-buffer-mode)
-		                      (setq vertico-buffer-display-action
-			                    '(display-buffer-in-side-window (side . left)
-			                    (window-width . 0.5)))
-		                    '';
-		                  };
-		                  vertico-directory = {
-		                    after = [ "vertico" ];
-		                    enable = true;
-		                    bindLocal = {
-		                      vertico-map = {
-			                      "RET" = "vertico-directory-enter";
-			                      "DEL" = "vertico-directory-delete-char";
-			                      "M-DEL" = "vertico-directory-delete-word";
-			                    };
-		                    };
-		                    hook = [
-		                      "(rfn-eshadow-update-overlay . vertico-directory-tidy)"
-	                      ];
-		                  };
+                          (setq vertico-buffer-display-action
+                          '(display-buffer-in-side-window (side . left)
+                          (window-width . 0.5)))
+                        '';
+                      };
+                      vertico-directory = {
+                        after = [ "vertico" ];
+                        enable = true;
+                        bindLocal = {
+                          vertico-map = {
+                            "RET" = "vertico-directory-enter";
+                            "DEL" = "vertico-directory-delete-char";
+                            "M-DEL" = "vertico-directory-delete-word";
+                          };
+                        };
+                        hook = [
+                          "(rfn-eshadow-update-overlay . vertico-directory-tidy)"
+                        ];
+                      };
                       image-dired = {
                         enable = true;
                         config = ''
@@ -1674,8 +1674,8 @@
                       };
                       org = {
                         enable = true;
-		                    demand = true;
-		                    init = ''
+                        demand = true;
+                        init = ''
                         '';
                         config = ''
                           ;;Add R to org-babel
@@ -1684,7 +1684,7 @@
                             '((emacs-lisp . t)
                             (R . t)))
 
-		                      ;;Allow code blocks to execute without asking me every time
+                          ;;Allow code blocks to execute without asking me every time
                           ;; for safetly though, don't allow C-c C-c to evaluate blocks
                            (setq org-confirm-babel-evaluate (lambda (lang src) (if (string= lang "R") nil t))
                                  org-babel-no-eval-on-ctrl-c-ctrl-c t)
@@ -1745,15 +1745,15 @@
                       helm-org-rifle = {
                         enable = true;
                       };
-		                  org-super-links = {
-		                    enable = true;
-		                    after = [ "org" ];
+                      org-super-links = {
+                        enable = true;
+                        after = [ "org" ];
                         config = ''
                           (setq org-super-links-search-function "helm-org-rifle")
                         '';
-		                  };
+                      };
                       org-sltypes = {
-		                    after = [ "org-super-links" ];
+                        after = [ "org-super-links" ];
                         enable = true;
                       };
                       org-slt-phdyellow = {
@@ -2029,49 +2029,49 @@
                           (add-hook 'eww-after-render-hook #'shrface-mode)
                         '';
                       };
-		                  ##Packages loaded when needed
-		                  free-keys = {
+                      ##Packages loaded when needed
+                      free-keys = {
                         enable = true;
-		                    command = [ "free-keys" ];
+                        command = [ "free-keys" ];
                       };
-		                  ess-site = {
-		                    enable= true;
-		                    mode = [ ''
-		                      ("\\.Rd\\'" . Rd-mode)
- 		                      ("DESCRIPTION\\'" . conf-colon-mode)
- 		                      ("\\.Rd\\'" . Rd-mode)
-		                      ("DESCRIPTION\\'" . conf-colon-mode)
-		                      ("\\.[Rr]out\\'" . ess-r-transcript-mode)
-		                      ("CITATION\\'" . ess-r-mode)
-		                      ("NAMESPACE\\'" . ess-r-mode)
-		                      ("\\.[rR]profile\\'" . ess-r-mode)
-		                      ("\\.[rR]\\'" . ess-r-mode)
-		                      ("/R/.*\\.q\\'" . ess-r-mode)
-		                      ("\\.[Jj][Aa][Gg]\\'" . ess-jags-mode)
-		                      ("\\.[Bb][Mm][Dd]\\'" . ess-bugs-mode)
- 		                      ("\\.[Bb][Oo][Gg]\\'" . ess-bugs-mode)
- 		                      ("\\.[Bb][Uu][Gg]\\'" . ess-bugs-mode)
-		                    '' ];
-   		                  extraConfig = ''
-		                      :interpreter (("r" . ess-r-mode)
- 		                      ("Rscript" . ess-r-mode))
-		                    '';
-		                  };
+                      ess-site = {
+                        enable= true;
+                        mode = [ ''
+                          ("\\.Rd\\'" . Rd-mode)
+                          ("DESCRIPTION\\'" . conf-colon-mode)
+                          ("\\.Rd\\'" . Rd-mode)
+                          ("DESCRIPTION\\'" . conf-colon-mode)
+                          ("\\.[Rr]out\\'" . ess-r-transcript-mode)
+                          ("CITATION\\'" . ess-r-mode)
+                          ("NAMESPACE\\'" . ess-r-mode)
+                          ("\\.[rR]profile\\'" . ess-r-mode)
+                          ("\\.[rR]\\'" . ess-r-mode)
+                          ("/R/.*\\.q\\'" . ess-r-mode)
+                          ("\\.[Jj][Aa][Gg]\\'" . ess-jags-mode)
+                          ("\\.[Bb][Mm][Dd]\\'" . ess-bugs-mode)
+                          ("\\.[Bb][Oo][Gg]\\'" . ess-bugs-mode)
+                          ("\\.[Bb][Uu][Gg]\\'" . ess-bugs-mode)
+                        '' ];
+                        extraConfig = ''
+                          :interpreter (("r" . ess-r-mode)
+                          ("Rscript" . ess-r-mode))
+                        '';
+                      };
                       ess = {
-		                    after = [ "ess-site" ];
-		                    enable = true;
+                        after = [ "ess-site" ];
+                        enable = true;
                         config = ''
                           ;;(setq inferior-ess-r-program "radian") ;;  ESS can't speak radian's language
                         '';
                       };
                       nix-mode = {
                         enable = true;
-		                    mode = [ ''"\\\\.nix\\\\'"''];
+                        mode = [ ''"\\\\.nix\\\\'"''];
                       };
-		                  nixos-options = {
-		                    enable = true;
-		                    mode = [ ''"\\\\.nix\\\\'"'' ];
-		                  };
+                      nixos-options = {
+                        enable = true;
+                        mode = [ ''"\\\\.nix\\\\'"'' ];
+                      };
                       ob-nix = {
                         enable = true;
                       };
@@ -2087,7 +2087,7 @@
                           "(R-mode . elgot-ensure)"
                         ];
                       };
-		                };
+                    };
 
                 };
               };
