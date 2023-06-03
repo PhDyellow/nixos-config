@@ -1014,12 +1014,17 @@
                     #Packages configured
                     usePackage = {
                       ## Startup packages. 'After' needs to flow back to an always-loaded package
-
+                      pinentry = {
+                        enable = true;
+                        after = [ "epg" ];
+                        config = ''
+                          (pinentry-start)
+                        '';
+                      };
                       epg = {
                         enable = true;
                         config = ''
                           (setq epg-pinentry-mode 'loopback)
-                          (pinentry-start)
                         '';
                       };
                       auth-source = {
