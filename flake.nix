@@ -2095,21 +2095,20 @@
                       };
                       eglot = {
                         enable = true;
-                        command = [ "elgot" "elgot-ensure" ];
+                        command = [ "eglot" "eglot-ensure" ];
                         config = ''
-                        ;; Elgot already has entries for R and nix
+                        ;; Eglot already has entries for R and nix
                         '';
                         hook = [
-                          "(nix-mode . elgot-ensure)"
-                          "(ess-r-mode . elgot-ensure)"
-                          "(R-mode . elgot-ensure)"
+                          "(nix-mode . eglot-ensure)"
+                          "(ess-r-mode . eglot-ensure)"
+                          "(R-mode . eglot-ensure)"
                         ];
                       };
                     };
 
                 };
               };
-
               bash = {
                 enable = true;
               };
