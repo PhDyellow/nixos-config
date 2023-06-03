@@ -879,7 +879,7 @@
             programs = {
               emacs = {
                 enable = true;
-                package = pkgs.emacsPgtk;
+                package = pkgs.emacs-pgtk;
                 extraPackages = epkgs: [
                 ];
                 overrides = final: prev: {
