@@ -209,6 +209,15 @@
             '';
           };
         };
+        ## Needed by tuxedo-nixos
+        ## Supposed to be set by tuxedo-nixos, but
+        ## not being seen for some reason
+        nixpkgs.config.permittedInsecurePackages = [
+          "openssl-1.1.1u"
+          "openssl-1.1.1t"
+          "nodejs-14.21.3"
+          "electron-13.6.9"
+        ];
         boot = {
           #The next line may fix a system crash in nvidia 525.xx.xx
           #Nvidia has enabled a new feature in 510, GSP, but logs
