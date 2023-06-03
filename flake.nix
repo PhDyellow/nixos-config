@@ -2080,7 +2080,7 @@
                       ob-nix = {
                         enable = true;
                       };
-                      elgot = {
+                      eglot = {
                         enable = true;
                         command = [ "elgot" "elgot-ensure" ];
                         config = ''
