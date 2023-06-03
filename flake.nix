@@ -2126,7 +2126,6 @@
                 userEmail = "phildyer@protonmail.com";
                 extraConfig = {
                   core = {
-                    editor = "nvim";
                     autocrlf = "input";
                   };
                   github.user = "PhDyellow";
