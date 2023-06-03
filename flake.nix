@@ -171,7 +171,7 @@
                   "useControl": true,
                   "fanProfile": "Freezy",
                   "minimumFanspeed": 0,
-                  "offsetFanspeed": 37
+                  "offsetFanspeed": 5
                 },
                 "odmProfile": {
                   "name": "performance"
