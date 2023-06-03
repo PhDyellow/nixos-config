@@ -38,7 +38,8 @@
       url = "github:nix-community/NUR";
     };
     emacs-overlay = {
-      url = "github:nix-community/emacs-overlay?rev=42a2a718bdcbe389e7ef284666d4aba09339a416";
+      url = "github:nix-community/emacs-overlay";
+      # url = "github:nix-community/emacs-overlay?rev=42a2a718bdcbe389e7ef284666d4aba09339a416";
       # url = "github:nix-community/emacs-overlay?rev=0acd590f3b518dfc8354bf9ed5c82e1401c4e6b0";
       #;https://github.com/nix-community/emacs-overlay/commit/e9e67599cda6f57f37178fd33ccff86cc2c2d6c4
       #url = "github:nix-community/emacs-overlay?rev=f57192297f370f8f01b1476023ca29caf032b20a";https://github.com/nix-community/emacs-overlay/commit/#start-of-content
