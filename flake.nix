@@ -767,6 +767,24 @@
 
         };
       };
+      direnv = {config, pkgs, ... }: {
+        imports = [
+          inputs.home-manager.nixosModules.home-manager
+        ];
+        ## Needed by direnv and nix-direnv to properly pin nix shells
+        nix.settings = {
+          keep-outputs = true;
+          keep-derivations = true;
+        };
+        home-manager = {
+          programs.direnv = {
+            enable = true;
+            nix-direnv = {
+              enable = true;
+            };
+          };
+        };
+      };
       phil_home = {config, pkgs, ...}: {
         imports = [
           inputs.home-manager.nixosModules.home-manager
@@ -2410,6 +2428,7 @@
           #self.nixosModules.xfce_desktop
           self.nixosModules.phil_home
           self.nixosModules.spell_checkers
+          self.nixosModules.direnv
         ];
       };
     };
