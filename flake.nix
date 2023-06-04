@@ -843,6 +843,7 @@
 
           #config inserted before use-package
           users.phil = {
+            shell = pkgs.fish;
             imports = let
               nurNoPkgs = import inputs.nur { pkgs = null; nurpkgs = pkgs; };
             in [
