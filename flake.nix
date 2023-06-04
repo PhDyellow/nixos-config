@@ -776,7 +776,7 @@
           keep-outputs = true;
           keep-derivations = true;
         };
-        home-manager = {
+        home-manager.users.phil = {
           programs.direnv = {
             enable = true;
             nix-direnv = {
