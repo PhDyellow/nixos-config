@@ -900,7 +900,8 @@
                 defaultEditor = true;
                 ## Allow server to start with graphics so wayland session is
                 ## correctly detected by server
-                socketActivation.enable = true;
+                # socketActivation.enable = true;
+                startWithUserSession = "graphical";
               };
             };
 
