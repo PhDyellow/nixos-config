@@ -595,6 +595,7 @@
             imagemagickBig
             ripgrep
             nil # nix language server
+            # rnix-lsp # nix language server
           ];
 
           fonts = {
@@ -1047,6 +1048,19 @@
                     #Packages configured
                     usePackage = {
                       ## Startup packages. 'After' needs to flow back to an always-loaded package
+                      editorconfig = {
+                        enable = true;
+                        config = ''
+                          (editorconfig-mode 1)
+                          (setq editorconfig-trim-whitespace-mode 'ws-butler-mode)
+                        '';
+                      };
+                      envrc = {
+                        enable = true;
+                        config = ''
+                          (envrc-global-mode)
+                        '';
+                      };
                       pinentry = {
                         enable = true;
                         after = [ "epg" ];
@@ -2117,6 +2131,12 @@
                         enable = true;
                         command = [ "eglot" "eglot-ensure" ];
                         config = ''
+                          ;(add-to-list 'eglot-server-programs
+                           ;   `(nix-mode . ("nil" :initializationOptions
+                            ;     (:nix
+                             ;     (:flake (:autoArchive t
+                              ;    :autoEvalInputs t
+                               ;   :nixpkgsInputName "nixpkgs-unstable"))))))
                         ;; Eglot already has entries for R and nix
                         '';
                         hook = [
