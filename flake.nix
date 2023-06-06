@@ -496,6 +496,7 @@
             shell = pkgs.fish;
           };
         };
+        programs.fish.enable = true;
       };
       prime_ai_tailscale = {config, pkgs, ...}:
       {
