@@ -596,6 +596,7 @@
             ripgrep
             nil # nix language server
             # rnix-lsp # nix language server
+            elvish
           ];
 
           fonts = {
@@ -2157,9 +2158,6 @@
                 enable = true;
               };
               nushell = {
-                enable = true;
-              };
-              elvish = {
                 enable = true;
               };
               gpg = {
