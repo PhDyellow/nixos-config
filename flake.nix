@@ -2156,6 +2156,12 @@
               fish = {
                 enable = true;
               };
+              nushell = {
+                enable = true;
+              };
+              elvish = {
+                enable = true;
+              };
               gpg = {
                 enable = true;
               };
