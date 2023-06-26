@@ -489,6 +489,22 @@
             };
           };
         };
+      prime_ai_syncthing = {config, pkgs, ...}:
+        {
+          services.syncthing = {
+            enable = true;
+            dataDir = "/para/resources/syncthing";
+            configDir = "home/phil/.config/syncthing";
+            overrideDevices = true;
+            overrideFolders = true;
+            devices = {
+
+            };
+            folders = {
+
+            };
+          };
+        };
       phil_user = {config, pkgs, ...}:
         {
           age.secrets.user_phil_pwd.file = "/secrets/agenix/user_phil_pwd.age";
