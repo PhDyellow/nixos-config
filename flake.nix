@@ -494,7 +494,7 @@
           services.syncthing = {
             enable = true;
             dataDir = "/para/resources/syncthing";
-            configDir = "home/phil/.config/syncthing";
+            configDir = "/home/phil/.config/syncthing";
             overrideDevices = true;
             overrideFolders = true;
             devices = {
