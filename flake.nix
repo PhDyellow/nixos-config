@@ -97,11 +97,11 @@
 
   outputs = {self, nixpkgs-unstable, ...}@inputs: {
     nixosModules = {
-      prime-ai_hardware_config = { config, lib, pkgs, modulesPath, ...}:
-      let
-        tcc-profile = pkgs.writeTextFile {
-          name = "tcc-profile";
-          text =  ''
+      prime-ai_hardware_config_tuxedo = { config, lib, pkgs, modulesPath, ...}:
+        let
+          tcc-profile = pkgs.writeTextFile {
+            name = "tcc-profile";
+            text =  ''
             [
               {
                 "id": "__default_custom_profile__",
@@ -141,13 +141,13 @@
                 "name": "freezy",
                 "description": "Edit profile to change behaviour",
                 "display": {
-                  "brightness": 5,
-                  "useBrightness": false
+                  "brightness": 50,
+                  "useBrightness": true
                 },
                 "cpu": {
                   "useMaxPerfGov": false,
                   "governor": "powersave",
-                  "energyPerformancePreference": "balance_performance",
+                  "energyPerformancePreference": "performance",
                   "noTurbo": false,
                   "onlineCores": 24,
                   "scalingMinFrequency": 550000,
@@ -173,46 +173,61 @@
               }
             ]
           '';
-        };
-      in
-      {
-        imports = [
-          (modulesPath + "/installer/scan/not-detected.nix")
-          inputs.nixos-hardware.nixosModules.common-cpu-amd-pstate
-          inputs.nixos-hardware.nixosModules.common-cpu-amd
-          inputs.nixos-hardware.nixosModules.common-pc-ssd
-          inputs.nixos-hardware.nixosModules.common-pc
-          inputs.nixos-hardware.nixosModules.common-gpu-nvidia-nonprime
-          inputs.tuxedo-nixos.nixosModules.default
-        ];
-        #powerManagement.cpuFreqGovernor = "performance"; #forced to schedutil by tuxedo control center
-        hardware.tuxedo-control-center.enable = true;
-        systemd.services = {
-          create-tcc-profile = {
-            serviceConfig.Type = "oneshot";
-            before = [ "tccd.service" ];
-            wantedBy = [ "multi-user.target" ];
-            script = ''
+          };
+        in
+          {
+            imports = [
+              inputs.tuxedo-nixos.nixosModules.default
+            ];
+            #powerManagement.cpuFreqGovernor = "performance"; #forced to schedutil by tuxedo control center
+            hardware.tuxedo-control-center.enable = true;
+            systemd.services = {
+              create-tcc-profile = {
+                serviceConfig.Type = "oneshot";
+                before = [ "tccd.service" ];
+                wantedBy = [ "multi-user.target" ];
+                script = ''
               mkdir -p /var/lib/tcc
               rm -f /var/lib/tcc/profiles
               ln -s ${tcc-profile} /var/lib/tcc/profiles
             '';
+              };
+            };
+            hardware.tuxedo-keyboard.enable = true;
+            environment.systemPackages = [
+              pkgs.linuxPackages.tuxedo-keyboard
+            ];
+            # boot.kernelParams = [
+            #   "tuxedo_keyboard.mode=0"
+            #   "tuxedo_keyboard.brightness=10"
+            #   "tuxedo_keyboard.color_left=0xff0a0a"
+            # ];
+            ## Needed by tuxedo-nixos
+            ## Supposed to be set by tuxedo-nixos, but
+            ## not being seen for some reason
+            nixpkgs.config.permittedInsecurePackages = [
+              "openssl-1.1.1u"
+              "openssl-1.1.1t"
+              "nodejs-14.21.3"
+              "electron-13.6.9"
+            ];
+
           };
-        };
-        ## Needed by tuxedo-nixos
-        ## Supposed to be set by tuxedo-nixos, but
-        ## not being seen for some reason
-        nixpkgs.config.permittedInsecurePackages = [
-          "openssl-1.1.1u"
-          "openssl-1.1.1t"
-          "nodejs-14.21.3"
-          "electron-13.6.9"
-        ];
-        boot = {
-          #The next line may fix a system crash in nvidia 525.xx.xx
-          #Nvidia has enabled a new feature in 510, GSP, but logs
-          #show it was the cause of failure in my laptop.
-          extraModprobeConfig = ''
+      prime-ai_hardware_config = { config, lib, pkgs, modulesPath, ...}:
+          {
+            imports = [
+              (modulesPath + "/installer/scan/not-detected.nix")
+              inputs.nixos-hardware.nixosModules.common-cpu-amd-pstate
+              inputs.nixos-hardware.nixosModules.common-cpu-amd
+              inputs.nixos-hardware.nixosModules.common-pc-ssd
+              inputs.nixos-hardware.nixosModules.common-pc
+              inputs.nixos-hardware.nixosModules.common-gpu-nvidia-nonprime
+            ];
+            boot = {
+              #The next line may fix a system crash in nvidia 525.xx.xx
+              #Nvidia has enabled a new feature in 510, GSP, but logs
+              #show it was the cause of failure in my laptop.
+              extraModprobeConfig = ''
             options nvidia NVreg_EnableGpuFirmware=0
 
           '';
@@ -2448,6 +2463,7 @@
         system = "x86_64-linux";
         modules = [
           self.nixosModules.prime-ai_hardware_config
+          self.nixosModules.prime-ai_hardware_config_tuxedo
           self.nixosModules.system_config
           self.nixosModules.phil_user
           self.nixosModules.wifi_secrets
