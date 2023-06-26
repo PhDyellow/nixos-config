@@ -1825,10 +1825,19 @@
                           "C-c C-i" = "org-slt-phdyellow";
                         };
                       };
-                      org-transclusion = {
-                        after = [ "org" ];
-                        enable = true;
-                      };
+                    };
+                    org-transclusion = {
+                      after = [ "org" ];
+                      enable = true;
+                      config = ''
+                        (add-to-list 'org-transclusion-extensions 'org-transclusion-src-lines)
+                        (require 'org-transclusion-src-lines)
+
+                        (add-to-list 'org-transclusion-extensions 'org-transclusion-font-lock)
+                        (require 'org-transclusion-font-lock)
+
+                      '';
+                    };
                     org-edna = {
                       after = [ "org" ];
                       enable = true;
