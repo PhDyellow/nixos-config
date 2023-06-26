@@ -231,55 +231,55 @@
             options nvidia NVreg_EnableGpuFirmware=0
 
           '';
-          initrd = {
-            luks.devices."nixos-crypt".device =
-              "dev/disk/by-uuid/c4129dcf-90da-4d0c-8da9-880b9c111e6f";
+              initrd = {
+                luks.devices."nixos-crypt".device =
+                  "dev/disk/by-uuid/c4129dcf-90da-4d0c-8da9-880b9c111e6f";
 
-              availableKernelModules = [
-                "nvme"
-                "xhci_pci"
-                "ahci"
-                "sdhci_pci"
+                availableKernelModules = [
+                  "nvme"
+                  "xhci_pci"
+                  "ahci"
+                  "sdhci_pci"
+                ];
+                kernelModules = [ ];
+              };
+              kernelModules = [
+                "kvm-amd"
+                "msr" #for zenstates
+                #"k10temp"
+                "cpuid"
+                "lm92"
+                "zenpower"
               ];
-              kernelModules = [ ];
-          };
-          kernelModules = [
-            "kvm-amd"
-            "msr" #for zenstates
-            #"k10temp"
-            "cpuid"
-            "lm92"
-            "zenpower"
-          ];
-          blacklistedKernelModules = [
-            "k10temp"
-          ];
-          extraModulePackages = [
-            config.boot.kernelPackages.zenpower];
-            bootspec.enable = true; #needed for lanzaboote secureboot
-            supportedFilesystems = [
-              "ntfs" #needed for NTFS support
-              "btrfs"
-            ];
-        };
-        fileSystems = {
-          "/" = {
-            device = "/dev/mapper/nixos-crypt";
-            fsType = "btrfs";
-          };
-          "/boot" = {
-            device = "/dev/disk/by-partuuid/5a687aae-d3c0-4f4e-b580-5ce32bec51b2";
-            fsType = "vfat";
-          };
-        };
-        #Swapfile
-        #Swapfile is created by
-        #sudo btrfs subvolume create /swap
-        systemd.services = {
-          create-swapfile = {
-            serviceConfig.Type = "oneshot";
-            wantedBy = [ "swap-swapfile.swap" ];
-            script = ''
+              blacklistedKernelModules = [
+                "k10temp"
+              ];
+              extraModulePackages = [
+                config.boot.kernelPackages.zenpower];
+              bootspec.enable = true; #needed for lanzaboote secureboot
+              supportedFilesystems = [
+                "ntfs" #needed for NTFS support
+                "btrfs"
+              ];
+            };
+            fileSystems = {
+              "/" = {
+                device = "/dev/mapper/nixos-crypt";
+                fsType = "btrfs";
+              };
+              "/boot" = {
+                device = "/dev/disk/by-partuuid/5a687aae-d3c0-4f4e-b580-5ce32bec51b2";
+                fsType = "vfat";
+              };
+            };
+            #Swapfile
+            #Swapfile is created by
+            #sudo btrfs subvolume create /swap
+            systemd.services = {
+              create-swapfile = {
+                serviceConfig.Type = "oneshot";
+                wantedBy = [ "swap-swapfile.swap" ];
+                script = ''
               swapfile="/swap/swapfile"
               if [[ -f "$swapfile" ]]; then
               echo "Swap file $swapfile already exists, taking no action"
@@ -289,112 +289,112 @@
               ${pkgs.e2fsprogs}/bin/chattr +C "$swapfile"
               fi
             '';
-          };
-        };
-        swapDevices = [
-          {
-            device = "/swap/swapfile";
-            # 8GB swap. RAM is AT LEAST 5x faster
-            # than M2 NVME. Almost always faster to
-            # just OOM, then restart the analysis
-            # either batched or sequentially.
-            size = (1024 * 1) * 8;
-          }
-        ];
-        boot.kernelParams = ["resume_offset=4503599627370495"];
-        boot.resumeDevice = "/dev/mapper/nixos-crypt";
-        services.xserver.videoDrivers = ["nvidia"];
-        hardware = {
-          nvidia = {
-            #open = true;
-            powerManagement.enable = true;
-            modesetting.enable = true;
-            #forceFullCompositionPipeline = true;
-            nvidiaPersistenced = true;
-          };
-          opengl = {
-            enable = true;
-            driSupport = true;
-            driSupport32Bit = true;
-            extraPackages = with pkgs; [
-              vaapiVdpau
-              libvdpau-va-gl
-              libva
-              qt5.qtwayland
-              nvidia-vaapi-driver
+              };
+            };
+            swapDevices = [
+              {
+                device = "/swap/swapfile";
+                # 8GB swap. RAM is AT LEAST 5x faster
+                # than M2 NVME. Almost always faster to
+                # just OOM, then restart the analysis
+                # either batched or sequentially.
+                size = (1024 * 1) * 8;
+              }
+            ];
+            boot.kernelParams = ["resume_offset=4503599627370495"];
+            boot.resumeDevice = "/dev/mapper/nixos-crypt";
+            services.xserver.videoDrivers = ["nvidia"];
+            hardware = {
+              nvidia = {
+                #open = true;
+                powerManagement.enable = true;
+                modesetting.enable = true;
+                #forceFullCompositionPipeline = true;
+                nvidiaPersistenced = true;
+              };
+              opengl = {
+                enable = true;
+                driSupport = true;
+                driSupport32Bit = true;
+                extraPackages = with pkgs; [
+                  vaapiVdpau
+                  libvdpau-va-gl
+                  libva
+                  qt5.qtwayland
+                  nvidia-vaapi-driver
+                ];
+              };
+            };
+            #services.cpupower-gui.enable = true;
+            services.logind.lidSwitch = "ignore";
+            environment.systemPackages = with pkgs; [
+              zenstates
+              #ryzenadj #rejects the 5900X as "not mobile" and won't run
+              linuxPackages.zenpower
+              zenmonitor
+              lm_sensors
+              #psensor
+              #amdctl #not in nixos, but does same job as zenstates
+              #cpu-x
+              mprime
             ];
           };
-        };
-        #services.cpupower-gui.enable = true;
-        services.logind.lidSwitch = "ignore";
-        environment.systemPackages = with pkgs; [
-          zenstates
-          #ryzenadj #rejects the 5900X as "not mobile" and won't run
-          linuxPackages.zenpower
-          zenmonitor
-          lm_sensors
-          #psensor
-          #amdctl #not in nixos, but does same job as zenstates
-          #cpu-x
-          mprime
-        ];
-      };
       xfce_desktop = {config, pkgs, ...}:
-      {
-        services.xserver.windowManager.dwm.enable = true;
-        services.xserver = {
-          enable = true;
-          desktopManager = {
-            xterm.enable = false;
-            xfce.enable = true;
+        {
+          services.xserver.windowManager.dwm.enable = true;
+          services.xserver = {
+            enable = true;
+            desktopManager = {
+              xterm.enable = false;
+              xfce.enable = true;
+            };
+            displayManager.defaultSession = "xfce";
+            dpi = 300;
           };
-          displayManager.defaultSession = "xfce";
-          dpi = 300;
         };
-      };
       prime-ai_hardware_shared_crypt = { config, lib, pkgs, ...}:
-      {
-        fileSystems = {
-          #tested ntfs-3g and ntfs3 with
-          #dd if=/dev/urandom of=/para/test.bad oflag=direct count=32k bs=128k
-          #ntfs-3g (472, 448, 469)Mb/s
-          #ntfs3 (323, 324, 329)Mb/r
-          #ntfs-3g is faster!
-          "/para" = {
-            device = "/dev/mapper/para-crypt"; #after mounting from crypttab
-            fsType = "ntfs-3g";
-            options = [ "rw"
-                        "uid=1001"
-                        "gid=100"
-                        "windows_names" #added to kernel in 6.2, current kernel in NixOS is 6.1.9. Supported by ntfs-3g
-                        "fmask=133"
-                        "dmask=022"
-                        "norecover" # this is an ntfs-3g option, not supported by ntfs3
-                        #"discard" #ntfs3 only option
-            ];
+        {
+          fileSystems = {
+            #tested ntfs-3g and ntfs3 with
+            #dd if=/dev/urandom of=/para/test.bad oflag=direct count=32k bs=128k
+            #ntfs-3g (472, 448, 469)Mb/s
+            #ntfs3 (323, 324, 329)Mb/r
+            #ntfs-3g is faster!
+            "/para" = {
+              device = "/dev/mapper/para-crypt"; #after mounting from crypttab
+              fsType = "ntfs-3g";
+              options = [ "rw"
+                          "uid=1001"
+                          "gid=100"
+                          "windows_names" #added to kernel in 6.2, current kernel in NixOS is 6.1.9. Supported by ntfs-3g
+                          "fmask=133"
+                          "dmask=022"
+                          "norecover" # this is an ntfs-3g option, not supported by ntfs3
+                          #"discard" #ntfs3 only option
+                        ];
+            };
           };
-        };
-        environment.etc.crypttab = {
-          enable = true;
-          text = ''
+          environment.etc.crypttab = {
+            enable = true;
+            text = ''
             para-crypt /dev/disk/by-partuuid/1b5333c3-9421-44d5-8d21-fc2f22c8cbe3 /secrets/bitlocker/para.bek bitlk
           '';
-        };
-      };
-      bootstrap_hardware = {config, pkgs, modulesPath, ...}:
-      {
-
-        imports = [
-          (modulesPath + "/installer/scan/not-detected.nix")
-        ];
-        boot = {
-          loader = {
-            systemd-boot.enable = true;
-            efi.canTouchEfiVariables = true;
           };
-          initrd = {
-            luks.devices."nixos-crypt".device =
-              "dev/disk/by-uuid/c4129dcf-90da-4d0c-8da9-880b9c111e6f";
+        };
+      bootstrap_hardware = {config, pkgs, modulesPath, ...}:
+        {
+
+          imports = [
+            (modulesPath + "/installer/scan/not-detected.nix")
+          ];
+          boot = {
+            loader = {
+              systemd-boot.enable = true;
+              efi.canTouchEfiVariables = true;
+            };
+            initrd = {
+              luks.devices."nixos-crypt".device =
+                "dev/disk/by-uuid/c4129dcf-90da-4d0c-8da9-880b9c111e6f";
 
               availableKernelModules = [
                 "nvme"
@@ -403,127 +403,127 @@
                 "sdhci_pci"
               ];
               kernelModules = [ ];
-          };
+            };
 
-          supportedFilesystems = [
-            "ntfs" #needed for NTFS support
-            "btrfs"
-          ];
-        };
-        fileSystems = {
-          "/" = {
-            device = "/dev/mapper/nixos-crypt";
-            fsType = "btrfs";
+            supportedFilesystems = [
+              "ntfs" #needed for NTFS support
+              "btrfs"
+            ];
           };
-          "/boot" = {
-            device = "/dev/disk/by-partuuid/5a687aae-d3c0-4f4e-b580-5ce32bec51b2";
-            fsType = "vfat";
+          fileSystems = {
+            "/" = {
+              device = "/dev/mapper/nixos-crypt";
+              fsType = "btrfs";
+            };
+            "/boot" = {
+              device = "/dev/disk/by-partuuid/5a687aae-d3c0-4f4e-b580-5ce32bec51b2";
+              fsType = "vfat";
+            };
           };
         };
-      };
 
       bootstrap_user = {config, pkgs, ...}:
-      {
-        users.users = {
-          bootstrap = {
-            isNormalUser = true;
-            extraGroups = ["wheel"];
-            password = "tmppwd";
+        {
+          users.users = {
+            bootstrap = {
+              isNormalUser = true;
+              extraGroups = ["wheel"];
+              password = "tmppwd";
+            };
           };
         };
-      };
       secure_boot = {config, pkgs, lib, ...}:
-      {
-        imports = [
-          inputs.lanzaboote.nixosModules.lanzaboote
-        ];
-        #boot.bootspec.enable = true; #duplicated from prime-ai_hardware_config
-        boot.loader.systemd-boot.enable = lib.mkForce false;
-        boot.lanzaboote = {
-          enable = true;
-          pkiBundle = "/etc/secureboot";
+        {
+          imports = [
+            inputs.lanzaboote.nixosModules.lanzaboote
+          ];
+          #boot.bootspec.enable = true; #duplicated from prime-ai_hardware_config
+          boot.loader.systemd-boot.enable = lib.mkForce false;
+          boot.lanzaboote = {
+            enable = true;
+            pkiBundle = "/etc/secureboot";
+          };
         };
-      };
       network_fs = {config, pkgs, ...}:
-      let
-        # this line prevents hanging on network split
-        automount_opts = "x-systemd.automount,noauto,x-systemd.idle-timeout=600,x-systemd.device-timeout=5s,x-systemd.mount-timeout=5s,uid=1001,gid=100";
-      in
-      {
-        age.secrets.cifs_dpbagje_share.file = "/secrets/agenix/cifs_dpbagje_share.age";
-        fileSystems = {
-          "/nas/dpbagj/parent_share" = {
-            device = "//100.108.81.63/parent_share";
-            fsType = "cifs";
-            options = ["${automount_opts},credentials=${config.age.secrets.cifs_dpbagje_share.path}"];
+        let
+          # this line prevents hanging on network split
+          automount_opts = "x-systemd.automount,noauto,x-systemd.idle-timeout=600,x-systemd.device-timeout=5s,x-systemd.mount-timeout=5s,uid=1001,gid=100";
+        in
+          {
+            age.secrets.cifs_dpbagje_share.file = "/secrets/agenix/cifs_dpbagje_share.age";
+            fileSystems = {
+              "/nas/dpbagj/parent_share" = {
+                device = "//100.108.81.63/parent_share";
+                fsType = "cifs";
+                options = ["${automount_opts},credentials=${config.age.secrets.cifs_dpbagje_share.path}"];
+              };
+              "/nas/dpbagj/family_share" = {
+                device = "//100.108.81.63/family_share";
+                fsType = "cifs";
+                options = ["${automount_opts},credentials=${config.age.secrets.cifs_dpbagje_share.path}"];
+              };
+            };
           };
-          "/nas/dpbagj/family_share" = {
-            device = "//100.108.81.63/family_share";
-            fsType = "cifs";
-            options = ["${automount_opts},credentials=${config.age.secrets.cifs_dpbagje_share.path}"];
-          };
-        };
-      };
       wifi_secrets = {config, pkgs, ...}:
-      {
-        age.secrets.wpa_pwd_env.file = "/secrets/agenix/wpa_pwd.env.age";
-        networking.wireless = {
-          environmentFile = config.age.secrets.wpa_pwd_env.path;
-          networks = {
-            PBAGJmob = {
-              psk = "@phone_psk@";
-              priority = 10;
-            };
-            WIFI-56E0-5G = {
-              psk = "@parent_psk@";
-              priority = 60;
-            };
-            WiFi-56E0-5G = {
-              psk = "@parent_psk@";
-              priority = 65;
-            };
-            PBAGJE_H_5G = {
-              psk = "@home_psk@";
-              priority = 99;
+        {
+          age.secrets.wpa_pwd_env.file = "/secrets/agenix/wpa_pwd.env.age";
+          networking.wireless = {
+            environmentFile = config.age.secrets.wpa_pwd_env.path;
+            networks = {
+              PBAGJmob = {
+                psk = "@phone_psk@";
+                priority = 10;
+              };
+              WIFI-56E0-5G = {
+                psk = "@parent_psk@";
+                priority = 60;
+              };
+              WiFi-56E0-5G = {
+                psk = "@parent_psk@";
+                priority = 65;
+              };
+              PBAGJE_H_5G = {
+                psk = "@home_psk@";
+                priority = 99;
+              };
             };
           };
         };
-      };
       phil_user = {config, pkgs, ...}:
-      {
-        age.secrets.user_phil_pwd.file = "/secrets/agenix/user_phil_pwd.age";
-        users.users = {
-          phil = {
-            isNormalUser = true;
-            extraGroups = ["wheel"];
-            passwordFile = config.age.secrets.user_phil_pwd.path;
-            uid = 1001;
-            shell = pkgs.fish;
+        {
+          age.secrets.user_phil_pwd.file = "/secrets/agenix/user_phil_pwd.age";
+          users.users = {
+            phil = {
+              isNormalUser = true;
+              extraGroups = ["wheel"];
+              passwordFile = config.age.secrets.user_phil_pwd.path;
+              uid = 1001;
+              shell = pkgs.fish;
+            };
           };
+          programs.fish.enable = true;
         };
-        programs.fish.enable = true;
-      };
       prime_ai_tailscale = {config, pkgs, ...}:
-      {
-        age.secrets.prime_ai_tailscale.file = "/secrets/agenix/prime_ai_tailscale.age";
-        services.tailscale = {
-          enable = true;
-        };
-        # https://tailscale.com/blog/nixos-minecraft/
-        # create a oneshot job to authenticate to Tailscale
-        systemd.services.tailscale-autoconnect = {
-          description = "Automatic connection to Tailscale";
+        {
+          age.secrets.prime_ai_tailscale.file = "/secrets/agenix/prime_ai_tailscale.age";
+          services.tailscale = {
+            enable = true;
+          };
+          # https://tailscale.com/blog/nixos-minecraft/
+          # create a oneshot job to authenticate to Tailscale
+          systemd.services.tailscale-autoconnect = {
+            description = "Automatic connection to Tailscale";
 
-          # make sure tailscale is running before trying to connect to tailscale
-          after = [ "network-pre.target" "tailscale.service" ];
-          wants = [ "network-pre.target" "tailscale.service" ];
-          wantedBy = [ "multi-user.target" ];
+            # make sure tailscale is running before trying to connect to tailscale
+            after = [ "network-pre.target" "tailscale.service" ];
+            wants = [ "network-pre.target" "tailscale.service" ];
+            wantedBy = [ "multi-user.target" ];
 
-          # set this service as a oneshot job
-          serviceConfig.Type = "oneshot";
+            # set this service as a oneshot job
+            serviceConfig.Type = "oneshot";
 
-          # have the job run this shell script
-          script = with pkgs; ''
+            # have the job run this shell script
+            script = with pkgs; ''
             # wait for tailscaled to settle
             sleep 2
 
@@ -536,40 +536,40 @@
             # otherwise authenticate with tailscale
             ${tailscale}/bin/tailscale up -authkey file:${config.age.secrets.prime_ai_tailscale.path}
           '';
-        };
+          };
 
-      };
+        };
       #ssh_public_config
       system_config = {config, pkgs, ...}:
-      {
-        nixpkgs.config.allowUnfree = true;
-        system.stateVersion = "21.11";
-        boot.loader.systemd-boot = {
-          #enable = true; #set to false by lanzaboote
-          editor = false;  #don't allow kernel cli editing before boot
-        };
-        boot.loader.efi.canTouchEfiVariables = true;
-        boot.kernelPackages = pkgs.linuxPackages_latest;
-
-        networking = {
-          hostName = "prime-ai-nixos";
-          firewall = {
-            allowedTCPPorts = [ ];
-            allowedUDPPorts = [ ];
+        {
+          nixpkgs.config.allowUnfree = true;
+          system.stateVersion = "21.11";
+          boot.loader.systemd-boot = {
+            #enable = true; #set to false by lanzaboote
+            editor = false;  #don't allow kernel cli editing before boot
           };
-          wireless = {
-            enable = true;
-          };
-          interfaces = {
-            enp4s0.useDHCP = true;
-            wlp5s0.useDHCP = true;
-          };
-        };
+          boot.loader.efi.canTouchEfiVariables = true;
+          boot.kernelPackages = pkgs.linuxPackages_latest;
 
-        time.timeZone = "Australia/Brisbane";
-        i18n.defaultLocale = "en_AU.UTF-8";
+          networking = {
+            hostName = "prime-ai-nixos";
+            firewall = {
+              allowedTCPPorts = [ ];
+              allowedUDPPorts = [ ];
+            };
+            wireless = {
+              enable = true;
+            };
+            interfaces = {
+              enp4s0.useDHCP = true;
+              wlp5s0.useDHCP = true;
+            };
+          };
 
-        # services.xserver = {
+          time.timeZone = "Australia/Brisbane";
+          i18n.defaultLocale = "en_AU.UTF-8";
+
+          # services.xserver = {
           #   enable = true;
           #   displayManager.lightdm.enable = true;
           #   displayManager.defaultSession = "none+dwm";
@@ -650,113 +650,113 @@
             startAgent = true;
             askPassword = "systemd-ask-password";
           };
-      };
+        };
       hyprland-prime-ai = {config, pkgs, ...}:
-      {
-        imports = [
-          inputs.hyprland.nixosModules.default
-        ];
-
-        nixpkgs.overlays = [
-          self.overlays.lsix_configured
-        ];
-
-        programs.hyprland = {
-          enable = true;
-          nvidiaPatches = true;
-        };
-
-
-        services.greetd = {
-          enable = true;
-          settings = {
-            default_session = {
-              command = "${pkgs.greetd.tuigreet}/bin/tuigreet -t -r -g 'Init: Prime-AI' --cmd Hyprland";
-              user = "phil";
-            };
-          };
-        };
-        environment = {
-
-          systemPackages = with pkgs; [
-            pipewire #Audio
-            wireplumber
-            fnott #desktop notifications. see also mako, dunst
-            polkit #request root priveliges
-            polkit_gnome #gnome app for polkit requests
-            waylock
-            #swaylock
-            swayimg
-            kitty
-            foot
-            lsix
-            libsixel
-            wl-clipboard
+        {
+          imports = [
+            inputs.hyprland.nixosModules.default
           ];
-          sessionVariables = {
-            _JAVA_AWT_WM_NONREPARENTING="1";
-            XCURSOR_SIZE="24";
-            # NIXOS_OZONE_WL = "1"; #Already set by hyprland module
-            LIBVA_DRIVER_NAME="nvidia";
-            XDG_SESSION_TYPE = "wayland";
-            GBM_BACKEND = "nvidia-drm";
-            __GLX_VENDOR_LIBRARY_NAME = "nvidia";
-            WLR_NO_HARDWARE_CURSORS = "1";
-            HYPRLAND_LOG_WLR="1";
-            # __GL_GSYNC_ALLOWED = "0";
-            # __GL_VRR_ALLOWED = "0";
-            # DISABLE_QT5_COMPAT = "0";
-            # ANKI_WAYLAND = "1";
-            # DIRENV_LOG_FORMAT = "";
-            # WLR_DRM_NO_ATOMIC = "1";
-            # QT_QPA_PLATFORM = "wayland";
-            # QT_WAYLAND_DISABLE_WINDOWDECORATION = "1";
-            # QT_QPA_PLATFORMTHEME = "qt5ct";
-            # MOZ_ENABLE_WAYLAND = "1";
-            # WLR_BACKEND = "vulkan";
-            # CLUTTER_BACKEND = "wayland";
-            # WLR_DRM_DEVICES = "/dev/dri/card1:/dev/dri/card0";
+
+          nixpkgs.overlays = [
+            self.overlays.lsix_configured
+          ];
+
+          programs.hyprland = {
+            enable = true;
+            nvidiaPatches = true;
           };
-        };
-
-        #pipewire specific config
-        security.rtkit.enable = true;
-        services.pipewire = {
-          enable = true;
-          alsa.enable = true;
-          alsa.support32Bit = true;
-          pulse.enable = true;
-          # If you want to use JACK applications, uncomment this
-          #jack.enable = true;
-        };
 
 
-        #Enable polkit for passwords, and activate agent
-        security.polkit.enable = true;
-        security.pam.services = {
-          swaylock = {};
-          waylock = {};
-        };
-        systemd = {
-          user.services.polkit-gnome-authentication-agent-1 = {
-            description = "polkit-gnome-authentication-agent-1";
-            wantedBy = [ "graphical-session.target" ];
-            wants = [ "graphical-session.target" ];
-            after = [ "graphical-session.target" ];
-            serviceConfig = {
-              Type = "simple";
-              ExecStart = "${pkgs.polkit_gnome}/libexec/polkit-gnome-authentication-agent-1";
-              Restart = "on-failure";
-              RestartSec = 1;
-              TimeoutStopSec = 10;
+          services.greetd = {
+            enable = true;
+            settings = {
+              default_session = {
+                command = "${pkgs.greetd.tuigreet}/bin/tuigreet -t -r -g 'Init: Prime-AI' --cmd Hyprland";
+                user = "phil";
+              };
             };
           };
+          environment = {
+
+            systemPackages = with pkgs; [
+              pipewire #Audio
+              wireplumber
+              fnott #desktop notifications. see also mako, dunst
+              polkit #request root priveliges
+              polkit_gnome #gnome app for polkit requests
+              waylock
+              #swaylock
+              swayimg
+              kitty
+              foot
+              lsix
+              libsixel
+              wl-clipboard
+            ];
+            sessionVariables = {
+              _JAVA_AWT_WM_NONREPARENTING="1";
+              XCURSOR_SIZE="24";
+              # NIXOS_OZONE_WL = "1"; #Already set by hyprland module
+              LIBVA_DRIVER_NAME="nvidia";
+              XDG_SESSION_TYPE = "wayland";
+              GBM_BACKEND = "nvidia-drm";
+              __GLX_VENDOR_LIBRARY_NAME = "nvidia";
+              WLR_NO_HARDWARE_CURSORS = "1";
+              HYPRLAND_LOG_WLR="1";
+              # __GL_GSYNC_ALLOWED = "0";
+              # __GL_VRR_ALLOWED = "0";
+              # DISABLE_QT5_COMPAT = "0";
+              # ANKI_WAYLAND = "1";
+              # DIRENV_LOG_FORMAT = "";
+              # WLR_DRM_NO_ATOMIC = "1";
+              # QT_QPA_PLATFORM = "wayland";
+              # QT_WAYLAND_DISABLE_WINDOWDECORATION = "1";
+              # QT_QPA_PLATFORMTHEME = "qt5ct";
+              # MOZ_ENABLE_WAYLAND = "1";
+              # WLR_BACKEND = "vulkan";
+              # CLUTTER_BACKEND = "wayland";
+              # WLR_DRM_DEVICES = "/dev/dri/card1:/dev/dri/card0";
+            };
+          };
+
+          #pipewire specific config
+          security.rtkit.enable = true;
+          services.pipewire = {
+            enable = true;
+            alsa.enable = true;
+            alsa.support32Bit = true;
+            pulse.enable = true;
+            # If you want to use JACK applications, uncomment this
+            #jack.enable = true;
+          };
+
+
+          #Enable polkit for passwords, and activate agent
+          security.polkit.enable = true;
+          security.pam.services = {
+            swaylock = {};
+            waylock = {};
+          };
+          systemd = {
+            user.services.polkit-gnome-authentication-agent-1 = {
+              description = "polkit-gnome-authentication-agent-1";
+              wantedBy = [ "graphical-session.target" ];
+              wants = [ "graphical-session.target" ];
+              after = [ "graphical-session.target" ];
+              serviceConfig = {
+                Type = "simple";
+                ExecStart = "${pkgs.polkit_gnome}/libexec/polkit-gnome-authentication-agent-1";
+                Restart = "on-failure";
+                RestartSec = 1;
+                TimeoutStopSec = 10;
+              };
+            };
+          };
+          nix.settings = {
+            substituters = ["https://hyprland.cachix.org"];
+            trusted-public-keys = ["hyprland.cachix.org-1:a7pgxzMz7+chwVL3/pzj6jIBMioiJM7ypFP8PwtkuGc="];
+          };
         };
-        nix.settings = {
-          substituters = ["https://hyprland.cachix.org"];
-          trusted-public-keys = ["hyprland.cachix.org-1:a7pgxzMz7+chwVL3/pzj6jIBMioiJM7ypFP8PwtkuGc="];
-        };
-      };
 
       spell_checkers = {config, pkgs, ...}: {
         environment = {
@@ -987,12 +987,12 @@
                     src = inputs.smart-tabs-mode;
                   });
                   # denote = prev.denote.overrideAttrs (oldAttrs: {
-                    # src = inputs.denote;
+                  # src = inputs.denote;
                   # });
                   # denote = prev.emacs.pkgs.trivialBuild {
-                    # pname = "denote";
-                    # version = "1.2.0";
-                    # src = inputs.denote;
+                  # pname = "denote";
+                  # version = "1.2.0";
+                  # src = inputs.denote;
                   # };
                 };
                 init = {
@@ -1036,7 +1036,7 @@
                         ;;else set up x clipboard sharing
                         (setq select-enable-clipboard t)
                         (setq select-enable-primary t)
-                      )
+                           )
                       ;; tramp may not play well with use-package
                       (require 'tramp)
                       (add-to-list 'backup-directory-alist (cons tramp-file-name-regexp nil))
@@ -1045,73 +1045,73 @@
                       (setq tramp-backup-directory-alist `(("." . ,(concat user-emacs-directory ".local/cache/backup/"))))
 
                     '';
-                    #config inserted after use-package
-                    postlude = ''
+                  #config inserted after use-package
+                  postlude = ''
                       ;; Local Variables:
                       ;; no-byte-compile: t
                       ;; End:
                     '';
 
-                    #Packages configured
-                    usePackage = {
-                      ## Startup packages. 'After' needs to flow back to an always-loaded package
-                      editorconfig = {
-                        enable = true;
-                        config = ''
+                  #Packages configured
+                  usePackage = {
+                    ## Startup packages. 'After' needs to flow back to an always-loaded package
+                    editorconfig = {
+                      enable = true;
+                      config = ''
                           (editorconfig-mode 1)
                           (setq editorconfig-trim-whitespace-mode 'ws-butler-mode)
                         '';
-                      };
-                      envrc = {
-                        enable = true;
-                        config = ''
+                    };
+                    envrc = {
+                      enable = true;
+                      config = ''
                           (envrc-global-mode)
                         '';
-                      };
-                      pinentry = {
-                        enable = true;
-                        after = [ "epg" ];
-                        config = ''
+                    };
+                    pinentry = {
+                      enable = true;
+                      after = [ "epg" ];
+                      config = ''
                           (pinentry-start)
                         '';
-                      };
-                      epg = {
-                        enable = true;
-                        config = ''
+                    };
+                    epg = {
+                      enable = true;
+                      config = ''
                           (setq epg-pinentry-mode 'loopback)
                         '';
-                      };
-                      auth-source = {
-                        enable = true;
-                        config = ''
+                    };
+                    auth-source = {
+                      enable = true;
+                      config = ''
                           (setq auth-sources '("/secrets/gpg/.authinfo.gpg"))
                         '';
-                      };
-                      dash = {
-                        enable = true;
-                      };
-                      noflet = {
-                        after = ["dash"];
-                        enable = true;
-                        init = ''
+                    };
+                    dash = {
+                      enable = true;
+                    };
+                    noflet = {
+                      after = ["dash"];
+                      enable = true;
+                      init = ''
                           (require 'dash) ;;bug in noflet, uses dash without requiring it
                         '';
-                      };
-                      load-theme-buffer-local = {
-                        after = [ "noflet" "god-mode" ];
-                        enable = false;
-                        init = ''
+                    };
+                    load-theme-buffer-local = {
+                      after = [ "noflet" "god-mode" ];
+                      enable = false;
+                      init = ''
                           (require 'noflet) ;; bug in load-theme-buffer-local: uses noflet without requiring it
                         '';
-                        config = ''
+                      config = ''
                         '';
-                      };
-                      god-mode = {
-                        enable = true;
-                        init = ''
+                    };
+                    god-mode = {
+                      enable = true;
+                      init = ''
                           ;;(setq god-mode-enable-function-key-translation nil)
                         '';
-                        config = ''
+                      config = ''
                           (setq god-exempt-major-modes nil)
                           (setq god-exempt-predicates nil)
                           ;;(god-mode)
@@ -1119,30 +1119,30 @@
                           ;; (add-hook 'god-mode-enabled-hook (lambda () (load-theme-buffer-local 'tango (current-buffer))))
                           ;; (add-hook 'god-mode-disabled-hook (lambda () (load-theme-buffer-local 'zenburn (current-buffer))))
                         '';
-                        chords = {
-                          "ii" = "god-mode-all";
-                        };
-                        bindLocal = {
-                          god-local-mode-map = {
-                            "j" = "god-mode-all";
-                            "." = "repeat";
-                          };
+                      chords = {
+                        "ii" = "god-mode-all";
+                      };
+                      bindLocal = {
+                        god-local-mode-map = {
+                          "j" = "god-mode-all";
+                          "." = "repeat";
                         };
                       };
-                      undo-fu-session = {
-                        enable = true;
-                        config = ''
+                    };
+                    undo-fu-session = {
+                      enable = true;
+                      config = ''
                           (undo-fu-session-global-mode)
                         '';
-                      };
-                      bind-key = {
-                        enable = true;
-                      };
-                      objed = {
-                        after = [ "avy" "expand-region" "magit" ];
-                        enable = true;
-                        config = ''
                           (objed-mode)
+                    };
+                    bind-key = {
+                      enable = true;
+                    };
+                    objed = {
+                      after = [ "avy" "expand-region" "magit" ];
+                      enable = true;
+                      config = ''
                           (setq objed-disabled-modes '(epa-key-list-mode
                               magit-mode))
 
@@ -1175,18 +1175,18 @@
                           (keymap-set objed-op-map "Z" #'embark-export)
                           (keymap-set objed-op-map "l" #'consult-line)
                         '';
-                      };
-                      objed-game = {
-                        after = ["objed"];
-                        enable = true;
-                      };
-                      expand-region = {
-                        enable = true;
-                      };
-                      avy = {
-                        after = [ "embark" ];
-                        enable = true;
-                        config = ''
+                    };
+                    objed-game = {
+                      after = ["objed"];
+                      enable = true;
+                    };
+                    expand-region = {
+                      enable = true;
+                    };
+                    avy = {
+                      after = [ "embark" ];
+                      enable = true;
+                      config = ''
                           (defun avy-action-embark (pt)
                             (unwind-protect
                               (save-excursion
@@ -1196,17 +1196,17 @@
                             t)
                           (setf (alist-get ?o avy-dispatch-alist) 'avy-action-embark)
                         '';
+                    };
+                    embark = {
+                      enable = true;
+                      demand = true; # bind will prevent loading otherwise
+                      bind = {
+                        "C-h B" = "embark-bindings";
+                        "M-o" = "embark-act";
+                        "M-O" = "embark-export";
+                        "C-;" = "embark-dwim";
                       };
-                      embark = {
-                        enable = true;
-                        demand = true; # bind will prevent loading otherwise
-                        bind = {
-                          "C-h B" = "embark-bindings";
-                          "M-o" = "embark-act";
-                          "M-O" = "embark-export";
-                          "C-;" = "embark-dwim";
-                        };
-                        config = ''
+                      config = ''
                           ;; Hide the mode line of the Embark live/completions buffers
                           (add-to-list 'display-buffer-alist
                           '("\\`\\*Embark Collect \\(Live\\|Completions\\)\\*"
@@ -1214,98 +1214,98 @@
                           (window-parameters (mode-line-format . none))))
 
                         '';
-                      };
-                      embark-consult = {
-                        after = [ "embark" "consult" ];
-                        enable = true;
-                        hook = [
-                          "(embark-collect-mode . consult-preview-at-point-mode)"
-                        ];
-                      };
-                      avy-embark-collect = {
-                        after = [ "avy" "embark" ];
-                        enable = true;
-                      };
-                      ace-window = {
-                        after = ["avy"];
-                        enable = true;
-                        config = ''
+                    };
+                    embark-consult = {
+                      after = [ "embark" "consult" ];
+                      enable = true;
+                      hook = [
+                        "(embark-collect-mode . consult-preview-at-point-mode)"
+                      ];
+                    };
+                    avy-embark-collect = {
+                      after = [ "avy" "embark" ];
+                      enable = true;
+                    };
+                    ace-window = {
+                      after = ["avy"];
+                      enable = true;
+                      config = ''
                           (setq aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l)
                                 aw-dispatch-always t)
                           (keymap-set objed-op-map "o" #'ace-window)
                         '';
-                        bind = {
-                          "C-x o" = "ace-window";
-                        };
+                      bind = {
+                        "C-x o" = "ace-window";
                       };
-                      origami = {
-                        enable = true;
-                        config = ''
+                    };
+                    origami = {
+                      enable = true;
+                      config = ''
                           (add-to-list 'origami-parser-alist '(ess-r-mode . origami-c-style-parser))
                           (global-origami-mode)
                         '';
-                      };
-                      files = {
-                        enable = true;
-                        config = ''
+                    };
+                    files = {
+                      enable = true;
+                      config = ''
                           (setq auto-save-default t
                                 auto-save-include-big-deletions t
                                 auto-save-list-file-prefix (concat user-emacs-directory ".local/cache/autosave/")
                                 auto-save-file-name-transforms (list (list ".*" auto-save-list-file-prefix t)))
                         '';
-                      };
-                      tramp = {
-                        enable = false;
-                        config = ''
+                    };
+                    tramp = {
+                      enable = false;
+                      config = ''
                           (add-to-list 'backup-directory-alist (cons tramp-file-name-regexp nil))
                           ;; Add the remote's PATH to tramp's search path (why isn't this the default?)
                           (add-to-list 'tramp-remote-path 'tramp-own-remote-path)
                           (setq tramp-backup-directory-alist `(("." . ,(concat user-emacs-directory ".local/cache/backup/"))))
                         '';
-                      };
-                      mouse = {
-                        enable = true;
-                        config =  ''
+                    };
+                    mouse = {
+                      enable = true;
+                      config =  ''
                           (setq mouse-yank-at-point t)
                         '';
-                      };
-                      apropos = {
-                        enable = true;
-                        config =  ''
+                    };
+                    apropos = {
+                      enable = true;
+                      config =  ''
                           (setq apropos-do-all t)
                         '';
-                      };
+                    };
 
-                      menu-bar = {
-                        enable = true;
-                        config = ''
+                    menu-bar = {
+                      enable = true;
+                      config = ''
                           (menu-bar-mode -1)
                         '';
-                      };
-                      tool-bar = {
-                        enable = true;
-                        config = ''
+                    };
+                    tool-bar = {
+                      enable = true;
+                      config = ''
                           (when (fboundp 'tool-bar-mode)
                           (tool-bar-mode -1))
                         '';
-                      };
-                      scroll-bar = {
-                        enable = true;
-                        config = ''
+                    };
+                    scroll-bar = {
+                      enable = true;
+                      config = ''
                           (when (fboundp 'scroll-bar-mode)
                           (scroll-bar-mode -1))
                         '';
-                      };
-                      uniquify = {
-                        enable = true;
-                        config = ''
+                    };
+                    uniquify = {
+                      enable = true;
+                      config = ''
                           (setq uniquify-buffer-name-style 'forward)
                         '';
-                      };
-                      ## May replace load-buffer-local-theme
-                      prism = {
-                        enable = true;
-                        config = ''
+                    };
+                    ## May replace load-buffer-local-theme
+                    prism = {
+                      enable = true;
+                      config = ''
                           ;;prism-colors was generated by
                           ;;running
                           ;;(prism-set-colors :num 24
@@ -1325,14 +1325,14 @@
                             prism-num-faces 24)
                           (prism-set-colors)
                         '';
-                      };
-                      smartparens = {
-                        enable = true;
-                      };
-                      smartparens-config = {
-                        after = [ "smartparens" ];
-                        enable = true;
-                        config = ''
+                    };
+                    smartparens = {
+                      enable = true;
+                    };
+                    smartparens-config = {
+                      after = [ "smartparens" ];
+                      enable = true;
+                      config = ''
                           ;; Turn off smartparens auto features,
                           ;; Sometimes they don't hurt me,
                           ;; But other times I have to fight them
@@ -1349,20 +1349,20 @@
                           (smartparens-global-mode)
                           (show-smartparens-global-mode)
                         '';
-                      };
-                      vundo = {
-                        enable = true;
-                      };
-                      frame = {
-                        enable = true;
-                        config = ''
+                    };
+                    vundo = {
+                      enable = true;
+                    };
+                    frame = {
+                      enable = true;
+                      config = ''
                           (setq default-frame-alist '((font . "FiraCode Nerd Font 18")))
                           (blink-cursor-mode 0)
                         '';
-                      };
-                      crm = {
-                        enable = true;
-                        config = ''
+                    };
+                    crm = {
+                      enable = true;
+                      config = ''
                           (defun crm-indicator (args)
                             (cons (format "[CRM%s] %s"
                               (replace-regexp-in-string
@@ -1376,20 +1376,19 @@
                           (setq read-extended-command-predicate
                           #'command-completion-default-include-p)
                         '';
-                      };
-                      simple = {
-                        enable = true;
-                        config = ''
+                    };
+                    simple = {
+                      enable = true;
+                      config = ''
                           (setq read-extended-command-predicate
                           #'command-completion-default-include-p
-                          save-interprogram-paste-before-kill t
-                          )
+                          save-interprogram-paste-before-kill t)
                           (setq-default indent-tabs-mode -1)
                         '';
-                      };
-                      emacs = {
-                        enable = true;
-                        config = ''
+                    };
+                    emacs = {
+                      enable = true;
+                      config = ''
                           (setq enable-recursive-minibuffers t)
 
                           (setq ring-bell-function
@@ -1403,37 +1402,37 @@
                            (setq completion-cycle-threshold 3)
 
                         '';
-                      };
-                      isend-mode = {
-                        enable = true;
-                      };
-                      magit = {
-                        enable = true;
-                        config = ''
+                    };
+                    isend-mode = {
+                      enable = true;
+                    };
+                    magit = {
+                      enable = true;
+                      config = ''
                           (setq magit-refresh-status-buffer nil)
                         '';
-                      };
-                      forge = {
-                        enable = true;
-                      };
-                      git-timemachine = {
-                        enable = true;
-                      };
-                      vterm = {
-                        enable = true;
-                      };
-                      eat = {
-                        enable = true;
-                      };
-                      xref = {
-                        enable = true;
-                      };
-                      consult = {
-                        enable = true;
-                        hook = [
-                          "(completion-list-mode . consult-preview-at-point-mode)"
-                        ];
-                        init = ''
+                    };
+                    forge = {
+                      enable = true;
+                    };
+                    git-timemachine = {
+                      enable = true;
+                    };
+                    vterm = {
+                      enable = true;
+                    };
+                    eat = {
+                      enable = true;
+                    };
+                    xref = {
+                      enable = true;
+                    };
+                    consult = {
+                      enable = true;
+                      hook = [
+                        "(completion-list-mode . consult-preview-at-point-mode)"
+                      ];
+                      init = ''
                           ;; Optionally configure the register formatting. This improves the register
                           ;; preview for `consult-register', `consult-register-load',
                           ;; `consult-register-store' and the Emacs built-ins.
@@ -1469,61 +1468,61 @@
                           ;; Both < and C-+ work reasonably well.
                           (setq consult-narrow-key "<") ;; (kbd "C-+")
                         '';
-                        bind = {
-                          "C-x C-b" = "consult-buffer";
-                          "C-x C-y" = "consult-yank-from-kill-ring";
-                          "C-x j b" = "consult-buffer";
-                          "C-x j l" = "consult-line";
-                          "C-x j y" = "consult-yank-from-kill-ring";
-                        };
+                      bind = {
+                        "C-x C-b" = "consult-buffer";
+                        "C-x C-y" = "consult-yank-from-kill-ring";
+                        "C-x j b" = "consult-buffer";
+                        "C-x j l" = "consult-line";
+                        "C-x j y" = "consult-yank-from-kill-ring";
                       };
-                      consult-dir = {
-                        enable = true;
-                      };
-                      marginalia = {
-                        enable = true;
-                        demand = true;
-                        config = ''
+                    };
+                    consult-dir = {
+                      enable = true;
+                    };
+                    marginalia = {
+                      enable = true;
+                      demand = true;
+                      config = ''
                           (marginalia-mode)
                         '';
-                        bindLocal = {
-                          minibuffer-local-map = {
-                            "M-A" = "marginalia-cycle";
-                          };
+                      bindLocal = {
+                        minibuffer-local-map = {
+                          "M-A" = "marginalia-cycle";
                         };
                       };
-                      orderless = {
-                        enable = true;
-                        init = ''
+                    };
+                    orderless = {
+                      enable = true;
+                      init = ''
                           (setq completion-styles '(orderless basic)
                           completion-category-defaults nil
                           completion-category-overrides '((file (styles partial-completion))))
                         '';
-                      };
-                      autorevert = {
-                        enable = true;
-                        config = ''
+                    };
+                    autorevert = {
+                      enable = true;
+                      config = ''
                           (setq global-auto-revert-non-file-buffers t)
                           (global-auto-revert-mode 1)
                         '';
-                      };
-                      saveplace = {
-                        enable = true;
-                        config = ''
+                    };
+                    saveplace = {
+                      enable = true;
+                      config = ''
                           (save-place-mode 1)
                         '';
-                      };
-                      recentf = {
-                        enable = true;
-                        init = ''
+                    };
+                    recentf = {
+                      enable = true;
+                      init = ''
                           (setq recentf-max-saved-items nil
                                 recentf-save-file (concat user-emacs-directory ".local/cache/recentf"))
                           (recentf-mode 1)
                         '';
-                      };
-                      savehist = {
-                        enable = true;
-                        config = ''
+                    };
+                    savehist = {
+                      enable = true;
+                      config = ''
                           (setq savehist-additional-variables
                                 '(search-ring
                                   regexp-search-ring
@@ -1532,66 +1531,66 @@
                           (setq history-length 250)
                           (savehist-mode)
                         '';
-                      };
-                      vertico = {
-                        enable = true;
-                        config = ''
+                    };
+                    vertico = {
+                      enable = true;
+                      config = ''
                           (vertico-mode)
                         '';
-                      };
-                      vertico-quick = {
-                        after = [ "vertico" ];
-                        enable = true;
-                        bindLocal = {
-                          vertico-map = {
-                            "M-q" = "vertico-quick-insert";
-                            "C-q" = "vertico-quick-exit";
-                          };
+                    };
+                    vertico-quick = {
+                      after = [ "vertico" ];
+                      enable = true;
+                      bindLocal = {
+                        vertico-map = {
+                          "M-q" = "vertico-quick-insert";
+                          "C-q" = "vertico-quick-exit";
                         };
                       };
-                      vertico-buffer = {
-                        after = [ "vertico" ];
                         enable = true;
-                        config = ''
+                    };
+                    vertico-buffer = {
+                      after = [ "vertico" ];
+                      config = ''
                           (vertico-buffer-mode)
                           (setq vertico-buffer-display-action
                           '(display-buffer-in-side-window (side . left)
                           (window-width . 0.5)))
                         '';
-                      };
-                      vertico-directory = {
-                        after = [ "vertico" ];
-                        enable = true;
-                        bindLocal = {
-                          vertico-map = {
-                            "RET" = "vertico-directory-enter";
-                            "DEL" = "vertico-directory-delete-char";
-                            "M-DEL" = "vertico-directory-delete-word";
-                          };
+                    };
+                    vertico-directory = {
+                      after = [ "vertico" ];
+                      enable = true;
+                      bindLocal = {
+                        vertico-map = {
+                          "RET" = "vertico-directory-enter";
+                          "DEL" = "vertico-directory-delete-char";
+                          "M-DEL" = "vertico-directory-delete-word";
                         };
-                        hook = [
-                          "(rfn-eshadow-update-overlay . vertico-directory-tidy)"
-                        ];
                       };
-                      image-dired = {
-                        enable = true;
-                        config = ''
+                      hook = [
+                        "(rfn-eshadow-update-overlay . vertico-directory-tidy)"
+                      ];
+                    };
+                    image-dired = {
+                      enable = true;
+                      config = ''
                           (setq image-dired-thumbnail-storage 'standard-large)
                         '';
-                      };
-                      one-themes = {
-                        enable = true;
-                      };
-                      nerd-icons = {
-                        enable = true;
-                        config = ''
+                    };
+                    one-themes = {
+                      enable = true;
+                    };
+                    nerd-icons = {
+                      enable = true;
+                      config = ''
                           (setq nerd-icons-font-family "FiraCode Nerd Font")
                         '';
-                      };
-                      kind-icon = {
-                        enable = true;
-                        after = [ "corfu" "nerd-icons" ];
-                        config = ''
+                    };
+                    kind-icon = {
+                      enable = true;
+                      after = [ "corfu" "nerd-icons" ];
+                      config = ''
                           (add-to-list 'corfu-margin-formatters #'kind-icon-margin-formatter)
                           (setq kind-icon-use-icons nil)
                           (setq kind-icon-mapping
@@ -1637,13 +1636,13 @@
 
                           ;(setq kind-icon-default-face 'corfu-default)
                         '';
-                      };
-                      corfu = {
-                        enable = true;
-                        init = ''
+                    };
+                    corfu = {
+                      enable = true;
+                      init = ''
                           (global-corfu-mode)
                         '';
-                        config = ''
+                      config = ''
                           (setq corfu-quit-no-match nil
                                 corfu-quit-at-boundary 'separator
                                 corfu-preview-current nil
@@ -1691,52 +1690,52 @@
                           (corfu-popupinfo-mode 1)
 
                         '';
-                      };
-                      cape = {
-                        enable = true;
-                        after = [ "corfu" ];
-                        init = ''
+                    };
+                    cape = {
+                      enable = true;
+                      after = [ "corfu" ];
+                      init = ''
                           ;;Add `completion-at-point-functions' used by `completion-at-point'.
                           ;; Order matters
                           (add-to-list 'completion-at-point-functions #'cape-dabbrev)
                           (add-to-list 'completion-at-point-functions #'cape-file)
                           (add-to-list 'completion-at-point-functions #'cape-elisp-block)
                         '';
-                        bind = {
-                          "M-n f" = "cape-file";
-                          "M-n d" = "cape-dabbrev";
-                          "M-n e" = "cape-elisp-block";
-                        };
+                      bind = {
+                        "M-n f" = "cape-file";
+                        "M-n d" = "cape-dabbrev";
+                        "M-n e" = "cape-elisp-block";
                       };
-                      zenburn-theme = {
-                        enable = true;
-                        init = ''
+                    };
+                    zenburn-theme = {
+                      enable = true;
+                      init = ''
                           (setq zenburn-use-variable-pitch t)
                         '';
-                        config = ''
+                      config = ''
                           (load-theme 'zenburn t)
                         '';
-                      };
-                      browse-url = {
-                        enable = true;
-                        config = ''
+                    };
+                    browse-url = {
+                      enable = true;
+                      config = ''
                           (setq browse-url-generic-program "nyxt"
                                 browse-url-browser-function 'eww-browse-url
                                 browse-url-secondary-browser-function 'browse-url-generic)
                         '';
-                      };
-                      which-key = {
-                        enable = true;
-                        config = ''
+                    };
+                    which-key = {
+                      enable = true;
+                      config = ''
                           (which-key-mode)
                         '';
-                      };
-                      org = {
-                        enable = true;
-                        demand = true;
-                        init = ''
+                    };
+                    org = {
+                      enable = true;
+                      demand = true;
+                      init = ''
                         '';
-                        config = ''
+                      config = ''
                           ;;Add R to org-babel
                           (org-babel-do-load-languages
                             'org-babel-load-languages
@@ -1768,85 +1767,84 @@
                           (setq org-image-actual-width '(800))
 
                         '';
-                      };
-                      org-clock = {
-                        after = [ "org" ];
-                        enable = true;
-                        config = ''
+                    };
+                    org-clock = {
+                      after = [ "org" ];
+                      enable = true;
+                      config = ''
                           (setq
                                 ;;enable auto-clock resolution for finding open clocks
-                                org-clock-auto-clock-resolution 'when-no-clock-is-running 
+                                org-clock-auto-clock-resolution 'when-no-clock-is-running
                                 org-clock-report-include-clocking-task t ;; include current clocking task in clock reports
                                 ;; save the running clock and all clock history when exiting emacs, and load it on startup
                           org-clock-persist t
                           ;; resume clocking task on clock-in if the clock is open
                           org-clock-in-resume t
                           ;;automatically start clock from last clock out
-                          org-clock-continuously nil 
+                          org-clock-continuously nil
                           )
                         '';
-                      };
-                      #org link library
-                      ol = {
-                        enable = true;
-                        after = [ "org" ];
-                        config = ''
+                    };
+                    #org link library
+                    ol = {
+                      enable = true;
+                      after = [ "org" ];
+                      config = ''
                           (setq org-link-abbrev-alist
                           '(("websearch"      . "https://start.duckduckgo.com/?q=%s")))
                         '';
-                      };
-                      helm = {
-                        enable = true;
-                      };
-                      helm-org-ql = {
-                        enable = true;
-                      };
-                      helm-org-rifle = {
-                        enable = true;
-                      };
-                      org-super-links = {
-                        enable = true;
-                        after = [ "org" ];
-                        config = ''
+                    };
+                    helm = {
+                      enable = true;
+                    };
+                    helm-org-ql = {
+                      enable = true;
+                    };
+                    helm-org-rifle = {
+                      enable = true;
+                    };
+                    org-super-links = {
+                      enable = true;
+                      after = [ "org" ];
+                      config = ''
                           (setq org-super-links-search-function "helm-org-rifle")
                         '';
-                      };
-                      org-sltypes = {
-                        after = [ "org-super-links" ];
-                        enable = true;
-                      };
-                      org-slt-phdyellow = {
-                        after = ["org-sltypes"];
-                        enable = true;
-                        bindLocal = {
-                          org-mode-map = {
-                            "C-c C-i" = "org-slt-phdyellow";
-                          };
+                    };
+                    org-sltypes = {
+                      after = [ "org-super-links" ];
+                      enable = true;
+                    };
+                    org-slt-phdyellow = {
+                      after = ["org-sltypes"];
+                      enable = true;
+                      bindLocal = {
+                        org-mode-map = {
+                          "C-c C-i" = "org-slt-phdyellow";
                         };
                       };
                       org-transclusion = {
                         after = [ "org" ];
                         enable = true;
                       };
-                      org-edna = {
-                        after = [ "org" ];
-                        enable = true;
-                        config = ''
+                    org-edna = {
+                      after = [ "org" ];
+                      enable = true;
+                      config = ''
                           (org-edna-mode)
                         '';
-                      };
-                      org-linker-edna = {
-                        after = [ "org" ];
-                        enable = true;
-                      };
-                      org-linker = {
-                        after = [ "org" ];
-                        enable = true;
-                      };
-                      org-id = {
-                        after = [ "org" ];
-                        enable = true;
-                        config = ''
+                    };
+                    org-linker-edna = {
+                      after = [ "org" ];
+                      enable = true;
+                    };
+                    org-linker = {
+                      after = [ "org" ];
+                      enable = true;
+                    };
+                    org-id = {
+                      after = [ "org" ];
+                      enable = true;
+                      config = ''
                           (setq org-id-method 'ts
                                 org-id-prefix "org")
                           ;;Create id's agressively
@@ -1932,41 +1930,40 @@
                           ;; Use citekey as note title
                           (setq citar-denote-title-format nil)
                         '';
-                      };
-                      smart-tabs-mode = {
-                        enable = true;
-                        config = ''
+                    smart-tabs-mode = {
+                      enable = true;
+                      config = ''
                           ;(setq-default indent-tabs-mode nil)
                           (setq-default tab-width 2)
                           ;(add-hook 'ess-r-mode-hook
                           ;(lambda () (setq indent-tabs-mode -1)))
                         '';
-                      };
-                      ws-butler = {
-                        enable = true;
-                        config = ''
+                    };
+                    ws-butler = {
+                      enable = true;
+                      config = ''
                           (ws-butler-global-mode)
                         '';
-                      };
-                      whitespace = {
-                        enable = true;
-                        after = [ "zenburn-theme" ];
-                        config = ''
+                    };
+                    whitespace = {
+                      enable = true;
+                      after = [ "zenburn-theme" ];
+                      config = ''
                           (setq whitespace-style '(face tabs trailing lines-tail missing-newline-at-eof empty big-indent space-before-tab space-after-tab)
                                 whitespace-global-modes '(not magit-mode eat-mode))
                           (add-hook 'whitespace-mode-hook #'(lambda ()
                                     (face-remap-add-relative 'whitespace-big-indent (zenburn-with-color-variables `(:foreground ,zenburn-red+2 :background ,zenburn-red-2)))))
                           (global-whitespace-mode)
                           '';
-                      };
-                      jinx = {
-                        enable = true;
-                        hook = [ "(emacs-startup . global-jinx-mode)"];
-                      };
-                      org-remark = {
-                        after = [ "org" ];
-                        enable = true;
-                        config = ''
+                    };
+                    jinx = {
+                      enable = true;
+                      hook = [ "(emacs-startup . global-jinx-mode)"];
+                    };
+                    org-remark = {
+                      after = [ "org" ];
+                      enable = true;
+                      config = ''
                           (defun my-org-remark-notes-file-names ()
                                  (concat "/para/areas/memx/"
                                    (file-name-base (org-remark-notes-file-name-function))
@@ -1978,27 +1975,30 @@
                                 org-remark-notes-file-name #'my-org-remark-notes-file-names)
                           (org-remark-global-tracking-mode +1)
                         '';
-                      };
-                      org-noter = {
-                        after = [ "org" "pdf-tools" "nov" "djvu"];
-                        enable = true;
-                      };
-                      pdf-tools = {
-                        enable = true;
-                      };
-                      shrface = {
-                        enable = true;
-                        config = ''
+                    };
+                    org-noter = {
+                      after = [ "org" "pdf-tools" "nov" "djvu"];
+                      enable = true;
+                    };
+                    pdf-tools = {
+                      enable = true;
+                      config = ''
+                        (pdf-loader-install)
+                      '';
+                    };
+                    shrface = {
+                      enable = true;
+                      config = ''
                           (shrface-basic)
                           (shrface-trial)
                           (shrface-default-keybindings)
                           (setq shrface-href-versatile t)
                         '';
-                      };
-                      shr-tag-pre-highlight = {
-                        after = [ "shr" "shrface" ];
-                        enable = true;
-                        config = ''
+                    };
+                    shr-tag-pre-highlight = {
+                      after = [ "shr" "shrface" ];
+                      enable = true;
+                      config = ''
                           (add-to-list 'shr-external-rendering-functions '(pre . shrface-shr-tag-pre-highlight))
                           (defun shrface-shr-tag-pre-highlight (pre)
                             "Highlighting code in PRE."
@@ -2037,11 +2037,11 @@
                              (advice-add 'eww-display-html :around
                                'eww-display-html--override-shr-external-rendering-functions)))
                         '';
-                      };
-                      org-web-tools = {
-                        after = [ "org" "shrface"  ];
-                        enable = true;
-                        config = ''
+                    };
+                    org-web-tools = {
+                      after = [ "org" "shrface"  ];
+                      enable = true;
+                      config = ''
                           (advice-add 'org-web-tools--html-to-org-with-pandoc :override 'shrface-html-convert-as-org-string)
 
                           (defun request-url-readable (url)
@@ -2062,40 +2062,40 @@
                               (shrface-request-url url))
                               (shrface-html-export-as-org html))))))
                         '';
-                      };
+                    };
 
 
-                      nov = {
-                        after = [ "shrface" ];
-                        enable = true;
-                        init = ''
+                    nov = {
+                      after = [ "shrface" ];
+                      enable = true;
+                      init = ''
                           (add-hook 'nov-mode-hook #'shrface-mode)
                         '';
-                        config = ''
+                      config = ''
                           (setq nov-shr-rendering-functions '((img . nov-render-img) (title . nov-render-title)))
                           (setq nov-shr-rendering-functions (append nov-shr-rendering-functions shr-external-rendering-functions))
                         '';
-                      };
+                    };
 
-                      djvu = {
-                        enable = true;
-                      };
+                    djvu = {
+                      enable = true;
+                    };
 
-                      eww = {
-                        after = [ "shrface" ];
-                        enable = true;
-                        init = ''
+                    eww = {
+                      after = [ "shrface" ];
+                      enable = true;
+                      init = ''
                           (add-hook 'eww-after-render-hook #'shrface-mode)
                         '';
-                      };
-                      ##Packages loaded when needed
-                      free-keys = {
-                        enable = true;
-                        command = [ "free-keys" ];
-                      };
-                      ess-site = {
-                        enable= true;
-                        mode = [ ''
+                    };
+                    ##Packages loaded when needed
+                    free-keys = {
+                      enable = true;
+                      command = [ "free-keys" ];
+                    };
+                    ess-site = {
+                      enable= true;
+                      mode = [ ''
                           ("\\.Rd\\'" . Rd-mode)
                           ("DESCRIPTION\\'" . conf-colon-mode)
                           ("\\.Rd\\'" . Rd-mode)
@@ -2111,34 +2111,34 @@
                           ("\\.[Bb][Oo][Gg]\\'" . ess-bugs-mode)
                           ("\\.[Bb][Uu][Gg]\\'" . ess-bugs-mode)
                         '' ];
-                        extraConfig = ''
+                      extraConfig = ''
                           :interpreter (("r" . ess-r-mode)
                           ("Rscript" . ess-r-mode))
                         '';
-                      };
-                      ess = {
-                        after = [ "ess-site" ];
-                        enable = true;
-                        config = ''
+                    };
+                    ess = {
+                      after = [ "ess-site" ];
+                      enable = true;
+                      config = ''
                           ;;(setq inferior-ess-r-program "radian") ;;  ESS can't speak radian's language
                           (ess-set-style 'RStudio)
                         '';
-                      };
-                      nix-mode = {
-                        enable = true;
-                        mode = [ ''"\\\\.nix\\\\'"''];
-                      };
-                      nixos-options = {
-                        enable = true;
-                        mode = [ ''"\\\\.nix\\\\'"'' ];
-                      };
-                      ob-nix = {
-                        enable = true;
-                      };
-                      eglot = {
-                        enable = true;
-                        command = [ "eglot" "eglot-ensure" ];
-                        config = ''
+                    };
+                    nix-mode = {
+                      enable = true;
+                      mode = [ ''"\\\\.nix\\\\'"''];
+                    };
+                    nixos-options = {
+                      enable = true;
+                      mode = [ ''"\\\\.nix\\\\'"'' ];
+                    };
+                    ob-nix = {
+                      enable = true;
+                    };
+                    eglot = {
+                      enable = true;
+                      command = [ "eglot" "eglot-ensure" ];
+                      config = ''
                           ;(add-to-list 'eglot-server-programs
                            ;   `(nix-mode . ("nil" :initializationOptions
                             ;     (:nix
@@ -2147,13 +2147,13 @@
                                ;   :nixpkgsInputName "nixpkgs-unstable"))))))
                         ;; Eglot already has entries for R and nix
                         '';
-                        hook = [
-                          "(nix-mode . eglot-ensure)"
-                          "(ess-r-mode . eglot-ensure)"
-                          "(R-mode . eglot-ensure)"
-                        ];
-                      };
+                      hook = [
+                        "(nix-mode . eglot-ensure)"
+                        "(ess-r-mode . eglot-ensure)"
+                        "(R-mode . eglot-ensure)"
+                      ];
                     };
+                  };
 
                 };
               };
@@ -2425,14 +2425,16 @@
       secureboot-tools = let
         pkgs = import nixpkgs-unstable {system = "x86_64-linux";};
       in
-      pkgs.mkShell {
-        name = "secureboot_tools_shell";
-        version = "1";
-        buildInputs = with pkgs; [
-          sbsigntool
-          sbctl
-          efitools
-        ];
+        pkgs.mkShell {
+          name = "secureboot_tools_shell";
+          version = "1";
+          buildInputs = with pkgs; [
+            sbsigntool
+            sbctl
+            efitools
+          ];
+        };
+    };
     packages."x86_64-linux" = {
     };
     overlays = {
