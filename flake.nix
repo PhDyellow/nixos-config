@@ -1794,7 +1794,7 @@
                       after = [ "org" ];
                       config = ''
                           (setq org-link-abbrev-alist
-                          '(("websearch"      . "https://start.duckduckgo.com/?q=%s")))
+                          '(("websearch"      . "https://html.duckduckgo.com/html/?q=%s")))
                         '';
                     };
                     helm = {
