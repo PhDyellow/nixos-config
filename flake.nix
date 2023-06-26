@@ -1320,9 +1320,10 @@
 
                           (setq
                             prism-colors '("#cc9393" "#7f9f7f" "#dfaf8f" "#8cd0d3" "#f0dfaf" "#dc8cc3" "#d19e9e" "#87a587" "#e3b99d" "#98d5d7" "#f3e5c0" "#e099ca" "#d7aaaa" "#8fab8f" "#e7c3ab" "#a5dadc" "#f6ecd1" "#e4a7d1" "#e2c2c2" "#9fb79f" "#efd7c7" "#bee4e6" "#fdfaf4" "#ecc3df")
-                            prism-desaturations '(0 0 0 0)
-                            prism-lightens '(0 5 10 20)
-                            prism-num-faces 24)
+                            prism-desaturations '(0)
+                            prism-lightens '(0)
+                            prism-num-faces 24
+                            )
                           (prism-set-colors)
                         '';
                     };
