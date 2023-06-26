@@ -2418,6 +2418,8 @@
           sbctl
           efitools
         ];
+    packages."x86_64-linux" = {
+    };
     overlays = {
       lsix_configured = final: prev: {
         lsix = prev.lsix.overrideAttrs (oldAttrs: {
