@@ -590,7 +590,7 @@
             gitSVN
             wget
             firefox
-            # nyxt
+            nyxt
             st
             #agenix.packages.x86_64-linux.default #nix run github:ryantm/agenix -- --help
             python3
