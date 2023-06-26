@@ -2909,6 +2909,7 @@ Close when conclusion is reached.
           self.nixosModules.system_config
           self.nixosModules.phil_user
           self.nixosModules.wifi_secrets
+          self.nixosModules.prime_ai_syncthing
           self.nixosModules.secure_boot
           self.nixosModules.prime-ai_hardware_shared_crypt
           inputs.ragenix.nixosModules.age
