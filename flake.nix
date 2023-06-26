@@ -96,18 +96,6 @@
   };
 
   outputs = {self, nixpkgs-unstable, ...}@inputs: {
-    overlays = {
-      lsix_configured = final: prev: {
-        lsix = prev.lsix.overrideAttrs (oldAttrs: {
-          postInstall = ''
-            substituteInPlace $out/bin/lsix \
-              --replace tilesize=120 tilesize=390 \
-              --replace \#fontfamily=Dejavu-Sans fontfamily=Dejavu-Sans \
-              --replace fontsize=\$\(\(tilewidth/10\)\) fontsize=20
-          '';
-        });
-      };
-    };
     nixosModules = {
       prime-ai_hardware_config = { config, lib, pkgs, modulesPath, ...}:
       let
@@ -2430,8 +2418,20 @@
           sbctl
           efitools
         ];
+    overlays = {
+      lsix_configured = final: prev: {
+        lsix = prev.lsix.overrideAttrs (oldAttrs: {
+          postInstall = ''
+            substituteInPlace $out/bin/lsix \
+              --replace tilesize=120 tilesize=390 \
+              --replace \#fontfamily=Dejavu-Sans fontfamily=Dejavu-Sans \
+              --replace fontsize=\$\(\(tilewidth/10\)\) fontsize=20
+          '';
+        });
       };
+
     };
+
     nixosConfigurations = {
       prime-ai-bootstrap = nixpkgs-unstable.lib.nixosSystem {
         system = "x86_64-linux";
