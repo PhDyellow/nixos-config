@@ -1402,6 +1402,8 @@
 
                            (setq completion-cycle-threshold 3)
 
+                           (setq sentence-end-double-space nil)
+
                         '';
                     };
                     isend-mode = {
