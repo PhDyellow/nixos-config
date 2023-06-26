@@ -493,10 +493,13 @@
         {
           services.syncthing = {
             enable = true;
-            dataDir = "/para/resources/syncthing";
-            configDir = "/etc/syncthing";
+            dataDir = "/var/lib/syncthing";
+            configDir = config.services.syncthing.dataDir + "/.config/syncthing";
             overrideDevices = true;
             overrideFolders = true;
+            user = "phil";
+            group = "users";
+            openDefaultPorts = true;
             devices = {
 
             };
