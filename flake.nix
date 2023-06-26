@@ -1550,10 +1550,10 @@
                           "C-q" = "vertico-quick-exit";
                         };
                       };
-                        enable = true;
                     };
                     vertico-buffer = {
                       after = [ "vertico" ];
+                      enable = false;
                       config = ''
                           (vertico-buffer-mode)
                           (setq vertico-buffer-display-action
