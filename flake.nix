@@ -823,9 +823,9 @@
                 #!/bin/bash
 
                 # large, changes less frequently
-                BIG=/para/areas/bibliography__bib/readings.bib
+                BIG=/para/areas/bibliography___CITE/readings.bib
                 # small, changes more frequently
-                SMALL=/para/areas/bibliography__bib/new_refs.bib
+                SMALL=/para/areas/bibliography___CITE/new_refs.bib
 
                 # size of small before script actually does anything
                 MAXSIZE=5000
@@ -1002,9 +1002,18 @@
                   startupTimer = true;
                   earlyInit = "";
                   #home-manager.users.<name> is an attribute set {} of users. Each user is a hmModule, so I can import
-                    #modules to it. Any modules imported by all users can go in home-manager.sharedModules
-                    prelude = ''
+                  #modules to it. Any modules imported by all users can go in home-manager.sharedModules
+                  prelude = ''
                       ;;(setq my-user-emacs-directory "/storage/emulated/0/memx/repos/phone_emacs/")
+                      (setq my-memx-dir "/para/areas/memx/"
+                            my-bib-dir "/para/areas/bibliography___CITE/"
+                            my-bib-files '("/para/areas/bibliography___CITE/new_refs.bib"
+                            "/para/areas/bibliography___CITE/readings.bib")
+                            my-ereading-dir "/para/areas/bibliography___CITE/ereading___pdf__ebook__refs/"
+                            my-html-dir "/para/areas/bibliography___CITE/web-capture___html__org__refs/"
+                            my-refs-dirs (list my-ereading-dir my-html-dir)
+                      )
+
 
                       (setq make-backup-files nil
                             vc-make-backup-files nil
@@ -1047,6 +1056,9 @@
                     '';
                   #config inserted after use-package
                   postlude = ''
+                      ; Seems to break if called too early
+                       (citar-org-roam-mode)
+
                       ;; Local Variables:
                       ;; no-byte-compile: t
                       ;; End:
@@ -1251,7 +1263,8 @@
                           (setq auto-save-default t
                                 auto-save-include-big-deletions t
                                 auto-save-list-file-prefix (concat user-emacs-directory ".local/cache/autosave/")
-                                auto-save-file-name-transforms (list (list ".*" auto-save-list-file-prefix t)))
+                                auto-save-file-name-transforms (list (list ".*" auto-save-list-file-prefix t))
+                                safe-local-variable-directories `(,my-memx-dir))
                         '';
                     };
                     tramp = {
@@ -1450,7 +1463,7 @@
                           (setq xref-show-xrefs-function #'consult-xref
                           xref-show-definitions-function #'consult-xref)
                         '';
-                        config = ''
+                      config = ''
                           ;; Optionally configure preview. The default value
                           ;; is 'any, such that any key triggers the preview.
                           ;; (setq consult-preview-key 'any)
@@ -1760,6 +1773,43 @@
                           (sequence "ADD" "FIND" "SKIM(1!)" "1ST_READ(2!)" "1ST_MARG(3!)" "2ND_READ(4!)" "2ND_MARG(5!)" "3RD_READ(6!)" "3RD_MARG(7!)" "GOLD(8!)" "|" "REF(9!)" "DROP(k)")
                           ))
 
+                          (setq org-tag-alist '(
+                          ;; (startgroup . nil) ... (endgroup . nil) -> Mutually exclusive  tags
+                          ;; (startgroup . nil) (tagggx . "t") (grouptags . nil) ... (endgroup . nil) -> Mutually exclusive tags in tag group "tagggx"
+                          ;; (startgrouptag . nil) (taggg . "t") (grouptags . nil) ... (endgrouptag . nil) ->  tag group "taggg", not exclusive
+                          ;; regular tag "proj"
+                          ;; regexp tag "{proj_.+}" -> matches any tag starting with "proj_". Useful as part of group tag, eg ((startgroup) ("proj") (grouptags) ("{proj_.+}")(endgroup)) which allows searches for "proj" to match all projects, or proj_win to just match the proj_win project.
+
+                          ;; If a tag is mutually exclusive with PROCESSING, then the tag is always a processing tag.
+
+                            ;; QUERY tag for question, investigation log, conclusion.
+                            (startgroup . nil) ("QUERY") ("PROCESSING") ("XXQUERY") (endgroup . nil)
+                            ;; RECIPE tag for how to do something
+                            (startgroup . nil) ("RECIPE") ("XXRECIPE") (endgroup . nil)
+                            ;; CITE tag for a reference or source. XXCITE is a retracted source
+                            (startgroup . nil) ("CITE") ("XXCITE") (endgroup . nil)
+                            ;; SPARK tag for an idea, probably crossing together a lot of other ideas and sources. XXSPARK is a spark that has been processed
+                            (startgroup . nil) ("SPARK") ("PROCESSING") ("XXSPARK") (endgroup . nil)
+                            ;; PROJ tag for a goal with tasks. Use PROJ if it is something that can be marked as done, is more complex than a single task and achieves something in itself when done (ie. not just partway to a desired state. A counterexample: submitting an application then accepting the returned offer are two tasks, the first one is not a complete project on it's own.). A subproject is also a PROJ, linked to the parent proj in a super/sub type link pair.
+                            (startgroup . nil) ("PROJ") ("XXPROJ") (endgroup . nil)
+                            ;; AREA tag for things I am responsible for, and want to maintain, but cannot be marked as done. I'm never really "done" with being a parent or husband, for example, or taking care of my health. Areas do close though, as life circumstances change.
+                            (startgroup . nil) ("AREA") ("XXAREA") (endgroup . nil)
+                            ;; GOAL tag for things I want to work towards. Needs more thought, are these visions and big picture stuff, or just projects without tasks? Should I be using AREA? GOALS are things I want to bring about, but may not be a concrete "done"
+                            (startgroup . nil) ("GOAL") ("XXGOAL") (endgroup . nil)
+                            ;; WORKS tag for things I am working on. Code, writing, in collaboration, solo... They are marked as closed when I don't plan on changing anything else in them.
+                            (startgroup . nil) ("WORKS") ("PROCESSING") ("XXWORKS") (endgroup . nil)
+                            ;; CONCEPT tag for notes that explain a concept. Theseare the "evergreen" notes in my memx, and should be reasonably self-contained and understandable to an outsider. Concept notes are not normally closed, but they might be retracted.
+                            (startgroup . nil) ("CONCEPT") ("XXCONCEPT") (endgroup . nil)
+                            ;; ENTITY  tag, for a thing, like a person, company, city or software program. Entity tags are closed when I no longer want to see them, not when the entity ceases to exist, as some entities are historical or fictional.
+                            (startgroup . nil) ("ENTITY") ("XXENTITY") (endgroup . nil)
+                            ;; Contains TOC, org-ql-views, overview, or some kind of summary that mostly just links to other things.
+                            (startgroup . nil) ("VIEW") ("XXVIEW") (endgroup . nil)
+                            ;; THINKING tag, for thinking things through. Like SPARK, but when I dont have an idea.
+                            (startgroup . nil) ("THINKING") ("PROCESSING") ("XXTHINKING") (endgroup . nil)
+
+
+                          ))
+
                           (setq org-M-RET-may-split-line nil)
 
                           (setq org-log-into-drawer t
@@ -1768,6 +1818,10 @@
                                 org-log-done t)
 
                           (setq org-image-actual-width '(800))
+
+                          (setq org-bibtex-tags '("CITE"))
+
+                          ;; TODO org-after-tags-change-hook in memx to rename file to match tags. filetags could be quite useful here if I set it to match my tag
 
                         '';
                     };
@@ -1858,7 +1912,9 @@
                       enable = true;
                       config = ''
                           (setq org-id-method 'ts
-                                org-id-prefix "org")
+                                org-id-prefix nil
+                                org-id-ts-format "%Y%m%dT%H%M%S%6N"
+                               )
                           ;;Create id's agressively
                           (setq org-id-link-to-org-use-id 'create-if-interactive)
                           (defmacro my-add-id-to-heading (heading-func)
@@ -1866,11 +1922,11 @@
                                       #'(lambda (&rest rest-var)
                                           "Add an ID to new headers automatically"
                                (save-excursion (org-id-get-create)))))
-                          (my-add-id-to-heading 'org-insert-heading)
-                          (my-add-id-to-heading 'org-meta-return)
-                          (my-add-id-to-heading 'org-insert-heading-respect-content)
-                          (my-add-id-to-heading 'org-insert-todo-heading)
-                          (my-add-id-to-heading 'org-insert-todo-heading-respect-content)
+                          ; (my-add-id-to-heading 'org-insert-heading)
+                          ; (my-add-id-to-heading 'org-meta-return)
+                          ; (my-add-id-to-heading 'org-insert-heading-respect-content)
+                          ; (my-add-id-to-heading 'org-insert-todo-heading)
+                          ; (my-add-id-to-heading 'org-insert-todo-heading-respect-content)
 
                           (defun my-org-add-ids-to-headings-in-file ()
                             "Add ID properties to all headlines in the current
@@ -1879,15 +1935,183 @@
                               (org-map-entries 'org-id-get-create))
 
 
-                          (setq org-agenda-files "/para/areas/memx"
-                                org-agenda-file-regexp "\\`[^.].*_agenda.*\\.org\\'")
+                          (setq org-agenda-files `(,my-memx-dir)
+                          ;      org-agenda-file-regexp "\\`[^.].*_agenda.*\\.org\\'"
+                          )
                         '';
-                      };
-                      denote = {
-                        enable = true;
-                        after = [ "org" ];
-                        config = ''
-                          (setq denote-directory "/para/areas/memx/"
+                    };
+                    org-roam = {
+                      after = [ "org" ];
+                      enable = true;
+                      config = ''
+                        (setq org-roam-directory (file-truename my-memx-dir)
+                          org-roam-node-display-template
+                            (concat "''${title:60} "
+                              (propertize "''${tags:20}" 'face 'org-tag))
+                          org-roam-database-connector 'sqlite-builtin
+                          org-roam-db-gc-threshold most-positive-fixnum
+
+                          org-roam-capture-templates '(
+                            ("T" "CITAR: new CITE note" plain
+                              "%?"
+                              :target (file+head "''${id}-''${citekey}___CITE.org"
+"* ''${citekey}  :CITE:
+:PROPERTIES:
+:ROAM_ALIASES:
+:URL: ''${url}
+:DOI: ''${doi}
+:AUTHOR: ''${author}
+:EDITOR: ''${editor}
+:YEAR: ''${bdate}
+:NOTER_DOCUMENT: %(orb-process-file-field \"''${citekey}\")
+:TITLE: ''${title}
+:BIBTEX_TYPE: ''${btype}
+:KEYWORDS: ''${keywords}
+:ID: ''${id}-''${citekey}
+:CREATED: %U
+:END:
+
+"))
+                            ("d" "OOB: new CITE note" plain
+                              "%?"
+                              :target (file+head "''${id}-''${citekey}___CITE.org"
+"* ''${citekey}  :CITE:
+:PROPERTIES:
+:ROAM_ALIASES:
+:URL: ''${url}
+:DOI: ''${doi}
+:AUTHOR: ''${author}
+:EDITOR: ''${editor}
+:YEAR: ''${date} ''${year} ''${issued}
+:NOTER_DOCUMENT: %(orb-process-file-field \"''${citekey}\")
+:TITLE: ''${title}
+:BIBTEX_TYPE: ''${=type=}
+:ID: ''${id}-''${citekey}
+:KEYWORDS: ''${keywords}
+:CREATED: %U
+:END:
+
+"))
+                            ("a" "new: SPARK note" plain
+                            "%?"
+                            :target (file+head "''${id}-''${slug}___SPARK.org"
+"* ''${title}  :SPARK:
+:PROPERTIES:
+:ID: ''${id}-''${slug}
+:ROAM_ALIASES:
+:CREATED: %U
+:END:
+")
+                            :unnarrowed)
+                            ("c" "new: CONCEPT note" plain
+                            "%?"
+                            :target (file+head "''${id}-''${slug}___CONCEPT.org"
+"* ''${title}  :CONCEPT:
+:PROPERTIES:
+:ID: ''${id}-''${slug}
+:ROAM_ALIASES:
+:CREATED: %U
+:END:
+")
+                            :unnarrowed)
+                            ("q" "new: QUERY note" plain
+                            "%?"
+                            :target (file+head "''${id}-''${slug}___QUERY.org"
+"* ''${title}  :QUERY:
+:PROPERTIES:
+:ID: ''${id}-''${slug}
+:ROAM_ALIASES:
+:CREATED: %U
+:END:
+* Conclusion
+Close when conclusion is reached.
+* Processing template
+- [timestamp] [[websearch: keywords]]
+  - [timestamp] [result url] :: relevance
+  - [timestamp] [result url] :: relevance
+    - [[websearch: new idea inspired by result]]
+* Processing
+")
+                            :unnarrowed)
+                            ("r" "new: RECIPE note" plain
+                            "%?"
+                            :target (file+head "''${id}-''${slug}___RECIPE.org"
+"* ''${title}  :RECIPE:
+:PROPERTIES:
+:ID: ''${id}-''${slug}
+:ROAM_ALIASES:
+:CREATED: %U
+:END:
+* Expected Results
+* Inputs
+* Procedure
+")
+                            :unnarrowed)
+                            ("i" "Capture into note")
+                            ("iq" "capture into note: quote" plain
+                              "\n#+begin_quote :source-link %a :date %U\n%i\n#+end_quote\n%?"
+                              :target (file "''${id}-''${slug}.org")
+                            :unnarrowed)
+                            ("it" "capture into note: transclude" plain
+                              "\n#+transclude: %a %?"
+                            :target (file "''${id}-''${slug}.org")
+                            :unnarrowed)
+                          ("p" "new: plain note" plain
+                            "%?"
+                            :target (file+head "''${id}-''${slug}.org"
+"* ''${title}  %^g
+:PROPERTIES:
+:ID: ''${id}-''${slug}
+:ROAM_ALIASES:
+:CREATED: %U
+:END:
+"))
+
+                          )
+
+            )
+
+                        (org-roam-db-autosync-mode)
+
+
+
+                      '';
+                    };
+                    org-roam-export = {
+                      enable = true;
+                      after = [ "org-roam" ];
+                    };
+                    org-roam-bibtex = {
+                      enable = true;
+                      after = [ "org-roam" ];
+                      config = ''
+                        (setq orb-preformat-templates t
+                           orb-preformat-keywords '(
+                             "=key="
+                             "=type="
+                             "title"
+                             "citekey"
+                             "keywords"
+                             "url"
+                             "doi"
+                             "author"
+                             "editor"
+                             "date"
+                             "year"
+                             "issued"
+                           )
+                           orb-process-file-keyword t
+                           orb-file-field-extensions '("pdf")
+                           orb-roam-ref-format 'org-cite
+                        )
+                        (org-roam-bibtex-mode)
+                      '';
+                    };
+                    denote = {
+                      enable = false;
+                      after = [ "org" ];
+                      config = ''
+                          (setq denote-directory my-memx-dir
                                 denote-infer-keywords t
                                 denote-sort-keywords t
                                 denote-known-keywords '("agenda" "xagenda" "xnote")
@@ -1909,39 +2133,223 @@
                           (add-hook 'org-trigger-hook #'my-add-to-agenda)
 
                         '';
-                      };
-                      consult-notes = {
-                        enable = true;
-                        after = [ "denote" ];
-                        config = ''
-                          (setq consult-notes-denote-display-id nil
-                                consult-notes-denote-dir nil)
+                    };
+                    consult-notes = {
+                      enable = true;
+                      after = [ "org-roam" ];
+                      config = ''
+                        ;(setq consult-notes-file-dir-sources
+                        ;  `(("Memx" ?m ,my-memx-dir))
+                        ;)
+                          ;(consult-notes-org-headings-mode)
+                          (consult-notes-org-roam-mode)
 
-                          (consult-notes-org-headings-mode)
-                          (consult-notes-denote-mode)
+
+;; Search org-roam notes for citations (depends on citar)
+(defun consult-notes-org-roam-cited (reference)
+  "Return a list of notes that cite the REFERENCE."
+  (interactive (list (citar-select-ref
+                      :rebuild-cache current-prefix-arg
+                      :filter (citar-has-note))))
+  (let* ((ids
+          (org-roam-db-query [:select * :from citations
+                              :where (= cite-key $s1)]
+                             (car reference)))
+         (anodes
+          (mapcar (lambda (id)
+                    (org-roam-node-from-id (car id)))
+                  ids))
+         (template
+          (org-roam-node--process-display-format org-roam-node-display-template))
+         (bnodes
+          (mapcar (lambda (node)
+                    (org-roam-node-read--to-candidate node template)) anodes))
+         (node (completing-read
+                "Node: "
+                (lambda (string pred action)
+                  (if (eq action 'metadata)
+                      `(metadata
+                        ;; get title using annotation function
+                        (annotation-function
+                         . ,(lambda (title)
+                              (funcall org-roam-node-annotation-function
+                                       (get-text-property 0 'node title))))
+                        (category . org-roam-node))
+                    (complete-with-action action bnodes string pred)))))
+         (fnode
+          (cdr (assoc node bnodes))))
+    (if ids
+        ;; Open node in other window
+        (org-roam-node-open fnode)
+      (message "No notes cite this reference."))))
+
                         '';
-                      };
-
-                      citar = {
-                        enable = true;
-                        after = [ "org" "oc" ];
-                        config = ''
-                            (setq org-cite-global-bibliography
-                                    '("/para/areas/bibliography__bib/new_refs.bib"
-                                      "/para/areas/bibliography__bib/readings.bib")
+                    };
+                    oc = {
+                      enable = true;
+                      after = [ "org" "citar" ];
+                      config = ''
+                            (setq org-cite-global-bibliography my-bib-files
                                   org-cite-insert-processor 'citar
                                   org-cite-follow-processor 'citar
-                                  org-cite-activate-processor 'citar
-                                  citar-at-point-function 'embark-act)
-                        '';
-                      };
-                      citar-denote = {
-                        enable = true;
-                        after = [ "citar" "denote" ];
-                        config = ''
+                                  org-cite-activate-processor 'citar)
+                      '';
+                    };
+                    ebib = {
+                      enable = true;
+                      config = ''
+                        (setq ebib-preload-bib-files my-bib-files
+                        ebib-bibtex-dialect 'biblatex
+                        ebib-file-search-dirs my-refs-dirs
+                        ebib-file-associations '()
+                        ebib-link-file-path-type 'relative)
+
+                      '';
+                    };
+                    citar = {
+                      enable = true;
+                      after = [ "org" ];
+                      config = ''
+                        (setq citar-bibliography my-bib-files
+                           citar-at-point-function 'embark-act
+                           citar-library-paths (list my-ereading-dir)
+                        citar-file-additional-files-separator "---")
+                      '';
+                      hook = [
+                        "(org-mode . citar-capf-setup)"
+                      ];
+                    };
+                    citar-embark = {
+                      enable = true;
+                      after = [ "citar" ];
+                      config = ''
+                        (citar-embark-mode)
+                      '';
+                    };
+                    citar-org-roam = {
+                      enable = true;
+                      after = [ "citar" "org-roam" "org-roam-bibtex" ];
+                      init = ''
+
+                      '';
+                      config = ''
+                        (citar-register-notes-source
+                          'orb-citar-source (list :name "Org Roam Notes"
+                            :category 'org-roam-node
+                            :items #'citar-org-roam--get-candidates
+                            :hasitems #'citar-org-roam-has-notes
+                            :open #'citar-org-roam-open-note
+                            :create #'orb-citar-edit-note
+                            :annotate #'citar-org-roam--annotate))
+
+                        (setq citar-notes-source 'orb-citar-source
+                          citar-org-roam-capture-template-key "T"
+                          citar-org-roam-subdir my-memx-dir
+                          citar-org-roam-template-fields '(
+                            (:citekey "=key=")
+                             (:title "title")
+                             (:author "author")
+                             (:editor "editor")
+                             (:keywords "keywords")
+                             (:url "url")
+                             (:doi "doi")
+                             (:bdate "date" "year" "issued")
+                             (:btype "=type="))
+                        )
+
+
+
+
+                      '';
+                      extraConfig = ''
+                      '';
+                    };
+                    citar-denote = {
+                      enable = false;
+                      after = [ "citar" "denote" ];
+                      config = ''
                           ;; Use citekey as note title
                           (setq citar-denote-title-format nil)
                         '';
+                    };
+                    biblio = {
+                      enable = true;
+                      config = ''
+                        (setq biblio-bibtex-use-autokey t
+                        biblio-download-directory (concat my-ereading-dir "/refile"))
+                      '';
+                    };
+                    biblio-bibsonomy = {
+                      enable = false;
+                      # requires an account
+                    };
+                    bibtex = {
+                      enable = true;
+                      config = ''
+                        (setq bibtex-autokey-names 1
+                          bibtex-autokey-names-stretch 1
+                          bibtex-autokey-name-separator "-"
+                          bibtex-autokey-additional-names ".etal"
+                          bibtex-autokey-name-case-convert-function 'capitalize
+                          bibtex-autokey-year-length 4
+                          bibtex-autokey-titlewords 3
+                          bibtex-autokey-titlewords-stretch 2
+                          bibtex-autokey-titleword-length t
+                          bibtex-autokey-year-title-separator ""
+
+                          bibtex-include-OPTcrossref '("InProceedings" "InCollection" "InBook")
+
+
+
+                          bibtex-maintain-sorted-entries 'crossref
+                          bibtex-entry-format '(opts-or-alts
+                            required-fields
+                            numerical-fields
+                            whitespace
+                            ;realign
+                            last-comma
+                            delimiters
+                          ;  sort-fields
+                          )
+                          bibtex-file-path my-bib-dir
+                        )
+
+
+
+                        (bibtex-set-dialect 'biblatex)
+                      '';
+                    };
+                    ## Part of helm-bibtex, and used by org-ref
+                    helm-bibtex = {
+                      enable = true;
+                      after = [ "citar" ];
+                    };
+                    bibtex-completion = {
+                      after = [ "citar" ];
+                      enable = true;
+                      config = ''
+                        ;; matches org-cite-global-bibliography
+                        (setq bibtex-completion-bibliography my-bib-files
+                          bibtex-completion-library-path my-ereading-dir
+                          bibtex-completion-find-additional-pdfs t
+                        )
+
+                      '';
+                    };
+                    org-ref = {
+                      after = [ "org" "bibtex" "bibtex-completion" ];
+                      enable = true;
+                      config = ''
+                          (require 'org-ref-wos)
+                          (require 'org-ref-arxiv)
+                          (require 'org-ref-scopus)
+                          (setq org-ref-bibtex-pdf-download-dir (concat my-ereading-dir "/refile"))
+                        '';
+                    };
+                    org-ref-helm = {
+                      after = [ "org-ref" ];
+                      enable = true;
+                    };
                     smart-tabs-mode = {
                       enable = true;
                       config = ''
@@ -1977,9 +2385,9 @@
                       enable = true;
                       config = ''
                           (defun my-org-remark-notes-file-names ()
-                                 (concat "/para/areas/memx/"
+                                 (concat my-memx-dir
                                    (file-name-base (org-remark-notes-file-name-function))
-                                   " -- org-remark.org"))
+                                   "___org-remark.org"))
                           (setq org-remark-notes-display-buffer-action '((display-buffer-in-side-window) (side . right) (slot . 1))
                                 org-remark-notes-buffer-name "*remark file notes*"
                                 org-remark-use-org-id t
