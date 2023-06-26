@@ -25,7 +25,9 @@
       inputs.nixpkgs.follows = "nixpkgs-unstable";
     };
     hyprland = {
-      url = "github:hyprwm/Hyprland";
+      # url = "github:hyprwm/Hyprland?rev=c4dec4f79697cb789b585f8e4febf92e929b5291"; # failed to build
+      # url = "github:hyprwm/Hyprland?rev=e43f7fc98defc3d9a5bc2fe249895d23e490392f"; #failed to build
+      url = "github:hyprwm/Hyprland?rev=f0e4f6622e3e9addc530119b804d2f71395455e7";
       #not following nixpkgs to get caching
     };
     tuxedo-nixos = {
