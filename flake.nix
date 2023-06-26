@@ -1146,7 +1146,6 @@
                       config = ''
                           (undo-fu-session-global-mode)
                         '';
-                          (objed-mode)
                     };
                     bind-key = {
                       enable = true;
@@ -1155,8 +1154,13 @@
                       after = [ "avy" "expand-region" "magit" ];
                       enable = true;
                       config = ''
+                          ;(objed-mode)
+                          (add-hook 'ess-r-mode-hook #'objed-local-mode)
+                          (add-hook 'nix-mode-hook #'objed-local-mode)
+                          (add-hook 'bibtex-mode-hook #'objed-local-mode)
+                          (add-hook 'elisp-mode-hook #'objed-local-mode)
                           (setq objed-disabled-modes '(epa-key-list-mode
-                              magit-mode))
+                              magit-mode org-mode))
 
 
                           ;; rebind switch to buffer with consult
