@@ -1117,7 +1117,7 @@
                   #modules to it. Any modules imported by all users can go in home-manager.sharedModules
                   prelude = ''
                       ;;(setq my-user-emacs-directory "/storage/emulated/0/memx/repos/phone_emacs/")
-                      (setq my-memx-dir "/para/areas/memx/"
+                      (setq my-memx-dir "/para/areas/memx___syncthing/"
                             my-bib-dir "/para/areas/bibliography___CITE/"
                             my-bib-files '("/para/areas/bibliography___CITE/new_refs.bib"
                             "/para/areas/bibliography___CITE/readings.bib")
