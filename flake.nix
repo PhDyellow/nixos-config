@@ -2650,8 +2650,11 @@ Close when conclusion is reached.
                       enable = true;
                       config = ''
                           ;;(setq inferior-ess-r-program "radian") ;;  ESS can't speak radian's language
-                          (ess-set-style 'RStudio)
                         '';
+                      hook = [
+                        "(ess-mode . (lambda ()
+                           (ess-set-style 'RStudio)))"
+                      ];
                     };
                     nix-mode = {
                       enable = true;
