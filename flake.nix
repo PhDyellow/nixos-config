@@ -1951,6 +1951,10 @@
 
                         '';
                     };
+                    ox-pandoc = {
+                      after = [ "org" ] ;
+                      enable = true;
+                    };
                     org-clock = {
                       after = [ "org" ];
                       enable = true;
