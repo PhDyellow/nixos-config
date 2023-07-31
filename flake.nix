@@ -588,6 +588,14 @@
                   "x1_carbon"
                 ];
               };
+              phd_transition = {
+                path = "/para/projects/phd___syncthing__transition/";
+                id = "nbdjg-farns";
+                enable = true;
+                devices = [
+                  "x1_carbon"
+                ];
+              };
             };
             cert = "/secrets/syncthing/cert.pem";
             key = "/secrets/syncthing/key.pem";
