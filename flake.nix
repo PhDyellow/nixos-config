@@ -596,6 +596,14 @@
                   "x1_carbon"
                 ];
               };
+              phd_draft = {
+                path = "/para/projects/phd_draft___syncthing/";
+                id = "ceto7-fdkqr";
+                enable = true;
+                devices = [
+                  "x1_carbon"
+                ];
+              };
             };
             cert = "/secrets/syncthing/cert.pem";
             key = "/secrets/syncthing/key.pem";
