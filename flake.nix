@@ -724,6 +724,7 @@
             nil # nix language server
             # rnix-lsp # nix language server
             elvish
+            pandoc
           ];
 
           fonts = {
