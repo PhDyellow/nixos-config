@@ -922,6 +922,17 @@
         nixpkgs.overlays = [
           inputs.emacs-overlay.overlays.default
         ];
+
+
+        environment.systemPackages = with pkgs; [
+          (texlive.combine { inherit (texlive)
+            scheme-basic biber collection-bibtexextra collection-mathscience
+            collection-latexrecommended collection-latexextra
+            collection-pictures collection-plaingeneric
+            collection-fontsrecommended collection-xetex collection-luatex;})
+          pandoc
+        ];
+
         systemd.timers."bib_reorganise" = {
           description = "Move new bib entries to main collection to improve caching";
           wantedBy = [ "timers.target" ];
@@ -970,14 +981,6 @@
           useGlobalPkgs = true;
           useUserPackages = true;
 
-          environment.systemPackages = with pkgs; [
-            (texlive.combine { inherit (texlive)
-              scheme-basic biber collection-bibtexextra collection-mathscience
-              collection-latexrecommended collection-latexextra
-              collection-pictures collection-plaingeneric
-              collection-fontsrecommended collection-xetex collection-luatex;})
-              pandoc
-          ];
           #config inserted before use-package
           users.phil = {
             imports = let
