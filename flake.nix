@@ -2129,7 +2129,7 @@
 :END:
 
 "))
-                            ("a" "new: SPARK note" plain
+                            ("s" "new: SPARK note" plain
                             "%?"
                             :target (file+head "''${id}-''${slug}___SPARK.org"
 "* ''${title}  :SPARK:
@@ -2151,7 +2151,7 @@
 :END:
 ")
                             :unnarrowed)
-                            ("q" "new: QUERY note" plain
+                            ("y" "new: QUERY note" plain
                             "%?"
                             :target (file+head "''${id}-''${slug}___QUERY.org"
 "* ''${title}  :QUERY:
@@ -2160,14 +2160,39 @@
 :ROAM_ALIASES:
 :CREATED: %U
 :END:
-* Conclusion
+** Overview
+** Conclusion
 Close when conclusion is reached.
-* Processing template
+** Processing template
 - [timestamp] [[websearch: keywords]]
   - [timestamp] [result url] :: relevance
   - [timestamp] [result url] :: relevance
     - [[websearch: new idea inspired by result]]
-* Processing
+** Processing
+")
+                            :unnarrowed)
+                            ("a" "Activity note types")
+
+                            ("ap" "new: PROJ note" plain
+                            "%?"
+                            :target (file+head "''${id}-''${slug}___PROJ.org"
+"* ''${title}  :PROJ:
+:PROPERTIES:
+:ID: ''${id}-''${slug}
+:ROAM_ALIASES:
+:CREATED: %U
+:END:
+
+:PURSUES:
+:END:
+
+:SUPPORTED_BY:
+:END:
+
+:FILES_DIRS:
+:END:
+
+** Overview
 ")
                             :unnarrowed)
                             ("r" "new: RECIPE note" plain
@@ -2179,9 +2204,9 @@ Close when conclusion is reached.
 :ROAM_ALIASES:
 :CREATED: %U
 :END:
-* Expected Results
-* Inputs
-* Procedure
+** Expected Results
+** Inputs
+** Procedure
 ")
                             :unnarrowed)
                             ("i" "Capture into note")
