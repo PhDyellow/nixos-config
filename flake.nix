@@ -975,7 +975,7 @@
               scheme-basic biber collection-bibtexextra collection-mathscience
               collection-latexrecommended collection-latexextra
               collection-pictures collection-plaingeneric
-              collection-fontsrecommended collection-xetex collection-luatex)
+              collection-fontsrecommended collection-xetex collection-luatex;})
               pandoc
           ];
           #config inserted before use-package
