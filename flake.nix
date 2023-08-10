@@ -724,7 +724,6 @@
             nil # nix language server
             # rnix-lsp # nix language server
             elvish
-            pandoc
           ];
 
           fonts = {
@@ -971,6 +970,14 @@
           useGlobalPkgs = true;
           useUserPackages = true;
 
+          environment.systemPackages = with pkgs; [
+            (texlive.combine { inherit (texlive)
+              scheme-basic biber collection-bibtexextra collection-mathscience
+              collection-latexrecommended collection-latexextra
+              collection-pictures collection-plaingeneric
+              collection-fontsrecommended collection-xetex collection-luatex)
+              pandoc
+          ];
           #config inserted before use-package
           users.phil = {
             imports = let
