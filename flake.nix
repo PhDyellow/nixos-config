@@ -931,6 +931,7 @@
             collection-pictures collection-plaingeneric
             collection-fontsrecommended collection-xetex collection-luatex;})
           pandoc
+          inkscape-with-extensions
         ];
 
         systemd.timers."bib_reorganise" = {
