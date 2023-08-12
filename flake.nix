@@ -990,6 +990,24 @@
               inputs.hyprland.homeManagerModules.default
               nurNoPkgs.repos.rycee.hmModules.emacs-init
             ];
+
+            gtk = {
+              enable = true;
+              theme = {
+                package = pkgs.gnome.gnome-themes-extra;
+                name = "Adwaita";
+              };
+              iconTheme = {
+                package = pkgs.gnome.adwaita-icon-theme;
+                name = "Adwaita";
+              };
+              cursorTheme = {
+                package = pkgs.vanilla-dmz;
+                name = "Vanilla-DMZ";
+                size = 16;
+              };
+            };
+
             home = {
               stateVersion = "23.05";
               file = {
