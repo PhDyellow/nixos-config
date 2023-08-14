@@ -1354,6 +1354,8 @@
                             my-refs-dirs (list my-ereading-dir my-html-dir)
                       )
 
+                      (setq temporary-file-directory "/para/tmp")
+
 
                       (setq make-backup-files nil
                             vc-make-backup-files nil
