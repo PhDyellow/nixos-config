@@ -486,6 +486,11 @@
                 psk = "@home_psk@";
                 priority = 99;
               };
+              #BParent 2.4Ghz
+              TelstraA76952 = {
+                psk = "@bparent_psk@";
+                priority = 50;
+              };
             };
           };
         };
