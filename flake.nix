@@ -932,7 +932,8 @@
             scheme-basic biber collection-bibtexextra collection-mathscience
             collection-latexrecommended collection-latexextra
             collection-pictures collection-plaingeneric
-            collection-fontsrecommended collection-xetex collection-luatex;})
+            collection-fontsrecommended collection-xetex collection-luatex
+            dvipng;})
           pandoc
           (inkscape-with-extensions.override {
             inkscapeExtensions = null;
