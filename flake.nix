@@ -37,6 +37,11 @@
       # This should give the least surprises and saves on disk space.
       # inputs.nixpkgs.follows = "nixpkgs-unstable"; # not working with nixpkgs unstable yet
     };
+
+    nix-on-droid = {
+      url = "github:t184256/nix-on-droid/release-23.05";
+    };
+
     nur = {
       url = "github:nix-community/NUR";
     };
@@ -48,6 +53,18 @@
       #url = "github:nix-community/emacs-overlay?rev=f57192297f370f8f01b1476023ca29caf032b20a";https://github.com/nix-community/emacs-overlay/commit/#start-of-content
     };
 
+    emacs-overlay-pinned-android = {
+      url = "github:nix-community/emacs-overlay";
+      # url = "github:nix-community/emacs-overlay?rev=42a2a718bdcbe389e7ef284666d4aba09339a416";
+      # url = "github:nix-community/emacs-overlay?rev=0acd590f3b518dfc8354bf9ed5c82e1401c4e6b0";
+      #;https://github.com/nix-community/emacs-overlay/commit/e9e67599cda6f57f37178fd33ccff86cc2c2d6c4
+      #url = "github:nix-community/emacs-overlay?rev=f57192297f370f8f01b1476023ca29caf032b20a";https://github.com/nix-community/emacs-overlay/commit/#start-of-content
+    };
+
+
+    pandoc-crossref = {
+      url = "github:lierdakil/pandoc-crossref";
+    };
 
     #Emacs packages
     org-sltypes = {
@@ -94,127 +111,403 @@
       url = "git+https://git.sr.ht/~protesilaos/denote";
       flake = false;
     };
+    org-transclusion = {
+      url = "github:nobiot/org-transclusion/main";
+      flake = false;
+    };
   };
 
   outputs = {self, nixpkgs-unstable, ...}@inputs: {
     nixosModules = {
-      prime-ai_hardware_config_tuxedo = { config, lib, pkgs, modulesPath, ...}:
-        let
-          tcc-profile = pkgs.writeTextFile {
-            name = "tcc-profile";
-            text =  ''
-            [
-              {
-                "id": "__default_custom_profile__",
-                "name": "TUXEDO Defaults",
-                "description": "Edit profile to change behaviour",
-                "display": {
-                  "brightness": 100,
-                  "useBrightness": false
-                },
-                "cpu": {
-                  "useMaxPerfGov": false,
-                  "governor": "powersave",
-                  "energyPerformancePreference": "balance_performance",
-                  "noTurbo": false,
-                  "onlineCores": 24,
-                  "scalingMinFrequency": 2200000,
-                  "scalingMaxFrequency": 4700000
-                },
-                "webcam": {
-                  "status": true,
-                  "useStatus": true
-                },
-                "fan": {
-                  "useControl": true,
-                  "fanProfile": "Balanced",
-                  "minimumFanspeed": 0,
-                  "offsetFanspeed": 0
-                },
-                "odmProfile": {
-                  "name": "performance"
-                },
-                "odmPowerLimits": {
-                  "tdpValues": []
-                }
-              },
-              {
-                "name": "freezy",
-                "description": "Edit profile to change behaviour",
-                "display": {
-                  "brightness": 50,
-                  "useBrightness": true
-                },
-                "cpu": {
-                  "useMaxPerfGov": false,
-                  "governor": "powersave",
-                  "energyPerformancePreference": "performance",
-                  "noTurbo": false,
-                  "onlineCores": 24,
-                  "scalingMinFrequency": 550000,
-                  "scalingMaxFrequency": 5074000
-                },
-                "webcam": {
-                  "status": false,
-                  "useStatus": true
-                },
-                "fan": {
-                  "useControl": true,
-                  "fanProfile": "Freezy",
-                  "minimumFanspeed": 0,
-                  "offsetFanspeed": 5
-                },
-                "odmProfile": {
-                  "name": "performance"
-                },
-                "odmPowerLimits": {
-                  "tdpValues": []
-                },
-                "id": "0350erinz8o9lfg6puqi"
-              }
-            ]
-          '';
+      # NAMING SCHEME:
+      # <device-name>.<module-name>: configuration specifically for one device, eg. prime-ai
+      # <device-name>.hm: home-manager config for device
+      # system-conf.<module-name>: system-wide configuration, not device specific
+      #    likely to be shared by multiple programs, eg fonts
+      # gui.<module-name>: a graphical program configured for my needs
+      # cli.<module-name>: a cli program configured for my needs
+      #   Only use gui or cli for programs that need tweaking
+
+      system-conf = {
+        # Programs that I want on all devices, and dont need to configure
+        gui = {config, pkgs, ...}:
+          {
+            environment.systemPackages = with pkgs; [
+
+            ];
           };
-        in
+        cli = {config, pkgs, ...}:
+          {
+            environment.systemPackages = with pkgs; [
+              ripgrep
+              nil # nix language server
+              openssl
+              vim
+              git
+              gitSVN
+              wget
+              curl
+
+            ];
+          };
+        allow-unfree = {config, pkgs, ...}:
+          {
+            nixpkgs.config.allowUnfree = true;
+          };
+        openssh = {config, pkgs, ...}:
+        {
+          #Enable OpenSSH daemon
+          #Primary use here is for agenix.
+          #Enabling openssh creates host keys, which agenix uses for secrets
+          #password entry is therefore disabled, and firewall ports are not opened
+          services.openssh = {
+            enable = true;
+            settings.PasswordAuthentication = false;
+            openFirewall = false;
+          };
+
+          programs.ssh = {
+            #agentTimeout = "1h"; #request passphrase for keys every hour
+            startAgent = true;
+            askPassword = "systemd-ask-password";
+          };
+        };
+        secure_boot = {config, pkgs, lib, ...}:
           {
             imports = [
-              inputs.tuxedo-nixos.nixosModules.default
+              inputs.lanzaboote.nixosModules.lanzaboote
             ];
-            #powerManagement.cpuFreqGovernor = "performance"; #forced to schedutil by tuxedo control center
-            hardware.tuxedo-control-center.enable = true;
-            systemd.services = {
-              create-tcc-profile = {
-                serviceConfig.Type = "oneshot";
-                before = [ "tccd.service" ];
-                wantedBy = [ "multi-user.target" ];
-                script = ''
+            #boot.bootspec.enable = true; #duplicated from prime-ai_hardware_config
+            boot = {
+              loader = {
+                efi.canTouchEfiVariables = true;
+                systemd-boot = {
+                  enable = lib.mkForce false; #force to false for lanzaboote
+                  #enable = true;
+                  editor = false;  #don't allow kernel cli editing before boot
+                };
+              };
+              lanzaboote = {
+                enable = true;
+                pkiBundle = "/etc/secureboot";
+              };
+            };
+          };
+        network_fs = {config, pkgs, ...}:
+          let
+            # this line prevents hanging on network split
+            automount_opts = "x-systemd.automount,noauto,x-systemd.idle-timeout=600,x-systemd.device-timeout=5s,x-systemd.mount-timeout=5s,uid=1001,gid=100";
+          in
+            {
+              age.secrets.cifs_dpbagje_share.file = ./agenix/cifs_dpbagje_share.age;
+             fileSystems = {
+                "/nas/dpbagj/parent_share" = {
+                  device = "//100.108.81.63/parent_share";
+                  fsType = "cifs";
+                  options = ["${automount_opts},credentials=${config.age.secrets.cifs_dpbagje_share.path}"];
+                };
+                "/nas/dpbagj/family_share" = {
+                  device = "//100.108.81.63/family_share";
+                  fsType = "cifs";
+                  options = ["${automount_opts},credentials=${config.age.secrets.cifs_dpbagje_share.path}"];
+                };
+              };
+            };
+        wifi_secrets = {config, pkgs, ...}:
+          {
+            age.secrets.wpa_pwd_env.file = ./agenix/wpa_pwd.env.age;
+            networking.wireless = {
+              environmentFile = config.age.secrets.wpa_pwd_env.path;
+              networks = {
+                PBAGJmob = {
+                  psk = "@phone_psk@";
+                  priority = 10;
+                };
+                WIFI-56E0-5G = {
+                  psk = "@parent_psk@";
+                  priority = 60;
+                };
+                WiFi-56E0-5G = {
+                  psk = "@parent_psk@";
+                  priority = 65;
+                };
+                PBAGJE_H_5G = {
+                  psk = "@home_psk@";
+                  priority = 99;
+                };
+                #BParent 2.4Ghz
+                TelstraA76952 = {
+                  psk = "@bparent_psk@";
+                  priority = 50;
+                };
+              };
+            };
+          };
+
+        locale_au = {config, pkgs, ...}:
+          {
+            time.timeZone = "Australia/Brisbane";
+            i18n.defaultLocale = "en_AU.UTF-8";
+          };
+        fonts = {config, pkgs, ...}:
+          {
+            fonts = {
+              fonts = with pkgs; [
+                (nerdfonts.override { fonts = [ "FiraCode" "RobotoMono" ]; })
+              ];
+
+              fontconfig.defaultFonts = {
+                monospace = [ "RobotoMono" ];
+              };
+            };
+
+          };
+
+        lock-root = {config, pkgs, ...}:
+          {
+            users.mutableUsers = false;
+            users.users = {
+              root.hashedPassword = "*";
+            };
+          };
+        nix-config = {config, pkgs, ...}:
+          {
+
+            nix = {
+              package = pkgs.nixVersions.unstable;
+              settings = {
+                system-features = [
+                  "recursive-nix"
+                  "kvm"
+                  "big-parallel"
+                  "nixos-test"
+                  "benchmark"
+                ];
+                experimental-features = [
+                  "nix-command"
+                  "flakes"
+                  "recursive-nix"
+                ];
+                substituters = [
+                  "https://hyprland.cachix.org" # for hyprland
+                  "https://nix-community.cachix.org" # for nix-community
+                ];
+                trusted-public-keys = [
+                  "hyprland.cachix.org-1:a7pgxzMz7+chwVL3/pzj6jIBMioiJM7ypFP8PwtkuGc=" #for hyprland
+                  "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs=" #For Nix-community
+                ];
+              };
+            };
+          };
+        stateversion = {config, pkgs, ...}:
+        {
+          system.stateVersion = "21.11";
+        };
+
+      };
+      nix-on-droid-config = {
+
+
+      };
+      x1carbon-vm = {
+        boot = {config, pkgs, ...}: {
+          boot = {
+            kernelModules = ["kvm-intel"];
+            extraModprobeConfig = "options kvm_intel nested=1";
+            loader.systemd-boot.enable = true;
+            loader.efi.canTouchEfiVariables = true;
+          };
+        };
+        networking = {config, pkgs, ...}: {
+          networking = {
+            firewall = {
+              enable = true;
+            };
+          };
+        };
+        trackpad = {config, pkgs, ...}: {
+          services.xserver.synaptics = {
+            enable = true;
+            twoFingerScroll = true;
+          };
+        };
+        fs = {config, pkgs, ...}: {
+          boot.initrd.checkJournallingFS = false;
+          fileSystems = {
+            "/para" = {
+              fsType = "vboxsf";
+              device = "para";
+              options = ["rw" "uid=1001" "gid=100"];
+            };
+          };
+        };
+        phil_user = {
+        };
+      };
+      prime-ai = {
+        gui = {config, pkgs, ...}:
+          {
+            environment.systemPackages = with pkgs; [
+              firefox
+              nyxt
+              pqiv
+              gthumb
+            ];
+          };
+        cli = {config, pkgs, ...}:
+          {
+            environment.systemPackages = with pkgs; [
+            ];
+          };
+
+        networking = {config, pkgs, ...}:
+          {
+            networking = {
+              hostName = "prime-ai-nixos";
+              firewall = {
+                enable = true;
+                allowedTCPPorts = [ ];
+                allowedUDPPorts = [ ];
+              };
+              wireless = {
+                enable = true;
+              };
+              interfaces = {
+                #enp4s0.useDHCP = true;
+                #wlp5s0.useDHCP = true;
+                # eno1 = {
+                #   useDHCP = false;
+                # };
+                # wlp0s20f3 = {
+                #   useDHCP = false;
+                # };
+                enp4s0 = {
+                  useDHCP = true;
+                };
+                wlp5s0 = {
+                  useDHCP = true;
+                };
+              };
+            };
+
+          };
+        hardware_config_tuxedo = { config, lib, pkgs, modulesPath, ...}:
+          let
+            tcc-profile = pkgs.writeTextFile {
+              name = "tcc-profile";
+              text =  ''
+              [
+                {
+                  "id": "__default_custom_profile__",
+                  "name": "TUXEDO Defaults",
+                  "description": "Edit profile to change behaviour",
+                  "display": {
+                    "brightness": 100,
+                    "useBrightness": false
+                  },
+                  "cpu": {
+                         "useMaxPerfGov": false,
+                         "governor": "powersave",
+                         "energyPerformancePreference": "balance_performance",
+                         "noTurbo": false,
+                         "onlineCores": 24,
+                         "scalingMinFrequency": 2200000,
+                         "scalingMaxFrequency": 4700000
+                  },
+                  "webcam": {
+                    "status": true,
+                    "useStatus": true
+                  },
+                  "fan": {
+                    "useControl": true,
+                    "fanProfile": "Balanced",
+                    "minimumFanspeed": 0,
+                    "offsetFanspeed": 0
+                  },
+                  "odmProfile": {
+                    "name": "performance"
+                  },
+                  "odmPowerLimits": {
+                    "tdpValues": []
+                  }
+                },
+              {
+                  "name": "freezy",
+                  "description": "Edit profile to change behaviour",
+                  "display": {
+                    "brightness": 50,
+                    "useBrightness": true
+                  },
+                  "cpu": {
+                    "useMaxPerfGov": false,
+                    "governor": "powersave",
+                    "energyPerformancePreference": "performance",
+                    "noTurbo": false,
+                    "onlineCores": 24,
+                    "scalingMinFrequency": 550000,
+                    "scalingMaxFrequency": 5074000
+                  },
+                  "webcam": {
+                    "status": false,
+                    "useStatus": true
+                  },
+                  "fan": {
+                    "useControl": true,
+                    "fanProfile": "Freezy",
+                    "minimumFanspeed": 0,
+                    "offsetFanspeed": 5
+                  },
+                  "odmProfile": {
+                    "name": "performance"
+                  },
+                  "odmPowerLimits": {
+                    "tdpValues": []
+                  },
+                  "id": "0350erinz8o9lfg6puqi"
+                }
+              ]
+            '';
+            };
+          in
+            {
+              imports = [
+                inputs.tuxedo-nixos.nixosModules.default
+              ];
+              #powerManagement.cpuFreqGovernor = "performance"; #forced to schedutil by tuxedo control center
+              hardware.tuxedo-control-center.enable = true;
+              systemd.services = {
+                create-tcc-profile = {
+                  serviceConfig.Type = "oneshot";
+                  before = [ "tccd.service" ];
+                  wantedBy = [ "multi-user.target" ];
+                  script = ''
               mkdir -p /var/lib/tcc
               rm -f /var/lib/tcc/profiles
               ln -s ${tcc-profile} /var/lib/tcc/profiles
             '';
+                };
               };
-            };
-            hardware.tuxedo-keyboard.enable = true;
-            environment.systemPackages = [
-              pkgs.linuxPackages.tuxedo-keyboard
-            ];
-            # boot.kernelParams = [
-            #   "tuxedo_keyboard.mode=0"
-            #   "tuxedo_keyboard.brightness=10"
-            #   "tuxedo_keyboard.color_left=0xff0a0a"
-            # ];
-            ## Needed by tuxedo-nixos
-            ## Supposed to be set by tuxedo-nixos, but
-            ## not being seen for some reason
-            nixpkgs.config.permittedInsecurePackages = [
-              "openssl-1.1.1u"
-              "openssl-1.1.1t"
-              "nodejs-14.21.3"
-              "electron-13.6.9"
-            ];
+              hardware.tuxedo-keyboard.enable = true;
+              environment.systemPackages = [
+                pkgs.linuxPackages.tuxedo-keyboard
+              ];
+              # boot.kernelParams = [
+              #   "tuxedo_keyboard.mode=0"
+              #   "tuxedo_keyboard.brightness=10"
+              #   "tuxedo_keyboard.color_left=0xff0a0a"
+              # ];
+              ## Needed by tuxedo-nixos
+              ## Supposed to be set by tuxedo-nixos, but
+              ## not being seen for some reason
+              nixpkgs.config.permittedInsecurePackages = [
+                "openssl-1.1.1u"
+                "openssl-1.1.1t"
+                "nodejs-14.21.3"
+                "electron-13.6.9"
+              ];
 
-          };
-      prime-ai_hardware_config = { config, lib, pkgs, modulesPath, ...}:
+            };
+      hardware_config = { config, lib, pkgs, modulesPath, ...}:
           {
             imports = [
               (modulesPath + "/installer/scan/not-detected.nix")
@@ -224,7 +517,13 @@
               inputs.nixos-hardware.nixosModules.common-pc
               inputs.nixos-hardware.nixosModules.common-gpu-nvidia-nonprime
             ];
+            boot.kernelPackages = pkgs.linuxPackages_latest;
+
             boot = {
+              loader = {
+                systemd-boot.enable = true;
+                efi.canTouchEfiVariables = true;
+              };
               #The next line may fix a system crash in nvidia 525.xx.xx
               #Nvidia has enabled a new feature in 510, GSP, but logs
               #show it was the cause of failure in my laptop.
@@ -340,20 +639,9 @@
               mprime
             ];
           };
-      xfce_desktop = {config, pkgs, ...}:
-        {
-          services.xserver.windowManager.dwm.enable = true;
-          services.xserver = {
-            enable = true;
-            desktopManager = {
-              xterm.enable = false;
-              xfce.enable = true;
-            };
-            displayManager.defaultSession = "xfce";
-            dpi = 300;
-          };
-        };
-      prime-ai_hardware_shared_crypt = { config, lib, pkgs, ...}:
+
+
+      hardware_shared_crypt = { config, lib, pkgs, ...}:
         {
           fileSystems = {
             #tested ntfs-3g and ntfs3 with
@@ -433,69 +721,7 @@
             };
           };
         };
-      secure_boot = {config, pkgs, lib, ...}:
-        {
-          imports = [
-            inputs.lanzaboote.nixosModules.lanzaboote
-          ];
-          #boot.bootspec.enable = true; #duplicated from prime-ai_hardware_config
-          boot.loader.systemd-boot.enable = lib.mkForce false;
-          boot.lanzaboote = {
-            enable = true;
-            pkiBundle = "/etc/secureboot";
-          };
-        };
-      network_fs = {config, pkgs, ...}:
-        let
-          # this line prevents hanging on network split
-          automount_opts = "x-systemd.automount,noauto,x-systemd.idle-timeout=600,x-systemd.device-timeout=5s,x-systemd.mount-timeout=5s,uid=1001,gid=100";
-        in
-          {
-            age.secrets.cifs_dpbagje_share.file = "/secrets/agenix/cifs_dpbagje_share.age";
-            fileSystems = {
-              "/nas/dpbagj/parent_share" = {
-                device = "//100.108.81.63/parent_share";
-                fsType = "cifs";
-                options = ["${automount_opts},credentials=${config.age.secrets.cifs_dpbagje_share.path}"];
-              };
-              "/nas/dpbagj/family_share" = {
-                device = "//100.108.81.63/family_share";
-                fsType = "cifs";
-                options = ["${automount_opts},credentials=${config.age.secrets.cifs_dpbagje_share.path}"];
-              };
-            };
-          };
-      wifi_secrets = {config, pkgs, ...}:
-        {
-          age.secrets.wpa_pwd_env.file = "/secrets/agenix/wpa_pwd.env.age";
-          networking.wireless = {
-            environmentFile = config.age.secrets.wpa_pwd_env.path;
-            networks = {
-              PBAGJmob = {
-                psk = "@phone_psk@";
-                priority = 10;
-              };
-              WIFI-56E0-5G = {
-                psk = "@parent_psk@";
-                priority = 60;
-              };
-              WiFi-56E0-5G = {
-                psk = "@parent_psk@";
-                priority = 65;
-              };
-              PBAGJE_H_5G = {
-                psk = "@home_psk@";
-                priority = 99;
-              };
-              #BParent 2.4Ghz
-              TelstraA76952 = {
-                psk = "@bparent_psk@";
-                priority = 50;
-              };
-            };
-          };
-        };
-      prime_ai_syncthing = {config, pkgs, ...}:
+      syncthing = {config, pkgs, ...}:
         {
           services.syncthing = {
             enable = true;
@@ -523,6 +749,9 @@
                 id = "O4OCDD3-BN3WGHU-4U42GOR-CZQQTSQ-GTSULNM-YQM76V5-6R7RT2Y-TTOG5AG";
               };
               x1_carbon = {
+                addresses = [
+                  "quic://100.103.6.30:2200"
+                ];
                 id = "PBQHAZ3-VEXG3K6-VC7AHMS-3OPLJOJ-SIL4UFP-MRIPZHL-PS2DUTD-DO6QXA6";
               };
             };
@@ -615,23 +844,9 @@
             key = "/secrets/syncthing/key.pem";
           };
         };
-      phil_user = {config, pkgs, ...}:
+      tailscale = {config, pkgs, ...}:
         {
-          age.secrets.user_phil_pwd.file = "/secrets/agenix/user_phil_pwd.age";
-          users.users = {
-            phil = {
-              isNormalUser = true;
-              extraGroups = ["wheel"];
-              passwordFile = config.age.secrets.user_phil_pwd.path;
-              uid = 1001;
-              shell = pkgs.fish;
-            };
-          };
-          programs.fish.enable = true;
-        };
-      prime_ai_tailscale = {config, pkgs, ...}:
-        {
-          age.secrets.prime_ai_tailscale.file = "/secrets/agenix/prime_ai_tailscale.age";
+          age.secrets.prime_ai_tailscale.file = ./agenix/prime_ai_tailscale.age;
           services.tailscale = {
             enable = true;
           };
@@ -665,281 +880,316 @@
           };
 
         };
-      #ssh_public_config
-      system_config = {config, pkgs, ...}:
+      phil_user = {config, pkgs, ...}:
         {
-          nixpkgs.config.allowUnfree = true;
-          system.stateVersion = "21.11";
-          boot.loader.systemd-boot = {
-            #enable = true; #set to false by lanzaboote
-            editor = false;  #don't allow kernel cli editing before boot
-          };
-          boot.loader.efi.canTouchEfiVariables = true;
-          boot.kernelPackages = pkgs.linuxPackages_latest;
-
-          networking = {
-            hostName = "prime-ai-nixos";
-            firewall = {
-              allowedTCPPorts = [ ];
-              allowedUDPPorts = [ ];
-            };
-            wireless = {
-              enable = true;
-            };
-            interfaces = {
-              enp4s0.useDHCP = true;
-              wlp5s0.useDHCP = true;
-            };
-          };
-
-          time.timeZone = "Australia/Brisbane";
-          i18n.defaultLocale = "en_AU.UTF-8";
-
-          # services.xserver = {
-          #   enable = true;
-          #   displayManager.lightdm.enable = true;
-          #   displayManager.defaultSession = "none+dwm";
-          #   windowManager.dwm.enable = true;
-          # };
-
-          #sound.enable = true;
-          #hardware.pulseaudio.enable = true;
-
-          users.mutableUsers = false;
+          age.secrets.user_phil_pwd.file = ./agenix/user_phil_pwd.age;
           users.users = {
-            root.hashedPassword = "*";
-          };
-
-          environment.systemPackages = with pkgs; [
-            vim
-            git
-            gitSVN
-            wget
-            firefox
-            nyxt
-            st
-            #agenix.packages.x86_64-linux.default #nix run github:ryantm/agenix -- --help
-            python3
-            openssl
-            # geekbench_6
-            pqiv
-            gthumb
-            gtk3
-            imagemagickBig
-            ripgrep
-            nil # nix language server
-            # rnix-lsp # nix language server
-            elvish
-          ];
-
-          fonts = {
-            fonts = with pkgs; [
-              (nerdfonts.override { fonts = [ "FiraCode" "RobotoMono" ]; })
-            ];
-
-            fontconfig.defaultFonts = {
-              monospace = [ "RobotoMono" ];
+            phil = {
+              isNormalUser = true;
+              extraGroups = ["wheel"];
+              passwordFile = config.age.secrets.user_phil_pwd.path;
+              uid = 1001;
+              shell = pkgs.fish;
             };
           };
-
-
-          nix = {
-            package = pkgs.nixVersions.unstable;
-            settings = {
-              system-features = [
-                "recursive-nix"
-                "kvm"
-                "big-parallel"
-                "nixos-test"
-                "benchmark"
-              ];
-              experimental-features = [
-                "nix-command"
-                "flakes"
-                "recursive-nix"
-              ];
-            };
-          };
-
-          #Enable OpenSSH daemon
-          #Primary use here is for agenix.
-          #Enabling openssh creates host keys, which agenix uses for secrets
-          #password entry is therefore disabled, and firewall ports are not opened
-          services.openssh = {
-            enable = true;
-            settings.PasswordAuthentication = false;
-            openFirewall = false;
-          };
-
-          programs.ssh = {
-            #agentTimeout = "1h"; #request passphrase for keys every hour
-            startAgent = true;
-            askPassword = "systemd-ask-password";
-          };
-        };
-      hyprland-prime-ai = {config, pkgs, ...}:
-        {
-
-          nixpkgs.overlays = [
-            self.overlays.lsix_configured
-          ];
-
-          programs.hyprland = {
-            enable = true;
-            nvidiaPatches = true;
-          };
-
-
-          services.greetd = {
-            enable = true;
-            settings = {
-              default_session = {
-                command = "${pkgs.greetd.tuigreet}/bin/tuigreet -t -r -g 'Init: Prime-AI' --cmd Hyprland";
-                user = "phil";
-              };
-            };
-          };
-          environment = {
-
-            systemPackages = with pkgs; [
-              pipewire #Audio
-              wireplumber
-              fnott #desktop notifications. see also mako, dunst
-              polkit #request root priveliges
-              polkit_gnome #gnome app for polkit requests
-              waylock
-              #swaylock
-              swayimg
-              kitty
-              foot
-              lsix
-              libsixel
-              wl-clipboard
-            ];
-            sessionVariables = {
-              _JAVA_AWT_WM_NONREPARENTING="1";
-              XCURSOR_SIZE="24";
-              # NIXOS_OZONE_WL = "1"; #Already set by hyprland module
-              LIBVA_DRIVER_NAME="nvidia";
-              XDG_SESSION_TYPE = "wayland";
-              GBM_BACKEND = "nvidia-drm";
-              __GLX_VENDOR_LIBRARY_NAME = "nvidia";
-              WLR_NO_HARDWARE_CURSORS = "1";
-              HYPRLAND_LOG_WLR="1";
-              # __GL_GSYNC_ALLOWED = "0";
-              # __GL_VRR_ALLOWED = "0";
-              # DISABLE_QT5_COMPAT = "0";
-              # ANKI_WAYLAND = "1";
-              # DIRENV_LOG_FORMAT = "";
-              # WLR_DRM_NO_ATOMIC = "1";
-              # QT_QPA_PLATFORM = "wayland";
-              # QT_WAYLAND_DISABLE_WINDOWDECORATION = "1";
-              # QT_QPA_PLATFORMTHEME = "qt5ct";
-              # MOZ_ENABLE_WAYLAND = "1";
-              # WLR_BACKEND = "vulkan";
-              # CLUTTER_BACKEND = "wayland";
-              # WLR_DRM_DEVICES = "/dev/dri/card1:/dev/dri/card0";
-            };
-          };
-
-          #pipewire specific config
-          security.rtkit.enable = true;
-          services.pipewire = {
-            enable = true;
-            alsa.enable = true;
-            alsa.support32Bit = true;
-            pulse.enable = true;
-            # If you want to use JACK applications, uncomment this
-            #jack.enable = true;
-          };
-
-
-          #Enable polkit for passwords, and activate agent
-          security.polkit.enable = true;
-          security.pam.services = {
-            swaylock = {};
-            waylock = {};
-          };
-          systemd = {
-            user.services.polkit-gnome-authentication-agent-1 = {
-              description = "polkit-gnome-authentication-agent-1";
-              wantedBy = [ "graphical-session.target" ];
-              wants = [ "graphical-session.target" ];
-              after = [ "graphical-session.target" ];
-              serviceConfig = {
-                Type = "simple";
-                ExecStart = "${pkgs.polkit_gnome}/libexec/polkit-gnome-authentication-agent-1";
-                Restart = "on-failure";
-                RestartSec = 1;
-                TimeoutStopSec = 10;
-              };
-            };
-          };
-          nix.settings = {
-            substituters = ["https://hyprland.cachix.org"];
-            trusted-public-keys = ["hyprland.cachix.org-1:a7pgxzMz7+chwVL3/pzj6jIBMioiJM7ypFP8PwtkuGc="];
-          };
+          programs.fish.enable = true;
         };
 
-      spell_checkers = {config, pkgs, ...}: {
-        environment = {
-          sessionVariables = {
-            ENCHANT_CONFIG_DIR="/home/phil/.config/enchant";
-          };
-          systemPackages = with pkgs; [
-            (aspellWithDicts (dicts: with dicts; [ en en-computers en-science]))
-            hunspellDicts.en-au-large
-
-            enchant
-
-            (nuspellWithDicts [
-              hunspellDicts.en-au-large
-            ])
-          ];
-
-        };
-      };
-      direnv = {config, pkgs, ... }: {
-        imports = [
-          inputs.home-manager.nixosModules.home-manager
-        ];
-        ## Needed by direnv and nix-direnv to properly pin nix shells
-        nix.settings = {
-          keep-outputs = true;
-          keep-derivations = true;
-        };
-        home-manager.users.phil = {
-          programs.direnv = {
-            enable = true;
-            nix-direnv = {
-              enable = true;
-            };
-          };
-        };
-      };
       phil_home = {config, pkgs, ...}: {
         imports = [
           inputs.home-manager.nixosModules.home-manager
         ];
 
+        # This is the place to target emacs program versions
         nixpkgs.overlays = [
           inputs.emacs-overlay.overlays.default
         ];
 
 
-        environment.systemPackages = with pkgs; [
-          (texlive.combine { inherit (texlive)
-            scheme-basic biber collection-bibtexextra collection-mathscience
-            collection-latexrecommended collection-latexextra
-            collection-pictures collection-plaingeneric
-            collection-fontsrecommended collection-xetex collection-luatex
-            dvipng;})
-          pandoc
-          (inkscape-with-extensions.override {
-            inkscapeExtensions = null;
-          })
-          pdf2svg
-        ];
+
+
+        home-manager = {
+          useGlobalPkgs = true;
+          useUserPackages = true;
+          #config inserted before use-package
+          users.phil = {
+            imports = let
+              nurNoPkgs = import inputs.nur { pkgs = null; nurpkgs = pkgs; };
+            in [
+              nurNoPkgs.repos.rycee.hmModules.emacs-init
+              self.hmModules.emacs-hm-init
+              self.hmModules.gtk_setup
+              self.hmModules.gpg-agent-emacs
+              self.hmModules.hyprland-config
+              self.hmModules.git-config
+              self.hmModules.r-config
+              self.hmModules.tex-full
+            ];
+            manual.manpages.enable = false;
+
+            home = {
+              stateVersion = "23.05";
+              file = {
+                enchant-ordering = {
+                  target = ".config/enchant/enchant.ordering";
+                  text = ''
+                    en_AU:aspell,nuspell
+                    en:aspell,nuspell
+                    en_GB:aspell,nuspell'';
+                };
+              };
+            };
+
+            programs = {
+              bash = {
+                enable = true;
+              };
+              fish = {
+                enable = true;
+              };
+              nushell = {
+                enable = true;
+              };
+              gpg = {
+                enable = true;
+              };
+              ssh = {
+                enable = true;
+                matchBlocks = {
+                  rdm = {
+                    hostname = "data.qriscloud.org.au";
+                    user = "uqpdyer";
+                    forwardX11Trusted = true;
+                    identitiesOnly = true;
+                    identityFile = ["/home/phil/id_phil_prime_ai_nixos_ed25519"];
+                  };
+                  getafix = {
+                    hostname = "getafix.smp.uq.edu.au";
+                    user = "uqpdyer";
+                    forwardX11Trusted = true;
+                    identitiesOnly = true;
+                    identityFile = ["/home/phil/id_phil_prime_ai_nixos_ed25519"];
+                    port = 2022;
+                  };
+                  getafix0 = {
+                    hostname = "getafix1.smp.uq.edu.au";
+                    user = "uqpdyer";
+                    forwardX11Trusted = true;
+                    identitiesOnly = true;
+                    identityFile = ["/home/phil/id_phil_prime_ai_nixos_ed25519"];
+                    port = 2022;
+                  };
+                  getafix1 = {
+                    hostname = "getafix2.smp.uq.edu.au";
+                    user = "uqpdyer";
+                    forwardX11Trusted = true;
+                    identitiesOnly = true;
+                    identityFile = ["/home/phil/id_phil_prime_ai_nixos_ed25519"];
+                    port = 2022;
+                  };
+                  github = {
+                    hostname = "github.com";
+                    identitiesOnly = true;
+                    identityFile = ["/home/phil/id_phil_prime_ai_nixos_ed25519"];
+                  };
+                  dogmatix = {
+                    hostname = "dogmatix.smp.uq.edu.au";
+                    user = "uqpdyer";
+                    forwardX11Trusted = true;
+                    identitiesOnly = true;
+                    identityFile = ["/home/phil/id_phil_prime_ai_nixos_ed25519"];
+                  };
+
+                };
+              };
+            };
+
+
+          };
+        };
+      };
+
+      };
+
+
+
+     #ssh_public_config
+
+      window-managers = {
+        xfce_desktop = {config, pkgs, ...}:
+          {
+            services.xserver.windowManager.dwm.enable = true;
+            services.xserver = {
+              enable = true;
+              desktopManager = {
+                xterm.enable = false;
+                xfce.enable = true;
+              };
+              displayManager.defaultSession = "xfce";
+              dpi = 300;
+            };
+          };
+
+        hyprland = {config, pkgs, ...}:
+          {
+
+            nixpkgs.overlays = [
+              self.overlays.lsix_configured
+            ];
+
+            programs.hyprland = {
+              enable = true;
+              nvidiaPatches = true;
+            };
+
+
+            services.greetd = {
+              enable = true;
+              settings = {
+                default_session = {
+                  command = "${pkgs.greetd.tuigreet}/bin/tuigreet -t -r -g 'Init: Prime-AI' --cmd Hyprland";
+                  user = "phil";
+                };
+              };
+            };
+            environment = {
+
+              systemPackages = with pkgs; [
+                pipewire #Audio
+                wireplumber
+                fnott #desktop notifications. see also mako, dunst
+                polkit #request root priveliges
+                polkit_gnome #gnome app for polkit requests
+                waylock
+                #swaylock
+                swayimg
+                kitty
+                foot
+                lsix
+                libsixel
+                wl-clipboard
+              ];
+              sessionVariables = {
+                _JAVA_AWT_WM_NONREPARENTING="1";
+                XCURSOR_SIZE="24";
+                # NIXOS_OZONE_WL = "1"; #Already set by hyprland module
+                LIBVA_DRIVER_NAME="nvidia";
+                XDG_SESSION_TYPE = "wayland";
+                GBM_BACKEND = "nvidia-drm";
+                __GLX_VENDOR_LIBRARY_NAME = "nvidia";
+                WLR_NO_HARDWARE_CURSORS = "1";
+                HYPRLAND_LOG_WLR="1";
+                # __GL_GSYNC_ALLOWED = "0";
+                # __GL_VRR_ALLOWED = "0";
+                # DISABLE_QT5_COMPAT = "0";
+                # ANKI_WAYLAND = "1";
+                # DIRENV_LOG_FORMAT = "";
+                # WLR_DRM_NO_ATOMIC = "1";
+                # QT_QPA_PLATFORM = "wayland";
+                # QT_WAYLAND_DISABLE_WINDOWDECORATION = "1";
+                # QT_QPA_PLATFORMTHEME = "qt5ct";
+                # MOZ_ENABLE_WAYLAND = "1";
+                # WLR_BACKEND = "vulkan";
+                # CLUTTER_BACKEND = "wayland";
+                # WLR_DRM_DEVICES = "/dev/dri/card1:/dev/dri/card0";
+              };
+            };
+
+            #pipewire specific config
+            security.rtkit.enable = true;
+            services.pipewire = {
+              enable = true;
+              alsa.enable = true;
+              alsa.support32Bit = true;
+              pulse.enable = true;
+              # If you want to use JACK applications, uncomment this
+              #jack.enable = true;
+            };
+
+
+            #Enable polkit for passwords, and activate agent
+            security.polkit.enable = true;
+            security.pam.services = {
+              swaylock = {};
+              waylock = {};
+            };
+            systemd = {
+              user.services.polkit-gnome-authentication-agent-1 = {
+                description = "polkit-gnome-authentication-agent-1";
+                wantedBy = [ "graphical-session.target" ];
+                wants = [ "graphical-session.target" ];
+                after = [ "graphical-session.target" ];
+                serviceConfig = {
+                  Type = "simple";
+                  ExecStart = "${pkgs.polkit_gnome}/libexec/polkit-gnome-authentication-agent-1";
+                  Restart = "on-failure";
+                  RestartSec = 1;
+                  TimeoutStopSec = 10;
+                };
+              };
+            };
+
+        };
+      };
+      cli = {
+        # System-wide python
+        python-system = {config, pkgs, ...}:
+          {
+            environment.systemPackages = with pkgs; [
+              (python3.withPackages(ps: with ps; [
+                inkex
+              ]))
+          ];
+          };
+
+        spell_checkers = {config, pkgs, ...}: {
+          environment = {
+            sessionVariables = {
+              ENCHANT_CONFIG_DIR="/home/phil/.config/enchant";
+            };
+            systemPackages = with pkgs; [
+              (aspellWithDicts (dicts: with dicts; [ en en-computers en-science]))
+              hunspellDicts.en-au-large
+
+              enchant
+
+              (nuspellWithDicts [
+                hunspellDicts.en-au-large
+              ])
+            ];
+
+          };
+        };
+        direnv = {config, pkgs, ... }: {
+          imports = [
+            inputs.home-manager.nixosModules.home-manager
+          ];
+          ## Needed by direnv and nix-direnv to properly pin nix shells
+          nix.settings = {
+            keep-outputs = true;
+            keep-derivations = true;
+          };
+          home-manager.users.phil = {
+            programs.direnv = {
+              enable = true;
+              nix-direnv = {
+              enable = true;
+              };
+            };
+          };
+        };
+      };
+      gui = {
+        inkscape = {config, pkgs, ...}: {
+          environment.systemPackages = with pkgs; [
+            (inkscape-with-extensions.override {
+              inkscapeExtensions = null;
+            })
+          ];
+        };
+      };
+
+      bib_reorganise = {config, pkgs, ...}: {
 
         systemd.timers."bib_reorganise" = {
           description = "Move new bib entries to main collection to improve caching";
@@ -979,54 +1229,14 @@
                 fi
               '';
         };
-
-
-        nix.settings = {
-          substituters = ["https://nix-community.cachix.org"];
-          trusted-public-keys = ["nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="];
-        };
-        home-manager = {
-          useGlobalPkgs = true;
-          useUserPackages = true;
-          #config inserted before use-package
-          users.phil = {
-            imports = let
-              nurNoPkgs = import inputs.nur { pkgs = null; nurpkgs = pkgs; };
-            in [
-              nurNoPkgs.repos.rycee.hmModules.emacs-init
-            ];
-            manual.manpages.enable = false;
-
-            gtk = {
-              enable = true;
-              theme = {
-                package = pkgs.gnome.gnome-themes-extra;
-                name = "Adwaita";
-              };
-              iconTheme = {
-                package = pkgs.gnome.adwaita-icon-theme;
-                name = "Adwaita";
-              };
-              cursorTheme = {
-                package = pkgs.vanilla-dmz;
-                name = "Vanilla-DMZ";
-                size = 16;
-              };
-            };
-
-            home = {
-              stateVersion = "23.05";
-              file = {
-                enchant-ordering = {
-                  target = ".config/enchant/enchant.ordering";
-                  text = ''
-                    en_AU:aspell,nuspell
-                    en:aspell,nuspell
-                    en_GB:aspell,nuspell'';
-                };
-                r-config = {
-                  target = ".Rprofile";
-                  text = ''
+      };
+    };
+    #Modules for importing into home-manager.users.<name>.imports = [ here ];
+    hmModules = {
+      r-config = {config, pkgs, ...}: {
+        home.file.r-config = {
+          target = ".Rprofile";
+          text = ''
                     ##Always install from csiro cran mirror when calling install.packages()
                     local({r <- getOption("repos")
                     r["CRAN"] <- "https://cran.csiro.au/"
@@ -1043,10 +1253,28 @@
                     utils::rc.settings(ipck=TRUE)
 
                   '';
-                };
-                hyprland-config = {
-                  target = ".config/hypr/hyprland.conf";
-                  text = ''
+        };
+
+      };
+      git-config = {config, pkgs, ...}: {
+        programs.git ={
+          enable = true;
+          package = pkgs.gitAndTools.gitFull;
+          userName = "Phil Dyer";
+          userEmail = "phildyer@protonmail.com";
+          extraConfig = {
+            core = {
+              autocrlf = "input";
+            };
+            github.user = "PhDyellow";
+          };
+        };
+      };
+      hyprland-config = {config, pkgs, ...}: {
+        home.file = {
+          hyprland-config = {
+            target = ".config/hypr/hyprland.conf";
+            text = ''
                 # This is an example Hyprland config file.
                 #
                 # Refer to the wiki for more information.
@@ -1227,42 +1455,71 @@
                 bindm = $mainMod, mouse:272, movewindow
                 bindm = $mainMod, mouse:273, resizewindow
                   '';
-                };
+          };
 
-              };
-            };
-            services = {
-              gpg-agent = {
-                enable = true;
-                defaultCacheTtl = 72000;
-                pinentryFlavor = "gtk2"; # other interesting flavours emacs tty curses
-                extraConfig = ''
+        };
+      };
+      gtk_setup = {config, pkgs, ...}: {
+        gtk = {
+          enable = true;
+          theme = {
+            package = pkgs.gnome.gnome-themes-extra;
+            name = "Adwaita";
+          };
+          iconTheme = {
+            package = pkgs.gnome.adwaita-icon-theme;
+            name = "Adwaita";
+          };
+          cursorTheme = {
+            package = pkgs.vanilla-dmz;
+            name = "Vanilla-DMZ";
+            size = 16;
+          };
+        };
+      };
+      gpg-agent-emacs = {config, pkgs, ...}: {
+        services = {
+          gpg-agent = {
+            enable = true;
+            defaultCacheTtl = 72000;
+            pinentryFlavor = "gtk2"; # other interesting flavours emacs tty curses
+            extraConfig = ''
                   allow-emacs-pinentry
                   allow-loopback-pinentry
                 '';
 
-                maxCacheTtl = 72000;
+            maxCacheTtl = 72000;
 
-              };
-              emacs = {
-                enable = true;
-                defaultEditor = true;
-                ## Allow server to start with graphics so wayland session is
-                ## correctly detected by server
-                # socketActivation.enable = true;
-                startWithUserSession = "graphical";
-              };
-            };
-
-            programs = {
-              emacs = {
-                enable = true;
-                package = pkgs.emacs-pgtk;
-                extraPackages = epkgs: [
-                ];
-                overrides = final: prev: {
-                  org-super-links = prev.emacs.pkgs.trivialBuild {
-                    pname = "org-super-links";
+          };
+        };
+      };
+      emacs-hm-init = {config, pkgs, ...}: {
+        home.packages = with pkgs; [
+          imagemagickBig
+          librsvg
+          inputs.pandoc-crossref.packages.x86_64-linux.pandoc-with-crossref
+          pdf2svg
+          graphviz-nox
+        ];
+        services = {
+          emacs = {
+            enable = true;
+            defaultEditor = true;
+            ## Allow server to start with graphics so wayland session is
+            ## correctly detected by server
+            # socketActivation.enable = true;
+            startWithUserSession = "graphical";
+          };
+        };
+        programs = {
+          emacs = {
+            enable = true;
+            package = pkgs.emacs-pgtk;
+            extraPackages = epkgs: [
+            ];
+            overrides = final: prev: {
+              org-super-links = prev.emacs.pkgs.trivialBuild {
+                pname = "org-super-links";
                     version = "git";
                     src = inputs.org-super-links;
                     packageRequires = [
@@ -1316,6 +1573,13 @@
                     src = inputs.org-linker-edna;
                     packageRequires = [
                       final.org-linker
+                    ];
+                  };
+                  org-transclusion = prev.emacs.pkgs.trivialBuild {
+                    pname = "org-transclusion";
+                    version = "git";
+                    src = inputs.org-transclusion;
+                    packageRequires = [
                     ];
                   };
                   load-theme-buffer-local = prev.load-theme-buffer-local.overrideAttrs (oldAttrs: {
@@ -1743,8 +2007,9 @@
                       enable = true;
                       config = ''
                           (setq read-extended-command-predicate
-                          #'command-completion-default-include-p
-                          save-interprogram-paste-before-kill t)
+                                  #'command-completion-default-include-p
+                                save-interprogram-paste-before-kill t
+                          )
                           (setq-default indent-tabs-mode -1)
                         '';
                     };
@@ -1791,8 +2056,19 @@
                     xref = {
                       enable = true;
                     };
+                    consult-xref = {
+                      enable = true;
+                      command = [ "consult-xref" ];
+                      after = [ "consult" "xref" ];
+                      init = ''
+                          ;; Use Consult to select xref locations with preview
+                          (setq xref-show-xrefs-function #'consult-xref
+                          xref-show-definitions-function #'consult-xref)
+                      '';
+                    };
                     consult = {
                       enable = true;
+                      command = [ "consult-xref" ];
                       hook = [
                         "(completion-list-mode . consult-preview-at-point-mode)"
                       ];
@@ -1807,9 +2083,6 @@
                           ;; This adds thin lines, sorting and hides the mode line of the window.
                           (advice-add #'register-preview :override #'consult-register-window)
 
-                          ;; Use Consult to select xref locations with preview
-                          (setq xref-show-xrefs-function #'consult-xref
-                          xref-show-definitions-function #'consult-xref)
                         '';
                       config = ''
                           ;; Optionally configure preview. The default value
@@ -1842,6 +2115,20 @@
                     };
                     consult-dir = {
                       enable = true;
+                    };
+                    consult-flymake = {
+                      enable = true;
+                      command = [ "consult-flymake"];
+                    };
+                    flycheck = {
+                      enable = true;
+                      config = ''
+                        (global-flycheck-mode)
+                      '';
+                    };
+                    consult-org = {
+                      enable = true;
+                      command = [ "consult-org" ];
                     };
                     marginalia = {
                       enable = true;
@@ -2003,6 +2290,7 @@
                     };
                     corfu = {
                       enable = true;
+                      command = [ "global-corfu-mode" ];
                       init = ''
                           (global-corfu-mode)
                         '';
@@ -2051,9 +2339,15 @@
                           (keymap-set corfu-map "M-q" #'corfu-quick-complete)
                           (keymap-set corfu-map "C-q" #'corfu-quick-insert)
 
-                          (corfu-popupinfo-mode 1)
 
                         '';
+                    };
+                    corfu-popupinfo = {
+                      enable = true;
+                      after = [ "corfu" ];
+                      config = ''
+                          (corfu-popupinfo-mode 1)
+                      '';
                     };
                     cape = {
                       enable = true;
@@ -2101,10 +2395,13 @@
                         '';
                       config = ''
                           ;;Add R to org-babel
+                          (add-to-list 'org-babel-load-languages (cons (intern "R") t))
                           (org-babel-do-load-languages
                             'org-babel-load-languages
-                            '((emacs-lisp . t)
-                            (R . t)))
+                            org-babel-load-languages)
+
+`                         ;; Use svg for latex preview
+                          (setq org-preview-latex-default-process dvisvgm)
 
                           ;;Allow code blocks to execute without asking me every time
                           ;; for safetly though, don't allow C-c C-c to evaluate blocks
@@ -2176,6 +2473,30 @@
                     ox-pandoc = {
                       after = [ "org" ] ;
                       enable = true;
+                      config = ''
+                        (setq org-pandoc-options '(
+                          (standalone  . t)
+                          (number-sections . t)
+                        )
+                         org-pandoc-format-extensions '(docx+native_numbering)
+                        )
+
+
+                      '';
+                    };
+                    ox-latex = {
+                      after = [ "org" ];
+                      enable = true;
+                      config = ''
+                        (setq org-latex-prefer-user-labels t)
+                      '';
+                    };
+                    ox-html = {
+                        after = [ "org" ];
+                        enable = true;
+                        config = ''
+                        (setq org-html-prefer-user-labels t)
+                      '';
                     };
                     org-clock = {
                       after = [ "org" ];
@@ -2200,7 +2521,8 @@
                       after = [ "org" ];
                       config = ''
                           (setq org-link-abbrev-alist
-                          '(("websearch"      . "https://html.duckduckgo.com/html/?q=%s")))
+                          '(("websearch"      . "https://html.duckduckgo.com/html/?q=%s")
+                             ("gscholar" . "https://scholar.google.com/scholar?q=%s")))
                         '';
                     };
                     helm = {
@@ -2225,6 +2547,7 @@
                     };
                     org-slt-phdyellow = {
                       after = ["org-sltypes"];
+                      command = [ "org-slt-phdyellow" ];
                       enable = true;
                       bindLocal = {
                         org-mode-map = {
@@ -2233,15 +2556,31 @@
                       };
                     };
                     org-transclusion = {
-                      after = [ "org" ];
+                      after = [ "org" "zenburn-theme" ];
                       enable = true;
                       config = ''
+
                         (add-to-list 'org-transclusion-extensions 'org-transclusion-src-lines)
                         (require 'org-transclusion-src-lines)
 
                         (add-to-list 'org-transclusion-extensions 'org-transclusion-font-lock)
                         (require 'org-transclusion-font-lock)
 
+                        (require 'zenburn-theme)
+                        (set-face-attribute 'org-transclusion-fringe nil
+                           :background "red"
+                           :foreground "red"
+                        )
+                        (set-face-attribute 'org-transclusion-source-fringe nil
+                           :background "coral"
+                           :foreground "coral"
+                        )
+                        (zenburn-with-color-variables
+                          (set-face-attribute 'org-transclusion nil
+                            :background zenburn-blue-5))
+                        (zenburn-with-color-variables
+                          (set-face-attribute 'org-transclusion-source nil
+                            :background zenburn-green-5))
                       '';
                     };
                     org-edna = {
@@ -2302,12 +2641,12 @@
                               (propertize "''${tags:20}" 'face 'org-tag))
                           org-roam-database-connector 'sqlite-builtin
                           org-roam-db-gc-threshold most-positive-fixnum
-
+                          my-memx-version "memx_v2"
                           org-roam-capture-templates '(
                             ("T" "CITAR: new CITE note" plain
                               "%?"
-                              :target (file+head "''${id}-''${citekey}___CITE.org"
-"* ''${citekey}  :CITE:
+                              :target (file+head "''${id}-''${citekey}___CITE__%(concat my-memx-version).org"
+"* ''${citekey}  :CITE:%(concat my-memx-version):
 :PROPERTIES:
 :ROAM_ALIASES:
 :URL: ''${url}
@@ -2326,8 +2665,8 @@
 "))
                             ("d" "OOB: new CITE note" plain
                               "%?"
-                              :target (file+head "''${id}-''${citekey}___CITE.org"
-"* ''${citekey}  :CITE:
+                              :target (file+head "''${id}-''${citekey}___CITE__%(concat my-memx-version).org"
+"* ''${citekey}  :CITE:%(concat my-memx-version):
 :PROPERTIES:
 :ROAM_ALIASES:
 :URL: ''${url}
@@ -2346,8 +2685,8 @@
 "))
                             ("s" "new: SPARK note" plain
                             "%?"
-                            :target (file+head "''${id}-''${slug}___SPARK.org"
-"* ''${title}  :SPARK:
+                            :target (file+head "''${id}-''${slug}___SPARK__%(concat my-memx-version).org"
+"* ''${title}  :SPARK:%(concat my-memx-version):
 :PROPERTIES:
 :ID: ''${id}-''${slug}
 :ROAM_ALIASES:
@@ -2357,8 +2696,8 @@
                             :unnarrowed)
                             ("c" "new: CONCEPT note" plain
                             "%?"
-                            :target (file+head "''${id}-''${slug}___CONCEPT.org"
-"* ''${title}  :CONCEPT:
+                            :target (file+head "''${id}-''${slug}___CONCEPT__%(concat my-memx-version).org"
+"* ''${title}  :CONCEPT:%(concat my-memx-version):
 :PROPERTIES:
 :ID: ''${id}-''${slug}
 :ROAM_ALIASES:
@@ -2368,8 +2707,8 @@
                             :unnarrowed)
                             ("y" "new: QUERY note" plain
                             "%?"
-                            :target (file+head "''${id}-''${slug}___QUERY.org"
-"* ''${title}  :QUERY:
+                            :target (file+head "''${id}-''${slug}___QUERY__%(concat my-memx-version).org"
+"* ''${title}  :QUERY:%(concat my-memx-version):
 :PROPERTIES:
 :ID: ''${id}-''${slug}
 :ROAM_ALIASES:
@@ -2386,12 +2725,26 @@ Close when conclusion is reached.
 ** Processing
 ")
                             :unnarrowed)
+                            ("e" "new: ENTITY note" plain
+                            "%?"
+                            :target (file+head "''${id}-''${slug}___ENTITY__%(concat my-memx-version).org"
+"* ''${title}  :ENTITY:%(concat my-memx-version):
+:PROPERTIES:
+:ID: ''${id}-''${slug}
+:ROAM_ALIASES:
+:CREATED: %U
+:END:
+
+
+** Overview
+")
+                            :unnarrowed)
                             ("a" "Activity note types")
 
                             ("ap" "new: PROJ note" plain
                             "%?"
-                            :target (file+head "''${id}-''${slug}___PROJ.org"
-"* ''${title}  :PROJ:
+                            :target (file+head "''${id}-''${slug}___PROJ__%(concat my-memx-version).org"
+"* ''${title}  :PROJ:%(concat my-memx-version):
 :PROPERTIES:
 :ID: ''${id}-''${slug}
 :ROAM_ALIASES:
@@ -2412,8 +2765,8 @@ Close when conclusion is reached.
                             :unnarrowed)
                             ("r" "new: RECIPE note" plain
                             "%?"
-                            :target (file+head "''${id}-''${slug}___RECIPE.org"
-"* ''${title}  :RECIPE:
+                            :target (file+head "''${id}-''${slug}___RECIPE__%(concat my-memx-version).org"
+"* ''${title}  :RECIPE:%(concat my-memx-version):
 :PROPERTIES:
 :ID: ''${id}-''${slug}
 :ROAM_ALIASES:
@@ -2427,16 +2780,16 @@ Close when conclusion is reached.
                             ("i" "Capture into note")
                             ("iq" "capture into note: quote" plain
                               "\n#+begin_quote :source-link %a :date %U\n%i\n#+end_quote\n%?"
-                              :target (file "''${id}-''${slug}.org")
+                              :target (file "''${id}-''${slug}__%(concat my-memx-version).org")
                             :unnarrowed)
                             ("it" "capture into note: transclude" plain
                               "\n#+transclude: %a %?"
-                            :target (file "''${id}-''${slug}.org")
+                            :target (file "''${id}-''${slug}__%(concat my-memx-version).org")
                             :unnarrowed)
                           ("p" "new: plain note" plain
                             "%?"
-                            :target (file+head "''${id}-''${slug}.org"
-"* ''${title}  %^g
+                            :target (file+head "''${id}-''${slug}__%(concat my-memx-version).org"
+"* ''${title}  :%^g:%(concat my-memx-version):
 :PROPERTIES:
 :ID: ''${id}-''${slug}
 :ROAM_ALIASES:
@@ -2564,12 +2917,13 @@ Close when conclusion is reached.
                     };
                     oc = {
                       enable = true;
-                      after = [ "org" "citar" ];
+                      after = [ "org" "citar" "citar-org" ];
                       config = ''
                             (setq org-cite-global-bibliography my-bib-files
                                   org-cite-insert-processor 'citar
                                   org-cite-follow-processor 'citar
                                   org-cite-activate-processor 'citar)
+                            (setq org-cite-export-processors `((t csl ,(file-name-concat my-bib-dir "apa.csl"))))
                       '';
                     };
                     ebib = {
@@ -2592,6 +2946,15 @@ Close when conclusion is reached.
                            citar-library-paths (list my-ereading-dir)
                         citar-file-additional-files-separator "---")
                       '';
+
+                    };
+                    citar-org = {
+                      enable = true;
+                      after = [ "org"];
+                    };
+                    citar-capf = {
+                      enable = true;
+                      command = [ "citar-capf-setup" ];
                       hook = [
                         "(org-mode . citar-capf-setup)"
                       ];
@@ -2723,6 +3086,17 @@ Close when conclusion is reached.
                           (setq org-ref-bibtex-pdf-download-dir (concat my-ereading-dir "/refile"))
                         '';
                     };
+                    org-ref-refproc = {
+                      after = [ "org-ref" ];
+                      enable = true;
+                      init = ''
+
+                      '';
+                      config = ''
+                      (require 'ol)
+                      (add-hook 'org-export-before-parsing-functions #'org-ref-refproc)
+                      '';
+                    };
                     org-ref-helm = {
                       after = [ "org-ref" ];
                       enable = true;
@@ -2755,6 +3129,9 @@ Close when conclusion is reached.
                     };
                     jinx = {
                       enable = true;
+                      bind = {
+                        "M-$" = "jinx-correct";
+                      };
                       hook = [ "(emacs-startup . global-jinx-mode)"];
                     };
                     org-remark = {
@@ -2776,13 +3153,35 @@ Close when conclusion is reached.
                     org-noter = {
                       after = [ "org" "pdf-tools" "nov" "djvu"];
                       enable = true;
+                      command = [ "org-noter" ];
                     };
                     pdf-tools = {
+                      enable = true;
+                      init = ''
+                        ;; needed because of emacs-init.nix
+                        ;; and a lack of package-quickstart
+                        (require 'pdf-occur)
+                        (require 'pdf-annot)
+                        (require 'pdf-cache)
+                        (require 'pdf-dev)
+                        (require 'pdf-history)
+                        (require 'pdf-isearch)
+                        (require 'pdf-links)
+                        (require 'pdf-macs)
+                          (require 'image-mode)
+                        (require 'pdf-misc)
+                        (require 'pdf-outline)
+                        (require 'pdf-sync)
+                        (require 'pdf-virtual)
+                      '';
+                    };
+                    pdf-loader = { #part of pdf-tools
                       enable = true;
                       config = ''
                         (pdf-loader-install)
                       '';
                     };
+
                     shrface = {
                       enable = true;
                       config = ''
@@ -2928,12 +3327,95 @@ Close when conclusion is reached.
                       enable = true;
                       mode = [ ''"\\\\.nix\\\\'"''];
                     };
-                    nixos-options = {
+                    nix-flake = {
                       enable = true;
+                      command = [ "nix-flake" ];
+                      after = [ "nix-mode" ];
+                    };
+                    helm-nixos-options = {
+                      enable = true;
+                      command = [ "helm-nixos-options" ];
                       mode = [ ''"\\\\.nix\\\\'"'' ];
                     };
                     ob-nix = {
                       enable = true;
+                    };
+                    ob-d2 = {
+                      enable = true;
+                      config = ''
+(add-to-list 'org-babel-load-languages (cons (intern "d2") t))
+                          (org-babel-do-load-languages
+                            'org-babel-load-languages
+                            org-babel-load-languages)
+                      '';
+                    };
+                    ob-latex = {
+                      enable = true;
+                      after = [ "org" ];
+                      config = ''
+                      (setq org-babel-latex-preamble (lambda (_)
+                        "\\documentclass[tikz,crop]{standalone}
+                         \\def\\pgfsysdriver{pgfsys-tex4ht.def}
+                         "))
+                      (add-to-list 'org-babel-load-languages (cons (intern "latex") t))
+                          (org-babel-do-load-languages
+                            'org-babel-load-languages
+                            org-babel-load-languages)
+                        (setq org-latex-pdf-process
+                          '("lualatex -shell-escape -interaction nonstopmode -output-directory=%o %f"
+"lualatex -shell-escape -interaction nonstopmode -output-directory=%o %f")
+                               luamagick '(luamagick :programs ("lualatex" "convert")
+:description "pdf -> png"
+:message "You need to install lualatex and imagemagick"
+:use-xcolor t
+:image-input-type "pdf"
+:image-output-type "png"
+:image-size-adjust (1.0 . 1.0)
+:latex-compiler ("lualatex -interaction nonstopmode -output-directory %o %f")
+:image-converter ("convert -density %D -trim -antialias %f -quality 100 %O")))
+
+                        (add-to-list 'org-preview-latex-process-alist luamagick)
+                        ;(setq org-preview-latex-default-process 'luamagick)
+
+
+                      '';
+                    };
+                    tex = {
+                      extraPackages = [ pkgs.auctex ];
+                      enable = true;
+                      after = [ "ob-latex" ];
+                    };
+                    d2-mode = {
+                      enable = true;
+                      config = ''
+                        (setq d2-tmp-dir temporary-file-directory)
+                      '';
+                    };
+                    ob-plantuml = {
+                      enable = true;
+                      config = ''
+                        (setq org-plantuml-exec-mode 'plantuml)
+                      '';
+                    };
+                    plantuml-mode = {
+                      enable = true;
+                      after = [ "org" ];
+                      mode = [ ''"\\\\.plantuml\\\\'"'' ];
+                      config = ''
+                        (setq plantuml-default-exec-mode 'executable)
+                        (add-to-list 'org-src-lang-modes '("plantuml" . plantuml))
+                          (add-to-list 'org-babel-load-languages (cons (intern "plantuml") t))
+                          (org-babel-do-load-languages
+                            'org-babel-load-languages
+                            org-babel-load-languages)
+                   '';
+                    };
+                    flycheck-plantuml = {
+                      enable = true;
+                      after = [ "flycheck" "plantuml-mode" ];
+                      config = ''
+                        (flycheck-plantuml-setup)
+                      '';
                     };
                     eglot = {
                       enable = true;
@@ -2956,86 +3438,34 @@ Close when conclusion is reached.
                   };
 
                 };
-              };
-              bash = {
-                enable = true;
-              };
-              fish = {
-                enable = true;
-              };
-              nushell = {
-                enable = true;
-              };
-              gpg = {
-                enable = true;
-              };
-              git ={
-                enable = true;
-                package = pkgs.gitAndTools.gitFull;
-                userName = "Phil Dyer";
-                userEmail = "phildyer@protonmail.com";
-                extraConfig = {
-                  core = {
-                    autocrlf = "input";
-                  };
-                  github.user = "PhDyellow";
-                };
-              };
-              ssh = {
-                enable = true;
-                matchBlocks = {
-                  rdm = {
-                    hostname = "data.qriscloud.org.au";
-                    user = "uqpdyer";
-                    forwardX11Trusted = true;
-                    identitiesOnly = true;
-                    identityFile = ["/home/phil/id_phil_prime_ai_nixos_ed25519"];
-                  };
-                  getafix = {
-                    hostname = "getafix.smp.uq.edu.au";
-                    user = "uqpdyer";
-                    forwardX11Trusted = true;
-                    identitiesOnly = true;
-                    identityFile = ["/home/phil/id_phil_prime_ai_nixos_ed25519"];
-                    port = 2022;
-                  };
-                  getafix0 = {
-                    hostname = "getafix1.smp.uq.edu.au";
-                    user = "uqpdyer";
-                    forwardX11Trusted = true;
-                    identitiesOnly = true;
-                    identityFile = ["/home/phil/id_phil_prime_ai_nixos_ed25519"];
-                    port = 2022;
-                  };
-                  getafix1 = {
-                    hostname = "getafix2.smp.uq.edu.au";
-                    user = "uqpdyer";
-                    forwardX11Trusted = true;
-                    identitiesOnly = true;
-                    identityFile = ["/home/phil/id_phil_prime_ai_nixos_ed25519"];
-                    port = 2022;
-                  };
-                  github = {
-                    hostname = "github.com";
-                    identitiesOnly = true;
-                    identityFile = ["/home/phil/id_phil_prime_ai_nixos_ed25519"];
-                  };
-                  dogmatix = {
-                    hostname = "dogmatix.smp.uq.edu.au";
-                    user = "uqpdyer";
-                    forwardX11Trusted = true;
-                    identitiesOnly = true;
-                    identityFile = ["/home/phil/id_phil_prime_ai_nixos_ed25519"];
-                  };
-
-                };
-              };
-            };
-
-
-          };
+                        };
         };
       };
+      tex-full = {config, pkgs, ...}:
+        {
+          programs.texlive = {
+            enable = true;
+            extraPackages = tpkgs: {
+              inherit (tpkgs)
+                scheme-basic
+                scheme-full
+                biber
+                collection-bibtexextra
+                collection-mathscience
+                collection-latexrecommended
+                collection-latexextra
+                collection-pictures
+                collection-plaingeneric
+                collection-fontsrecommended
+                collection-xetex
+                collection-luatex
+                dvisvgm
+                dvipng
+                pgf;
+            };
+          };
+        };
+
     };
     devShells."x86_64-linux" = {
       secureboot-tools = let
@@ -3071,34 +3501,89 @@ Close when conclusion is reached.
       prime-ai-bootstrap = nixpkgs-unstable.lib.nixosSystem {
         system = "x86_64-linux";
         modules = [
-          self.nixosModules.bootstrap_hardware
+          self.nixosModules.prime-ai.bootstrap_hardware
           self.nixosModules.system_config
-          self.nixosModules.bootstrap_user
+          self.nixosModules.prime-ai.bootstrap_user
           inputs.ragenix.nixosModules.age
         ];
       };
       prime-ai = nixpkgs-unstable.lib.nixosSystem {
         system = "x86_64-linux";
         modules = [
-          self.nixosModules.prime-ai_hardware_config
-          self.nixosModules.prime-ai_hardware_config_tuxedo
-          self.nixosModules.system_config
-          self.nixosModules.phil_user
-          self.nixosModules.wifi_secrets
-          self.nixosModules.prime_ai_syncthing
-          self.nixosModules.secure_boot
-          self.nixosModules.prime-ai_hardware_shared_crypt
+          self.nixosModules.prime-ai.hardware_config
+          self.nixosModules.prime-ai.networking
+          self.nixosModules.prime-ai.hardware_config_tuxedo
+          self.nixosModules.prime-ai.hardware_shared_crypt
+          self.nixosModules.prime-ai.syncthing
+          self.nixosModules.prime-ai.tailscale
+          self.nixosModules.prime-ai.phil_home
+          self.nixosModules.prime-ai.phil_user
+
+          self.nixosModules.system-conf.network_fs
+          self.nixosModules.system-conf.wifi_secrets
+          self.nixosModules.system-conf.secure_boot
+          self.nixosModules.system-conf.openssh
+          self.nixosModules.system-conf.allow-unfree
+          self.nixosModules.system-conf.locale_au
+          self.nixosModules.system-conf.cli
+          self.nixosModules.system-conf.gui
+          self.nixosModules.system-conf.fonts
+          self.nixosModules.system-conf.lock-root
+          self.nixosModules.system-conf.nix-config
+          self.nixosModules.system-conf.stateversion
+
+          self.nixosModules.window-managers.hyprland
+
+          self.nixosModules.bib_reorganise
+          self.nixosModules.gui.inkscape # works best when GTK is set up
+          self.nixosModules.cli.python-system
+          self.nixosModules.cli.spell_checkers
+          self.nixosModules.cli.direnv
+          #self.nixosModules.window-managers.xfce_desktop
+
+          # Not sure how this fits in
           inputs.ragenix.nixosModules.age
-          self.nixosModules.prime_ai_tailscale
-          self.nixosModules.network_fs
-          self.nixosModules.hyprland-prime-ai
-          #self.nixosModules.xfce_desktop
-          self.nixosModules.phil_home
-          self.nixosModules.spell_checkers
-          self.nixosModules.direnv
         ];
       };
+    
+      phil-vm = nixpkgs-unstable.lib.nixosSystem {
+        system = "x86_64-linux";
+        modules = [
+          self.nixosModules.x1carbon-vm.boot
+          self.nixosModules.x1carbon-vm.networking
+          self.nixosModules.x1carbon-vm.trackpad
+          self.nixosModules.x1carbon-vm.fs
+          self.nixosModules.x1carbon-vm.phil_user
+          self.nixosModules.x1carbon-vm.phil_home
+
+
+
+          self.nixosModules.system-conf.openssh
+          self.nixosModules.system-conf.allow-unfree
+          self.nixosModules.system-conf.locale_au
+          self.nixosModules.system-conf.fonts
+          self.nixosModules.system-conf.lock-root
+          self.nixosModules.system-conf.nix-config
+          self.nixosModules.system-conf.stateversion
+
+
+          self.nixosModules.python-system
+          self.nixosModules.spell_checkers
+          self.nixosModules.direnv
+
+          ## Need to get phil_home in here somehow
+
+        ];
+      };
+
     };
+    nixOnDroidConfigurations = {
+      galaxym62 = inputs.nix-on-droid.lib.nixOnDroidConfiguration {
+        modules = [];
+      };
+    };
+    # For managing with home-manager cli.
+    # I prefer the phil_home module
     homeConfigurations = {
       "phil@prime-ai-nixos" = inputs.home-manager.lib.homeManagerConfiguration {
         pkgs = nixpkgs-unstable.legacyPackages.x86_64-linux;
