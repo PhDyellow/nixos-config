@@ -2889,7 +2889,7 @@ Close when conclusion is reached.
                       after = [ "org-roam" ];
                     };
                     org-roam-bibtex = {
-                      enable = true;
+                      enable = false;
                       after = [ "org-roam" ];
                       config = ''
                         (setq orb-preformat-templates t
