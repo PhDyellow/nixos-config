@@ -1791,7 +1791,7 @@
                         '';
                     };
                     god-mode = {
-                      enable = true;
+                      enable = false;
                       init = ''
                           ;;(setq god-mode-enable-function-key-translation nil)
                         '';
