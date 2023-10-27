@@ -1266,19 +1266,28 @@
 
                 # large, changes less frequently
                 BIG=/para/areas/bibliography___CITE/readings.bib
+                BIG2=/para/areas/bibliography___CITE/readings2.org
                 # small, changes more frequently
                 SMALL=/para/areas/bibliography___CITE/new_refs.bib
+                SMALL2=/para/areas/bibliography___CITE/new_refs2.org
 
                 # size of small before script actually does anything
                 MAXSIZE=5000
 
                 # get file size
                 FILESIZE=$(stat -c%s "$SMALL")
+                FILESIZE2=$(stat -c%s "$SMALL2")
 
                 if ((FILESIZE > MAXSIZE)); then
                     # when $SMALL exceeds $MAXSIZE, move its content to $BIG
                     cat "$SMALL" >> "$BIG"
                     echo "" > "$SMALL"
+                fi
+
+                if ((FILESIZE2 > MAXSIZE)); then
+                    # when $SMALL2 exceeds $MAXSIZE, move its content to $BIG2
+                    cat "$SMALL2" >> "$BIG2"
+                    echo "" > "$SMALL2"
                 fi
               '';
         };
@@ -3588,7 +3597,7 @@ Close when conclusion is reached.
 
           self.nixosModules.window-managers.hyprland
 
-          self.nixosModules.bib_reorganise
+          # self.nixosModules.bib_reorganise # riskier when using org-bibtex, may be editing notes when timer kicks in.
           self.nixosModules.gui.inkscape # works best when GTK is set up
           self.nixosModules.cli.python-system
           self.nixosModules.cli.spell_checkers
