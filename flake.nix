@@ -3004,7 +3004,7 @@ Close when conclusion is reached.
                       '';
                     };
                     ebib = {
-                      enable = true;
+                      enable = false;
                       config = ''
                         (setq ebib-preload-bib-files my-bib-files
                         ebib-bibtex-dialect 'biblatex
