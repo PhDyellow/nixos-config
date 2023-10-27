@@ -1692,7 +1692,7 @@
                             ;"/para/areas/bibliography___CITE/readings.bib"
                             ;"/para/areas/bibliography___CITE/readings2.org"
                             ;(expand-file-name "new_refs.org" my-memx-dir)
-                            (expand-file-name "readings.org" my-memx-dir))
+                            (expand-file-name "20231027T152659057802-readings___CITE.org" my-memx-dir))
                             my-ereading-dir "/para/areas/bibliography___CITE/ereading___pdf__ebook__refs/"
                             my-html-dir "/para/areas/bibliography___CITE/web-capture___html__org__refs/"
                             my-refs-dirs (list my-ereading-dir my-html-dir)
