@@ -3382,10 +3382,6 @@ Close when conclusion is reached.
 
                       '';
                     };
-                    org-noter-pdf = {
-                      enable = true;
-                      after = [ "org-noter" ];
-                    };
                     pdf-tools = {
                       enable = true;
                       init = ''
