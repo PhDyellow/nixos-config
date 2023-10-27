@@ -2685,7 +2685,7 @@
                         '';
                     };
                     org-linker-edna = {
-                      after = [ "org" ];
+                      after = [ "org" "helm" ];
                       enable = true;
                     };
                     org-linker = {
