@@ -3244,22 +3244,12 @@ Close when conclusion is reached.
                       after = [ "org" "bibtex" "bibtex-completion" ];
                       enable = true;
                       config = ''
+                          (require 'org-ref-refproc)
                           (require 'org-ref-wos)
                           (require 'org-ref-arxiv)
                           (require 'org-ref-scopus)
                           (setq org-ref-bibtex-pdf-download-dir (concat my-ereading-dir "/refile"))
-                        '';
-                    };
-                    org-ref-refproc = {
-                      after = [ "org-ref" ];
-                      enable = true;
-                      init = ''
-
-                      '';
-                      config = ''
-                      (require 'ol)
-                      (add-hook 'org-export-before-parsing-functions #'org-ref-refproc)
-                      '';
+                          (add-hook 'org-export-before-parsing-functions #'org-ref-refproc)                        '';
                     };
                     org-ref-helm = {
                       after = [ "org-ref" ];
