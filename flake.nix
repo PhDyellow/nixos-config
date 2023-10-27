@@ -1582,13 +1582,23 @@
             extraPackages = epkgs: [
             ];
             overrides = final: prev: {
+              org-ref = prev.org-ref.overrideAttrs (old: {
+                src = pkgs.fetchFromGitHub {
+                  owner = "PhDyellow";
+                  repo = "org-ref";
+                  rev = "11013e702630a6ce2f7fd5da0bc0ac13e53eeea4";
+                  hash = "sha256-friWP2Hyk6aq/+0esnbpI1xr8Z36I3HtXQq5Di0yVzA=";
+                };
+                commit = "11013e702630a6ce2f7fd5da0bc0ac13e53eeea4";
+              });
               org-super-links = prev.emacs.pkgs.trivialBuild {
                 pname = "org-super-links";
                     version = "git";
                     src = inputs.org-super-links;
                     packageRequires = [
                     ];
-                  };
+              };
+
                   org-slt-phdyellow = prev.emacs.pkgs.trivialBuild {
                     pname = "org-slt-phdyellow";
                     version = "git";
