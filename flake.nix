@@ -1732,7 +1732,7 @@
                        (citar-org-roam-mode)
 
                       ;; Local Variables:
-                      ;; no-byte-compile: t
+                      ;; no-byte-compile: nil
                       ;; End:
                     '';
 
