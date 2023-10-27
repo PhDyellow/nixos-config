@@ -1958,7 +1958,9 @@
                                 auto-save-include-big-deletions t
                                 auto-save-list-file-prefix (concat user-emacs-directory ".local/cache/autosave/")
                                 auto-save-file-name-transforms (list (list ".*" auto-save-list-file-prefix t))
-                                safe-local-variable-directories `(,my-memx-dir))
+                                safe-local-variable-values '((magit-wip-merge-branch . t))
+                                ;safe-local-variable-directories `(,my-memx-dir)
+                          )
                         '';
                     };
                     tramp = {
