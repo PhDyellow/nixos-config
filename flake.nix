@@ -2127,6 +2127,9 @@
                           (setq magit-refresh-status-buffer nil)
                         '';
                     };
+                    orgit = {
+                      enable = true;
+                    };
                     forge = {
                       enable = true;
                     };
