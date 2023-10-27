@@ -2532,12 +2532,16 @@
                             (startgroup . nil) ("SPARK") ("PROCESSING") ("XXSPARK") (endgroup . nil)
                             ;; PROJ tag for a goal with tasks. Use PROJ if it is something that can be marked as done, is more complex than a single task and achieves something in itself when done (ie. not just partway to a desired state. A counterexample: submitting an application then accepting the returned offer are two tasks, the first one is not a complete project on it's own.). A subproject is also a PROJ, linked to the parent proj in a super/sub type link pair.
                             (startgroup . nil) ("PROJ") ("XXPROJ") (endgroup . nil)
+                            ;; TASK tag for a task. Often redundant due to TODO states.
+                            (startgroup . nil) ("TASK") ("XXTASK") (endgroup . nil)
                             ;; AREA tag for things I am responsible for, and want to maintain, but cannot be marked as done. I'm never really "done" with being a parent or husband, for example, or taking care of my health. Areas do close though, as life circumstances change.
                             (startgroup . nil) ("AREA") ("XXAREA") (endgroup . nil)
-                            ;; GOAL tag for things I want to work towards. Needs more thought, are these visions and big picture stuff, or just projects without tasks? Should I be using AREA? GOALS are things I want to bring about, but may not be a concrete "done"
+                            ;; VALUE tag for my fundamental understanding of things that are important. Values are concepts. Values are used to discern between actions that all seem good.
+                            (startgroup . nil) ("VALUE") ("XXVALUE") (endgroup . nil)
+                            ;; GOAL tag for things I want to work towards. Goals are visions of the future. An active goal is defined by a clear outcome. Goals pursue values, values inform goals.
                             (startgroup . nil) ("GOAL") ("XXGOAL") (endgroup . nil)
                             ;; WORKS tag for things I am working on. Code, writing, in collaboration, solo... They are marked as closed when I don't plan on changing anything else in them.
-                            (startgroup . nil) ("WORKS") ("PROCESSING") ("XXWORKS") (endgroup . nil)
+                            (startgroup . nil) ("WORKS") ("XXWORKS") (endgroup . nil)
                             ;; CONCEPT tag for notes that explain a concept. Theseare the "evergreen" notes in my memx, and should be reasonably self-contained and understandable to an outsider. Concept notes are not normally closed, but they might be retracted.
                             (startgroup . nil) ("CONCEPT") ("XXCONCEPT") (endgroup . nil)
                             ;; ENTITY  tag, for a thing, like a person, company, city or software program. Entity tags are closed when I no longer want to see them, not when the entity ceases to exist, as some entities are historical or fictional.
@@ -2756,6 +2760,24 @@
 :CREATED: %U
 :END:
 
+** Summary
+
+*** Authors Goals
+
+*** My interpretation of results
+
+*** ''${citekey} relevance
+:PROPERTIES:
+:ID: ''${id}-''${citekey}-relevance
+:END:
+
+** Notes
+
+*** Note Magnet
+:PROPERTIES:
+:NOTER_PAGE: (1 0 . 0)
+:END:
+
 "))
                             ("d" "OOB: new CITE note" plain
                               "%?"
@@ -2774,6 +2796,25 @@
 :ID: ''${id}-''${citekey}
 :KEYWORDS: ''${keywords}
 :CREATED: %U
+:END:
+
+
+** Summary
+
+*** Authors Goals
+
+*** My interpretation of results
+
+*** ''${citekey} relevance
+:PROPERTIES:
+:ID: ''${id}-''${citekey}-relevance
+:END:
+
+** Notes
+
+*** Note Magnet
+:PROPERTIES:
+:NOTER_PAGE: (1 0 . 0)
 :END:
 
 "))
