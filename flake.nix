@@ -3,8 +3,8 @@
 
   inputs  = {
     nixpkgs-unstable = {
-      url = "github:PhDyellow/nixpkgs/inkscape_writetex";
-      #url = "github:NixOS/nixpkgs/nixos-unstable";
+      #url = "github:PhDyellow/nixpkgs/inkscape_writetex";
+      url = "github:NixOS/nixpkgs/nixos-unstable";
       #url = "github:NixOS/nixpkgs/master"; #temporary change for bug in nixos
       # url = "github:NixOS/nixpkgs?rev=5abc896edad307816c03d9a672cc8fcf683e8f35"; #temporary change for bug in nixos
     };
@@ -1187,7 +1187,7 @@
           {
             environment.systemPackages = with pkgs; [
               (python3.withPackages(ps: with ps; [
-                inkex
+                # inkex
               ]))
           ];
           };
@@ -1232,9 +1232,10 @@
       gui = {
         inkscape = {config, pkgs, ...}: {
           environment.systemPackages = with pkgs; [
-            (inkscape-with-extensions.override {
-              inkscapeExtensions = null;
-            })
+            inkscape
+            # inkscape-with-extensions.override {
+            #   inkscapeExtensions = [ inkscape-extensions.applytransforms ];
+            # })
           ];
         };
       };
