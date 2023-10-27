@@ -3581,6 +3581,7 @@ Close when conclusion is reached.
           self.nixosModules.prime-ai.tailscale
           self.nixosModules.prime-ai.phil_home
           self.nixosModules.prime-ai.phil_user
+          self.nixosModules.prime-ai.gui
 
           self.nixosModules.system-conf.network_fs
           self.nixosModules.system-conf.wifi_secrets
