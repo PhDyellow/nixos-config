@@ -1666,7 +1666,7 @@
                 };
                 init = {
                   enable = true;
-                  packageQuickstart = false;
+                  packageQuickstart = true;
                   recommendedGcSettings = true;
                   startupTimer = true;
                   earlyInit = "";
