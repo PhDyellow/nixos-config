@@ -1677,8 +1677,12 @@
                       ;;(setq my-user-emacs-directory "/storage/emulated/0/memx/repos/phone_emacs/")
                       (setq my-memx-dir "/para/areas/memx___syncthing/"
                             my-bib-dir "/para/areas/bibliography___CITE/"
-                            my-bib-files '("/para/areas/bibliography___CITE/new_refs.bib"
-                            "/para/areas/bibliography___CITE/readings.bib")
+                            my-bib-files '(;"/para/areas/bibliography___CITE/new_refs.bib"
+                            ;"/para/areas/bibliography___CITE/new_refs2.org"
+                            ;"/para/areas/bibliography___CITE/readings.bib"
+                            ;"/para/areas/bibliography___CITE/readings2.org"
+                            ;(expand-file-name "new_refs.org" my-memx-dir)
+                            (expand-file-name "readings.org" my-memx-dir))
                             my-ereading-dir "/para/areas/bibliography___CITE/ereading___pdf__ebook__refs/"
                             my-html-dir "/para/areas/bibliography___CITE/web-capture___html__org__refs/"
                             my-refs-dirs (list my-ereading-dir my-html-dir)
@@ -2480,10 +2484,16 @@
                           (add-to-list 'org-babel-default-header-args '(:eval . "never-export"))
 
                           ;;set up todo entries
-                          (setq org-todo-keywords '((sequence "PROBLEM" "|" "SOLVED" "SKIP")
-                          (sequence "ATTEMPT" "|" "FAIL" "SUCCESS")
-                          (sequence "TODO(t)" "NEXT(n!)" "WAIT(b@/!)" "IDEA(i@)" "|" "NEVER(x@)" "DONE(d!)")
-                          (sequence "ADD" "FIND" "SKIM(1!)" "1ST_READ(2!)" "1ST_MARG(3!)" "2ND_READ(4!)" "2ND_MARG(5!)" "3RD_READ(6!)" "3RD_MARG(7!)" "GOLD(8!)" "|" "REF(9!)" "DROP(k)")
+                          (setq org-todo-keywords '(
+                            (sequence "QUERY(y)" "|" "RESOLVED(!)")
+                            (sequence "GOAL(g)" "|" "ACHIEVED(!)")
+                            (sequence "PROJ(p)" "|" "COMPLETE(!)")
+                            (sequence "TASK(t)" "NEXT(n)" "|" "DONE(!)")
+                            (sequence "SPARK(s)" "THINKING(h)" "|" "PROCESSED(!)")
+                            ;(sequence "PROBLEM" "|" "SOLVED" "SKIP")
+                            ;(sequence "ATTEMPT" "|" "FAIL" "SUCCESS")
+                            ;(sequence "TODO(t)" "NEXT(n!)" "WAIT(b@/!)" "IDEA(i@)" "|" "NEVER(x@)" "DONE(d!)")
+                            ;(sequence "ADD" "FIND" "SKIM(1!)" "1ST_READ(2!)" "1ST_MARG(3!)" "2ND_READ(4!)" "2ND_MARG(5!)" "3RD_READ(6!)" "3RD_MARG(7!)" "GOLD(8!)" "|" "REF(9!)" "DROP(k)")
                           ))
 
                           (setq org-tag-alist '(
@@ -3012,7 +3022,83 @@ Close when conclusion is reached.
                            citar-at-point-function 'embark-act
                            citar-library-paths (list my-ereading-dir)
                         citar-file-additional-files-separator "---")
-                      '';
+
+                        ;; Hacking citar to use org-bibtex
+                        ;; see https://gist.github.com/andras-simonyi/eda0daa0b677838022fd7c438b6eadfa
+
+;; Make Citar aware of org-bib(la)tex bibs.
+;; TODO: handle props correctly for Org files
+(define-advice citar-cache--update-bibliography (:override (bib &optional props))
+  (let* ((filename (citar-cache--bibliography-filename bib))
+	 (props (or props (citar-cache--get-bibliography-props filename)))
+	 (entries (citar-cache--bibliography-entries bib))
+	 (messagestr (format "Updating bibliography %s" (abbreviate-file-name filename)))
+	 (starttime (current-time)))
+    (message "%s..." messagestr)
+    (redisplay)	 ; Make sure message is displayed before Emacs gets busy parsing
+    (clrhash entries)
+    (if (string= (file-name-extension filename) "org")
+	(org-map-entries
+	 (lambda ()
+	   (when-let ((key-w-entry (citeproc-bt-from-org-headline)))
+	     (condition-case err
+		 (puthash (car key-w-entry) (cdr key-w-entry)
+			  entries)
+	       (error
+		(user-error
+		 "Couldn't parse the bib(la)tex entry with key '%s', the error was: %s"
+		 (car key-w-entry) err)))))
+	 t (list filename))
+      (parsebib-parse filename :entries entries :fields (plist-get props :fields)))
+    (setf (citar-cache--bibliography-props bib) props)
+    (citar-cache--preformat-bibliography bib)
+    (message "%s...done (%.3f seconds)" messagestr (float-time (time-since starttime)))))
+
+;; Open corresponding headlines in org-bib(la)tex files too.
+(define-advice citar--open-entry (:override (key bib-files))
+  (catch 'break
+    (dolist (bib-file bib-files)
+      (let ((buf (or (get-file-buffer bib-file)
+		     (find-buffer-visiting bib-file))))
+	(find-file bib-file)
+	(widen)
+	(goto-char (point-min))
+	(let ((orgp (string= "org" (file-name-extension bib-file))))
+	  (when (re-search-forward
+		 (if orgp (concat ":CUSTOM_ID: " (regexp-quote key))
+		   (concat "^@\\(" parsebib--bibtex-identifier
+			   "\\)[[:space:]]*[\\(\\{][[:space:]]*"
+			   (regexp-quote key) "[[:space:]]*,")) nil t)
+	    (when orgp
+	      (re-search-backward "^\\*")
+	      (org-fold-show-context))
+	    (throw 'break t)))
+	(unless buf
+	  (kill-buffer))))))
+
+
+                        (defun my-extend-org-bibtex-write ()
+                          "Add missing org properties to org-bibtex-write. Use on an org entry created by org-bibtex-write, possibly automate with advice"
+                          (interactive)
+                          ;;Need
+                          ;; ID (includes date anyway, no need for created property)
+                          ;; ROAM_REFS
+                          ;; ROAM_ALIASES
+                          ;; NOTER_DOCUMENT
+                          (let ((base-id (org-id-get nil t))
+                               (cite-key (org-entry-get nil "CUSTOM_ID")))
+                               (org-entry-put nil "ID" (concat base-id "-" cite-key))
+                               (org-entry-put nil "ROAM_REFS" (concat "@" cite-key))
+                               (org-entry-put nil "ROAM_ALIASES" nil)
+                               (org-entry-put nil "NOTER_DOCUMENT" (car (bibtex-completion-find-pdf (org-entry-get nil "CUSTOM_ID") nil)))
+
+                          )
+                        )
+
+
+
+
+'';
 
                     };
                     citar-org = {
@@ -3079,6 +3165,9 @@ Close when conclusion is reached.
                           (setq citar-denote-title-format nil)
                         '';
                     };
+                    citeproc-bibtex = {
+                      enable = true;
+                    };
                     biblio = {
                       enable = true;
                       config = ''
@@ -3124,6 +3213,14 @@ Close when conclusion is reached.
 
 
                         (bibtex-set-dialect 'biblatex)
+                      '';
+                    };
+                    ol-bibtex = {
+                      enable = true;
+                      after = [ "org" ];
+                      config = ''
+                        (setq org-bibtex-prefix "BIB_"
+                              org-bibtex-export-arbitrary-fields t)
                       '';
                     };
                     ## Part of helm-bibtex, and used by org-ref
