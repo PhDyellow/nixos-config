@@ -1637,6 +1637,7 @@
                     src = inputs.org-linker-edna;
                     packageRequires = [
                       final.org-linker
+                      final.helm
                     ];
                   };
                   org-transclusion = prev.emacs.pkgs.trivialBuild {
