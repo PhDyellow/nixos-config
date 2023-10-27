@@ -1832,8 +1832,11 @@
                           (add-hook 'bibtex-mode-hook #'objed-local-mode)
                           (add-hook 'elisp-mode-hook #'objed-local-mode)
                           (add-hook 'sh-mode-hook #'objed-local-mode)
-                          (setq objed-disabled-modes '(epa-key-list-mode
-                              magit-mode org-mode))
+                          (setq objed-disabled-modes '(
+                            epa-key-list-mode
+                            magit-mode
+                            ;org-mode
+                          ))
 
 
                           ;; rebind switch to buffer with consult
