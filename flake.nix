@@ -3327,21 +3327,6 @@ Close when conclusion is reached.
                     pdf-tools = {
                       enable = true;
                       init = ''
-                        ;; needed because of emacs-init.nix
-                        ;; and a lack of package-quickstart
-                        (require 'pdf-occur)
-                        (require 'pdf-annot)
-                        (require 'pdf-cache)
-                        (require 'pdf-dev)
-                        (require 'pdf-history)
-                        (require 'pdf-isearch)
-                        (require 'pdf-links)
-                        (require 'pdf-macs)
-                          (require 'image-mode)
-                        (require 'pdf-misc)
-                        (require 'pdf-outline)
-                        (require 'pdf-sync)
-                        (require 'pdf-virtual)
                       '';
                     };
                     pdf-loader = { #part of pdf-tools
