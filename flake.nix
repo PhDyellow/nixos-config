@@ -2640,12 +2640,11 @@
                            :background "coral"
                            :foreground "coral"
                         )
-                        (zenburn-with-color-variables
-                          (set-face-attribute 'org-transclusion nil
-                            :background zenburn-blue-5))
-                        (zenburn-with-color-variables
-                          (set-face-attribute 'org-transclusion-source nil
-                            :background zenburn-green-5))
+
+                        (set-face-attribute 'org-transclusion nil
+                            :background (cdr (assoc "zenburn-blue-5" zenburn-default-colors-alist)))
+                        (set-face-attribute 'org-transclusion-source nil
+                            :background (cdr (assoc "zenburn-green-5" zenburn-default-colors-alist)))
                       '';
                     };
                     org-edna = {
@@ -3187,8 +3186,13 @@ Close when conclusion is reached.
                       config = ''
                           (setq whitespace-style '(face tabs trailing lines-tail missing-newline-at-eof empty big-indent space-before-tab space-after-tab)
                                 whitespace-global-modes '(not magit-mode eat-mode))
+
                           (add-hook 'whitespace-mode-hook #'(lambda ()
-                                    (face-remap-add-relative 'whitespace-big-indent (zenburn-with-color-variables `(:foreground ,zenburn-red+2 :background ,zenburn-red-2)))))
+                             (face-remap-add-relative 'whitespace-big-indent
+														  :foreground  (cdr (assoc "zenburn-red+2" zenburn-default-colors-alist))
+														  :background (cdr (assoc "zenburn-red-2" zenburn-default-colors-alist)))))
+
+
                           (global-whitespace-mode)
                           '';
                     };
