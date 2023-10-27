@@ -2048,15 +2048,17 @@
                           ;; But other times I have to fight them
                           ;; I'm never glad the closing bracket has
                           ;; been inserted for me
-                          (setq sp-autowrap-region nil
-                                sp-autodelete-pair nil
-                                sp-autodelete-opening-pair nil
-                                sp-autodelete-closing-pair nil
-                                sp-autoinsert-pair nil
-                                sp-autodelete-wrap nil
-                                sp-autoskip-opening-pair nil
-                                sp-autoskip-closing-pair nil)
-                          (smartparens-global-mode)
+                          ;; (setq sp-autowrap-region nil
+                          ;;      sp-autodelete-pair nil
+                          ;;      sp-autodelete-opening-pair nil
+                          ;;      sp-autodelete-closing-pair nil
+                          ;;      sp-autoinsert-pair nil
+                          ;;      sp-autodelete-wrap nil
+                          ;;      sp-autoskip-opening-pair nil
+                          ;;      sp-autoskip-closing-pair nil
+                          ;;      sp-escape-quotes-after-insert nil)
+                          ;; I only want show-smartparens
+                          ;; (smartparens-global-mode)
                           (show-smartparens-global-mode)
                         '';
                     };
