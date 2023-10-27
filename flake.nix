@@ -2915,15 +2915,15 @@ Close when conclusion is reached.
                             ("i" "Capture into note")
                             ("iq" "capture into note: quote" plain
                               "\n#+begin_quote :source-link %a :date %U\n%i\n#+end_quote\n%?"
-                              :target (file "''${id}-''${slug}__%(concat my-memx-version).org")
+                              :target (file "''${id}-''${slug}___%(concat my-memx-version).org")
                             :unnarrowed)
                             ("it" "capture into note: transclude" plain
                               "\n#+transclude: %a %?"
-                            :target (file "''${id}-''${slug}__%(concat my-memx-version).org")
+                            :target (file "''${id}-''${slug}___%(concat my-memx-version).org")
                             :unnarrowed)
                           ("p" "new: plain note" plain
                             "%?"
-                            :target (file+head "''${id}-''${slug}__%(concat my-memx-version).org"
+                            :target (file+head "''${id}-''${slug}___%(concat my-memx-version).org"
 "* ''${title}  :%^g:%(concat my-memx-version):
 :PROPERTIES:
 :ID: ''${id}-''${slug}
