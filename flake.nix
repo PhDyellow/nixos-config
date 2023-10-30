@@ -1443,6 +1443,7 @@
                 misc {
                 enable_swallow = true
                 swallow_regex = ^(Alacritty|kitty|foot)$
+                force_default_wallpaper = 0
                 }
 
 
