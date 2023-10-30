@@ -1688,12 +1688,12 @@
                       ;;(setq my-user-emacs-directory "/storage/emulated/0/memx/repos/phone_emacs/")
                       (setq my-memx-dir "/para/areas/memx___syncthing/"
                             my-bib-dir "/para/areas/bibliography___CITE/"
-                            my-bib-files '(;"/para/areas/bibliography___CITE/new_refs.bib"
+                            my-bib-files `(;"/para/areas/bibliography___CITE/new_refs.bib"
                             ;"/para/areas/bibliography___CITE/new_refs2.org"
                             ;"/para/areas/bibliography___CITE/readings.bib"
                             ;"/para/areas/bibliography___CITE/readings2.org"
                             ;(expand-file-name "new_refs.org" my-memx-dir)
-                            (expand-file-name "20231027T152659057802-readings___CITE.org" my-memx-dir))
+                            ,(expand-file-name "20231027T152659057802-readings___CITE.org" my-memx-dir))
                             my-ereading-dir "/para/areas/bibliography___CITE/ereading___pdf__ebook__refs/"
                             my-html-dir "/para/areas/bibliography___CITE/web-capture___html__org__refs/"
                             my-refs-dirs (list my-ereading-dir my-html-dir)
@@ -3148,11 +3148,13 @@ Close when conclusion is reached.
                                (cite-key (org-entry-get nil "CUSTOM_ID")))
                                (org-entry-put nil "ID" (concat base-id "-" cite-key))
                                (org-entry-put nil "ROAM_REFS" (concat "@" cite-key))
-                               (org-entry-put nil "ROAM_ALIASES" nil)
+                               (org-entry-put nil "ROAM_ALIASES" cite-key)
                                (org-entry-put nil "NOTER_DOCUMENT" (car (bibtex-completion-find-pdf (org-entry-get nil "CUSTOM_ID") nil)))
-
+                               (org-todo "CITE")
                           )
                         )
+
+                        (advice-add #'org-bibtex-write :after #'my-extend-org-bibtex-write)
 
 
 
@@ -3279,7 +3281,9 @@ Close when conclusion is reached.
                       after = [ "org" ];
                       config = ''
                         (setq org-bibtex-prefix "BIB_"
-                              org-bibtex-export-arbitrary-fields t)
+                              org-bibtex-export-arbitrary-fields t
+                              org-bibtex-headline-format-function (lambda (entry)
+                                (cdr (assq :key entry))))
                       '';
                     };
                     ## Part of helm-bibtex, and used by org-ref
