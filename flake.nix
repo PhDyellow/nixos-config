@@ -2505,9 +2505,9 @@
                           ;;set up todo entries
                           (setq org-todo-keywords '(
                             (sequence "QUERY(y)" "|" "RESOLVED(!)") ;A question
-                            (sequence "GOAL(g)" "|" "ACHIEVED(!)") ;An outcome I want to see achieved
-                            (sequence "PROJ(p)" "|" "COMPLETE(!)") ;A set of tasks supporting a goal or higher project
-                            (sequence "TASK(t)" "NEXT(n)" "|" "DONE(!)") ; A task
+                            (sequence "GOAL(g)" "|" "ACHIEVED(!)") ;An outcome I want to see come about, ideally with a deadline
+                            ;(sequence "PROJ(p)" "|" "COMPLETE(!)") ;A set of tasks supporting a goal or higher project
+                            (sequence "TASK(t)" "NEXT(n)" "|" "DONE(!)") ; A task. Tasks should pursue goals. A group of related tasks are really just subtasks, no projects.
                             (sequence "SPARK(s)" "THINKING(h)" "|" "PROCESSED(!)") ;Transient notes that I want to capture
                             (sequence "READ(r)" "|" "CITE(c)") ;bibliographic entries. Switch back and forth as needed
                             (sequence "|" "CONCEPT(w)" "VIEW(v)") ;evergreen concept note or overview of area
@@ -2744,7 +2744,7 @@
                               (propertize "''${todo:15}" 'face 'org-todo))
                           org-roam-database-connector 'sqlite-builtin
                           org-roam-db-gc-threshold most-positive-fixnum
-                          my-memx-version "memx_v3"
+                          my-memx-version "memx_v4"
                           org-roam-capture-templates '(
 
                             ("i" "Capture into note")
