@@ -2501,16 +2501,19 @@
                           ;;never run blocks on export. Creates consisent results for R async session blocks.
                           (add-to-list 'org-babel-default-header-args '(:eval . "never-export"))
 
+
                           ;;set up todo entries
                           (setq org-todo-keywords '(
-                            (sequence "QUERY(y)" "|" "RESOLVED(!)")
-                            (sequence "GOAL(g)" "|" "ACHIEVED(!)")
-                            (sequence "PROJ(p)" "|" "COMPLETE(!)")
-                            (sequence "TASK(t)" "NEXT(n)" "|" "DONE(!)")
-                            (sequence "SPARK(s)" "THINKING(h)" "|" "PROCESSED(!)")
+                            (sequence "QUERY(y)" "|" "RESOLVED(!)") ;A question
+                            (sequence "GOAL(g)" "|" "ACHIEVED(!)") ;An outcome I want to see achieved
+                            (sequence "PROJ(p)" "|" "COMPLETE(!)") ;A set of tasks supporting a goal or higher project
+                            (sequence "TASK(t)" "NEXT(n)" "|" "DONE(!)") ; A task
+                            (sequence "SPARK(s)" "THINKING(h)" "|" "PROCESSED(!)") ;Transient notes that I want to capture
+                            (sequence "READ(r)" "|" "CITE(c)") ;bibliographic entries. Switch back and forth as needed
+                            (sequence "|" "CONCEPT(w)" "VIEW(v)") ;evergreen concept note or overview of area
                             ;(sequence "PROBLEM" "|" "SOLVED" "SKIP")
                             ;(sequence "ATTEMPT" "|" "FAIL" "SUCCESS")
-                            ;(sequence "TODO(t)" "NEXT(n!)" "WAIT(b@/!)" "IDEA(i@)" "|" "NEVER(x@)" "DONE(d!)")
+                            ;(sequence "BLOCKED(b)" "TODO(t)" "NEXT(n!)" "WAIT(b@/!)" "IDEA(i@)" "|" "NEVER(x@)" "DONE(d!)")
                             ;(sequence "ADD" "FIND" "SKIM(1!)" "1ST_READ(2!)" "1ST_MARG(3!)" "2ND_READ(4!)" "2ND_MARG(5!)" "3RD_READ(6!)" "3RD_MARG(7!)" "GOLD(8!)" "|" "REF(9!)" "DROP(k)")
                           ))
 
@@ -2737,182 +2740,13 @@
                         (setq org-roam-directory (file-truename my-memx-dir)
                           org-roam-node-display-template
                             (concat "''${title:60} "
-                              (propertize "''${tags:20}" 'face 'org-tag))
+                              (propertize "''${tags:20}" 'face 'org-tag)
+                              (propertize "''${todo:15}" 'face 'org-todo))
                           org-roam-database-connector 'sqlite-builtin
                           org-roam-db-gc-threshold most-positive-fixnum
-                          my-memx-version "memx_v2"
+                          my-memx-version "memx_v3"
                           org-roam-capture-templates '(
-                            ("T" "CITAR: new CITE note" plain
-                              "%?"
-                              :target (file+head "''${id}-''${citekey}___CITE__%(concat my-memx-version).org"
-"* ''${citekey}  :CITE:%(concat my-memx-version):
-:PROPERTIES:
-:ROAM_ALIASES:
-:URL: ''${url}
-:DOI: ''${doi}
-:AUTHOR: ''${author}
-:EDITOR: ''${editor}
-:YEAR: ''${bdate}
-:NOTER_DOCUMENT: %(orb-process-file-field \"''${citekey}\")
-:TITLE: ''${title}
-:BIBTEX_TYPE: ''${btype}
-:KEYWORDS: ''${keywords}
-:ID: ''${id}-''${citekey}
-:CREATED: %U
-:END:
 
-** Summary
-
-*** Authors Goals
-
-*** My interpretation of results
-
-*** ''${citekey} relevance
-:PROPERTIES:
-:ID: ''${id}-''${citekey}-relevance
-:END:
-
-** Notes
-
-*** Note Magnet
-:PROPERTIES:
-:NOTER_PAGE: (1 0 . 0)
-:END:
-
-"))
-                            ("d" "OOB: new CITE note" plain
-                              "%?"
-                              :target (file+head "''${id}-''${citekey}___CITE__%(concat my-memx-version).org"
-"* ''${citekey}  :CITE:%(concat my-memx-version):
-:PROPERTIES:
-:ROAM_ALIASES:
-:URL: ''${url}
-:DOI: ''${doi}
-:AUTHOR: ''${author}
-:EDITOR: ''${editor}
-:YEAR: ''${date} ''${year} ''${issued}
-:NOTER_DOCUMENT: %(orb-process-file-field \"''${citekey}\")
-:TITLE: ''${title}
-:BIBTEX_TYPE: ''${=type=}
-:ID: ''${id}-''${citekey}
-:KEYWORDS: ''${keywords}
-:CREATED: %U
-:END:
-
-
-** Summary
-
-*** Authors Goals
-
-*** My interpretation of results
-
-*** ''${citekey} relevance
-:PROPERTIES:
-:ID: ''${id}-''${citekey}-relevance
-:END:
-
-** Notes
-
-*** Note Magnet
-:PROPERTIES:
-:NOTER_PAGE: (1 0 . 0)
-:END:
-
-"))
-                            ("s" "new: SPARK note" plain
-                            "%?"
-                            :target (file+head "''${id}-''${slug}___SPARK__%(concat my-memx-version).org"
-"* ''${title}  :SPARK:%(concat my-memx-version):
-:PROPERTIES:
-:ID: ''${id}-''${slug}
-:ROAM_ALIASES:
-:CREATED: %U
-:END:
-")
-                            :unnarrowed)
-                            ("c" "new: CONCEPT note" plain
-                            "%?"
-                            :target (file+head "''${id}-''${slug}___CONCEPT__%(concat my-memx-version).org"
-"* ''${title}  :CONCEPT:%(concat my-memx-version):
-:PROPERTIES:
-:ID: ''${id}-''${slug}
-:ROAM_ALIASES:
-:CREATED: %U
-:END:
-")
-                            :unnarrowed)
-                            ("y" "new: QUERY note" plain
-                            "%?"
-                            :target (file+head "''${id}-''${slug}___QUERY__%(concat my-memx-version).org"
-"* ''${title}  :QUERY:%(concat my-memx-version):
-:PROPERTIES:
-:ID: ''${id}-''${slug}
-:ROAM_ALIASES:
-:CREATED: %U
-:END:
-** Overview
-** Conclusion
-Close when conclusion is reached.
-** Processing template
-- [timestamp] [[websearch: keywords]]
-  - [timestamp] [result url] :: relevance
-  - [timestamp] [result url] :: relevance
-    - [[websearch: new idea inspired by result]]
-** Processing
-")
-                            :unnarrowed)
-                            ("e" "new: ENTITY note" plain
-                            "%?"
-                            :target (file+head "''${id}-''${slug}___ENTITY__%(concat my-memx-version).org"
-"* ''${title}  :ENTITY:%(concat my-memx-version):
-:PROPERTIES:
-:ID: ''${id}-''${slug}
-:ROAM_ALIASES:
-:CREATED: %U
-:END:
-
-
-** Overview
-")
-                            :unnarrowed)
-                            ("a" "Activity note types")
-
-                            ("ap" "new: PROJ note" plain
-                            "%?"
-                            :target (file+head "''${id}-''${slug}___PROJ__%(concat my-memx-version).org"
-"* ''${title}  :PROJ:%(concat my-memx-version):
-:PROPERTIES:
-:ID: ''${id}-''${slug}
-:ROAM_ALIASES:
-:CREATED: %U
-:END:
-
-:PURSUES:
-:END:
-
-:SUPPORTED_BY:
-:END:
-
-:FILES_DIRS:
-:END:
-
-** Overview
-")
-                            :unnarrowed)
-                            ("r" "new: RECIPE note" plain
-                            "%?"
-                            :target (file+head "''${id}-''${slug}___RECIPE__%(concat my-memx-version).org"
-"* ''${title}  :RECIPE:%(concat my-memx-version):
-:PROPERTIES:
-:ID: ''${id}-''${slug}
-:ROAM_ALIASES:
-:CREATED: %U
-:END:
-** Expected Results
-** Inputs
-** Procedure
-")
-                            :unnarrowed)
                             ("i" "Capture into note")
                             ("iq" "capture into note: quote" plain
                               "\n#+begin_quote :source-link %a :date %U\n%i\n#+end_quote\n%?"
@@ -2925,13 +2759,187 @@ Close when conclusion is reached.
                           ("p" "new: plain note" plain
                             "%?"
                             :target (file+head "''${id}-''${slug}___%(concat my-memx-version).org"
-"* ''${title}  :%^g:%(concat my-memx-version):
+"* SPARK ''${title}  :%(concat my-memx-version):
 :PROPERTIES:
 :ID: ''${id}-''${slug}
 :ROAM_ALIASES:
 :CREATED: %U
 :END:
 "))
+;
+;
+;                            ("T" "CITAR: new CITE note" plain
+;                              "%?"
+;                              :target (file+head "''${id}-''${citekey}___CITE__%(concat my-memx-version).org"
+;"* ''${citekey}  :CITE:%(concat my-memx-version):
+;:PROPERTIES:
+;:ROAM_ALIASES:
+;:URL: ''${url}
+;:DOI: ''${doi}
+;:AUTHOR: ''${author}
+;:EDITOR: ''${editor}
+;:YEAR: ''${bdate}
+;:NOTER_DOCUMENT: %(orb-process-file-field \"''${citekey}\")
+;:TITLE: ''${title}
+;:BIBTEX_TYPE: ''${btype}
+;:KEYWORDS: ''${keywords}
+;:ID: ''${id}-''${citekey}
+;:CREATED: %U
+;:END:
+;
+;** Summary
+;
+;*** Authors Goals
+;
+;*** My interpretation of results
+;
+;*** ''${citekey} relevance
+;:PROPERTIES:
+;:ID: ''${id}-''${citekey}-relevance
+;:END:
+;
+;** Notes
+;
+;*** Note Magnet
+;:PROPERTIES:
+;:NOTER_PAGE: (1 0 . 0)
+;:END:
+;
+;"))
+;                            ("d" "OOB: new CITE note" plain
+;                              "%?"
+;                              :target (file+head "''${id}-''${citekey}___CITE__%(concat my-memx-version).org"
+;"* ''${citekey}  :CITE:%(concat my-memx-version):
+;:PROPERTIES:
+;:ROAM_ALIASES:
+;:URL: ''${url}
+;:DOI: ''${doi}
+;:AUTHOR: ''${author}
+;:EDITOR: ''${editor}
+;:YEAR: ''${date} ''${year} ''${issued}
+;:NOTER_DOCUMENT: %(orb-process-file-field \"''${citekey}\")
+;:TITLE: ''${title}
+;:BIBTEX_TYPE: ''${=type=}
+;:ID: ''${id}-''${citekey}
+;:KEYWORDS: ''${keywords}
+;:CREATED: %U
+;:END:
+;
+;
+;** Summary
+;
+;*** Authors Goals
+;
+;*** My interpretation of results
+;
+;*** ''${citekey} relevance
+;:PROPERTIES:
+;:ID: ''${id}-''${citekey}-relevance
+;:END:
+;
+;** Notes
+;
+;*** Note Magnet
+;:PROPERTIES:
+;:NOTER_PAGE: (1 0 . 0)
+;:END:
+;
+;"))
+;                            ("s" "new: SPARK note" plain
+;                            "%?"
+;                            :target (file+head "''${id}-''${slug}___SPARK__%(concat my-memx-version).org"
+;"* ''${title}  :SPARK:%(concat my-memx-version):
+;:PROPERTIES:
+;:ID: ''${id}-''${slug}
+;:ROAM_ALIASES:
+;:CREATED: %U
+;:END:
+;")
+;                            :unnarrowed)
+;                            ("c" "new: CONCEPT note" plain
+;                            "%?"
+;                            :target (file+head "''${id}-''${slug}___CONCEPT__%(concat my-memx-version).org"
+;"* ''${title}  :CONCEPT:%(concat my-memx-version):
+;:PROPERTIES:
+;:ID: ''${id}-''${slug}
+;:ROAM_ALIASES:
+;:CREATED: %U
+;:END:
+;")
+;                            :unnarrowed)
+;                            ("y" "new: QUERY note" plain
+;                            "%?"
+;                            :target (file+head "''${id}-''${slug}___QUERY__%(concat my-memx-version).org"
+;"* ''${title}  :QUERY:%(concat my-memx-version):
+;:PROPERTIES:
+;:ID: ''${id}-''${slug}
+;:ROAM_ALIASES:
+;:CREATED: %U
+;:END:
+;** Overview
+;** Conclusion
+;Close when conclusion is reached.
+;** Processing template
+;- [timestamp] [[websearch: keywords]]
+;  - [timestamp] [result url] :: relevance
+;  - [timestamp] [result url] :: relevance
+;    - [[websearch: new idea inspired by result]]
+;** Processing
+;")
+;                            :unnarrowed)
+;                            ("e" "new: ENTITY note" plain
+;                            "%?"
+;                            :target (file+head "''${id}-''${slug}___ENTITY__%(concat my-memx-version).org"
+;"* ''${title}  :ENTITY:%(concat my-memx-version):
+;:PROPERTIES:
+;:ID: ''${id}-''${slug}
+;:ROAM_ALIASES:
+;:CREATED: %U
+;:END:
+;
+;
+;** Overview
+;")
+;                            :unnarrowed)
+;                            ("a" "Activity note types")
+;
+;                            ("ap" "new: PROJ note" plain
+;                            "%?"
+;                            :target (file+head "''${id}-''${slug}___PROJ__%(concat my-memx-version).org"
+;"* ''${title}  :PROJ:%(concat my-memx-version):
+;:PROPERTIES:
+;:ID: ''${id}-''${slug}
+;:ROAM_ALIASES:
+;:CREATED: %U
+;:END:
+;
+;:PURSUES:
+;:END:
+;
+;:SUPPORTED_BY:
+;:END:
+;
+;:FILES_DIRS:
+;:END:
+;
+;** Overview
+;")
+;                            :unnarrowed)
+;                            ("r" "new: RECIPE note" plain
+;                            "%?"
+;                            :target (file+head "''${id}-''${slug}___RECIPE__%(concat my-memx-version).org"
+;"* ''${title}  :RECIPE:%(concat my-memx-version):
+;:PROPERTIES:
+;:ID: ''${id}-''${slug}
+;:ROAM_ALIASES:
+;:CREATED: %U
+;:END:
+;** Expected Results
+;** Inputs
+;** Procedure
+;")
+;                            :unnarrowed)
+;
 
                           )
 
