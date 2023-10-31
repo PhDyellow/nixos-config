@@ -1687,6 +1687,7 @@
                   prelude = ''
                       ;;(setq my-user-emacs-directory "/storage/emulated/0/memx/repos/phone_emacs/")
                       (setq my-memx-dir "/para/areas/memx___syncthing/"
+                            my-memx-version "memx_v4"
                             my-bib-dir "/para/areas/bibliography___CITE/"
                             my-bib-files `(;"/para/areas/bibliography___CITE/new_refs.bib"
                             ;"/para/areas/bibliography___CITE/new_refs2.org"
@@ -1745,6 +1746,9 @@
                   postlude = ''
                       ; Seems to break if called too early
                        (citar-org-roam-mode)
+
+                      ;Always start emacs by showing Goals and tasks
+                      (org-ql-view  "Progressing Goals")
 
                       ;; Local Variables:
                       ;; no-byte-compile: nil
@@ -2626,6 +2630,7 @@
                     };
                     org-ql = {
                       enable = true;
+                      after = [ "org" ];
                       config = ''
 
                       (defun my-org-agenda-blocked-p (item)
@@ -3069,7 +3074,7 @@ the target and properties of the edge."
                               (propertize "''${todo:15}" 'face 'org-todo))
                           org-roam-database-connector 'sqlite-builtin
                           org-roam-db-gc-threshold most-positive-fixnum
-                          my-memx-version "memx_v4"
+
                           org-roam-capture-templates '(
 
                             ("i" "Capture into note")
