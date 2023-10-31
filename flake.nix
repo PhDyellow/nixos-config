@@ -2636,8 +2636,39 @@
 																	 (switch-to-buffer-other-window buffer)
 																	 (goto-char marker)
 																	 (org-entry-blocked-p))))
-
+                        (setq org-ql-views '())
                         (add-to-list 'org-ql-views
+                          `("Clean memx"
+                            :buffers-files org-agenda-files
+                            :query (or (todo)
+                            (done)
+                            (not (todo)))
+                            :narrow nil
+                            :super-groups (
+                                          (:name "Open Queries"
+                                          :todo "QUERY")
+                                          (:name "Open Sparks"
+                                          :todo ("SPARK" "THINKING"))
+                                          (:name "Old Format"
+                                          :not (:tag ,my-memx-version))
+                                          (
+                                          :discard (:anything t))
+                            )))
+                        (add-to-list 'org-ql-views
+                          '("Cold Entries"
+                            :buffers-files org-agenda-files
+                            :query (closed :to -14)
+                            :narrow nil
+                            :super-groups (
+                              (:auto-ts)
+                            )))
+                        (add-to-list 'org-ql-views
+                          '("Citations to Read"
+                          :buffers-files org-agenda-files
+                          :query (todo "READ")
+                          :narrow nil))
+                        (add-to-list 'org-ql-views
+
                           '("Progressing Goals"
                           :buffers-files org-agenda-files
                           :query (or
