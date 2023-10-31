@@ -2490,6 +2490,12 @@
                             'org-babel-load-languages
                             org-babel-load-languages)
 
+
+                          (setq org-agenda-files `(,my-memx-dir)
+                                org-directory my-memx-dir
+                          ;      org-agenda-file-regexp "\\`[^.].*_agenda.*\\.org\\'"
+                          )
+
 `                         ;; Use svg for latex preview
                           (setq org-preview-latex-default-process dvisvgm)
 
@@ -2618,6 +2624,68 @@
                           )
                         '';
                     };
+                    org-ql = {
+                      enable = true;
+                      config = ''
+
+                      (defun my-org-agenda-blocked-p (item)
+                             "Returns t if the org-agenda item is blocked"
+                             (let* ((marker (get-text-property 0 'org-marker item))
+																        (buffer (marker-buffer marker)))
+																  (save-excursion
+																	 (switch-to-buffer-other-window buffer)
+																	 (goto-char marker)
+																	 (org-entry-blocked-p))))
+
+                        (add-to-list 'org-ql-views
+                          '("Progressing Goals"
+                          :buffers-files org-agenda-files
+                          :query (or
+																		 (todo "GOAL" "TASK" "NEXT")
+																		(tags "VALUE"))
+	                        :narrow nil
+                          :super-groups (
+                            (:name "Values"
+												     :tag "VALUE")
+									          (:todo "GOAL"
+												     :name "Unachieved Goals")
+                            (:name "Blocked Deadlines"
+                             :and (:pred (lambda (item)
+																 (my-org-agenda-blocked-p item))
+                                 :deadline t))
+                            (:name "Deadlines"
+                             :deadline t)
+                            (:name "Blocked Scheduled"
+                             :and (:pred (lambda (item)
+																 (my-org-agenda-blocked-p item))
+                                 :scheduled t))
+                            (:name "Scheduled"
+                             :scheduled t)
+                            (:name "Unblocked Tasks"
+                             :not (:pred (lambda (item)
+																 (my-org-agenda-blocked-p item))))
+                            (:name "Blocked Tasks"
+                             :pred (lambda (item)
+																 (my-org-agenda-blocked-p item))))))
+'';
+                    };
+                    org-sidebar = {
+                      enable = true;
+                      config = ''
+                        (defun my-org-sidebar ()
+  "Display my Org Sidebar."
+  (interactive)
+  (org-sidebar
+   :sidebars (make-org-sidebar
+              :name "My Sidebar"
+              :description "My sidebar items"
+              :items (org-ql (org-agenda-files)
+                       (and (not (done))
+                            (or (deadline auto)
+                                (scheduled :on today)))
+                       :action element-with-markers))))
+                      '';
+                    };
                     #org link library
                     ol = {
                       enable = true;
@@ -2728,9 +2796,7 @@
                               (org-map-entries 'org-id-get-create))
 
 
-                          (setq org-agenda-files `(,my-memx-dir)
-                          ;      org-agenda-file-regexp "\\`[^.].*_agenda.*\\.org\\'"
-                          )
+
                         '';
                     };
                     org-roam = {
