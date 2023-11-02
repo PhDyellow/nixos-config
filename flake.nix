@@ -3493,6 +3493,19 @@ the target and properties of the edge."
                           )
                         )
 
+                        (defun my-add-noter-org-bibtex-write ()
+                          "If the PDF was not added when the org-bibtex entry was created, `:NOTER:' will be empty. Once the PDF is added, this function fills in the `:NOTER:' property"
+                          (interactive)
+                            (org-entry-put nil "NOTER_DOCUMENT" (car (bibtex-completion-find-pdf (org-entry-get nil "CUSTOM_ID") nil))))
+
+                       (defun my-extend-id-with-slug ()
+                          ""
+                          (interactive)
+                          (save-buffer)
+                          (let ((base-id (org-id-get nil t)))
+                               (org-entry-put nil "ID" (concat base-id "-" (org-roam-node-slug (org-roam-node-at-point)))))
+                       )
+
                         (advice-add #'org-bibtex-write :after #'my-extend-org-bibtex-write)
 
 
