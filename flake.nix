@@ -1965,6 +1965,7 @@
                                 auto-save-file-name-transforms (list (list ".*" auto-save-list-file-prefix t))
                                 safe-local-variable-values '((magit-wip-merge-branch . t))
                                 ;safe-local-variable-directories `(,my-memx-dir)
+                                revert-without-query '(".pdf")
                           )
                         '';
                     };
