@@ -235,7 +235,7 @@
               networks = {
                 PBAGJmob = {
                   psk = "@phone_psk@";
-                  priority = 10;
+                  priority = 20;
                 };
                 WIFI-56E0-5G = {
                   psk = "@parent_psk@";
