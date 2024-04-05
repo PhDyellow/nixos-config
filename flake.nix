@@ -1808,7 +1808,7 @@ screen:TREE=PID PPID USER Command
           gpg-agent = {
             enable = true;
             defaultCacheTtl = 72000;
-            pinentryFlavor = "gtk2"; # other interesting flavours emacs tty curses
+            pinentryFlavor = "tty"; # other interesting flavours emacs tty curses
             extraConfig = ''
                   allow-emacs-pinentry
                   allow-loopback-pinentry
