@@ -962,6 +962,15 @@
                   devices = [
                     "x1_carbon"
                   ];
+                  synology_nas_admin = {
+                    path = "/para/projects/synology_nas_admin___syncthing/";
+                    id = "rfra6-xulze";
+                    enable = true;
+                    devices = [
+                      "x1_carbon"
+                      "dpbagje"
+                    ];
+                  };
                 };
               };
             };
