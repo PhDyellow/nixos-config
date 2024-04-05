@@ -1126,6 +1126,27 @@
                     hostname = "github.com";
                     identitiesOnly = true;
                     identityFile = ["/home/phil/id_phil_prime_ai_nixos_ed25519"];
+              services = {
+                recoll = {
+                  enable = true;
+                  ## doesn't build, fix should be easy but
+                  ## time is more valuable than avoiding an unused GUI
+                  # package = (pkgs.recoll.override {withGui = false;});
+                  settings = {
+                    nocjk = true;
+                    loglevel = 5;
+                    underscorasletter = true;
+                    cachedir = "/para/resources/recoll___cache/";
+                    aspellLanguage = "en";
+                    topdirs = [
+                      "/para/archives"
+                      "/para/projects"
+                      "/para/resources"
+                      "/para/areas"
+                    ];
+                    "/para/resources" = {
+                      skippedNames = [ "recoll___cache" ];
+                    };
                   };
                   dogmatix = {
                     hostname = "dogmatix.smp.uq.edu.au";
@@ -1133,8 +1154,166 @@
                     forwardX11Trusted = true;
                     identitiesOnly = true;
                     identityFile = ["/home/phil/id_phil_prime_ai_nixos_ed25519"];
-                  };
+              programs = {
+                bash = {
+                  enable = true;
+                };
+                htop = {
+                  enable = true;
+                  ## Htop is getting frequent updates
+                  ## Currently htop has a new interface that home-manager
+                  ## does not support. A PR is waiting merge.
+                  ## until then, settings are inputed manually.
+                  settings = {
+                    # Defaults
+                    htop_version="3.3.0";
+                    config_reader_min_version=3;
+                    hide_kernel_threads=1;
+                    hide_userland_threads=0;
+                    hide_running_in_container=0;
+                    shadow_other_users=0;
+                    show_thread_names=0;
+                    show_program_path=0;
+                    highlight_deleted_exe=1;
+                    shadow_distribution_path_prefix=0;
+                    highlight_megabytes=1;
+                    highlight_threads=1;
+                    highlight_changes=0;
+                    highlight_changes_delay_secs=5;
+                    find_comm_in_cmdline=1;
+                    strip_exe_from_cmdline=1;
+                    show_merged_command=0;
+                    screen_tabs=1;
+                    header_margin=1;
+                    detailed_cpu_time=0;
+                    cpu_count_from_one = 0;
+                    degree_fahrenheit=0;
+                    update_process_names=0;
+                    account_guest_in_cpu_meter=0;
+                    # End of Defaults
 
+                    # General config
+
+                    delay=15; #default
+                    hide_function_bar=0;
+                    show_cpu_usage=1;
+                    show_cpu_frequency=1;
+                    show_cpu_temperature=1;
+
+                    enable_mouse=0;
+                    highlight_base_name=1;
+
+
+                    # Meters
+                    header_layout="two_50_50";
+                    column_meters_0="LeftCPUs DiskIO NetworkIO System DateTime Battery Hostname MemorySwap";
+                    column_meter_modes_0="1 2 2 2 2 2 2 1";
+                    column_meters_1="RightCPUs PressureStallCPUSome PressureStallIOSome PressureStallIOFull PressureStallIRQFull PressureStallMemorySome PressureStallMemoryFull";
+                    column_meter_modes_1="1 2 2 2 2 2 2";
+
+                    # Hack nixos
+                    color_scheme=''6 # 0,1,5 ok 6 good
+# Screens
+screen:BY_CPU=PID USER PRIORITY NICE ELAPSED OOM STATE PERCENT_CPU PERCENT_MEM Command
+.sort_key=PERCENT_CPU
+.tree_sort_key=PID
+.tree_view_always_by_pid=0
+.tree_view=0
+.sort_direction=-1
+.tree_sort_direction=1
+.all_branches_collapsed=0
+screen:BY_MEM=PID USER PRIORITY NICE ELAPSED OOM STATE PERCENT_CPU PERCENT_MEM Command
+.sort_key=PERCENT_MEM
+.tree_sort_key=PID
+.tree_view_always_by_pid=0
+.tree_view=0
+.sort_direction=-1
+.tree_sort_direction=1
+.all_branches_collapsed=0
+screen:BY_RUNTIME=PID USER PRIORITY NICE ELAPSED OOM STATE PERCENT_CPU PERCENT_MEM Command
+.sort_key=ELAPSED
+.tree_sort_key=PID
+.tree_view_always_by_pid=0
+.tree_view=0
+.sort_direction=-1
+.tree_sort_direction=1
+.all_branches_collapsed=0
+screen:I/O=PID USER IO_PRIORITY IO_RATE IO_READ_RATE IO_WRITE_RATE PERCENT_SWAP_DELAY PERCENT_IO_DELAY Command
+.sort_key=IO_RATE
+.tree_sort_key=PID
+.tree_view_always_by_pid=0
+.tree_view=0
+.sort_direction=-1
+.tree_sort_direction=1
+.all_branches_collapsed=0
+screen:TREE=PID PPID USER Command
+.sort_key=PID
+.tree_sort_key=PPID
+.tree_view_always_by_pid=0
+.tree_view=1
+.sort_direction=-1
+.tree_sort_direction=1
+.all_branches_collapsed=0
+'';
+                  };
+                };
+                fish = {
+                  enable = true;
+                };
+                nushell = {
+                  enable = true;
+                };
+                gpg = {
+                  enable = true;
+                };
+                ssh = {
+                  enable = true;
+                  matchBlocks = {
+                    rdm = {
+                      hostname = "data.qriscloud.org.au";
+                      user = "uqpdyer";
+                      forwardX11Trusted = true;
+                      identitiesOnly = true;
+                      identityFile = ["/home/phil/id_phil_prime_ai_nixos_ed25519"];
+                    };
+                    getafix = {
+                      hostname = "getafix.smp.uq.edu.au";
+                      user = "uqpdyer";
+                      forwardX11Trusted = true;
+                      identitiesOnly = true;
+                      identityFile = ["/home/phil/id_phil_prime_ai_nixos_ed25519"];
+                      port = 2022;
+                    };
+                    getafix0 = {
+                      hostname = "getafix1.smp.uq.edu.au";
+                      user = "uqpdyer";
+                      forwardX11Trusted = true;
+                      identitiesOnly = true;
+                      identityFile = ["/home/phil/id_phil_prime_ai_nixos_ed25519"];
+                      port = 2022;
+                    };
+                    getafix1 = {
+                      hostname = "getafix2.smp.uq.edu.au";
+                      user = "uqpdyer";
+                      forwardX11Trusted = true;
+                      identitiesOnly = true;
+                      identityFile = ["/home/phil/id_phil_prime_ai_nixos_ed25519"];
+                      port = 2022;
+                    };
+                    github = {
+                      hostname = "github.com";
+                      identitiesOnly = true;
+                      identityFile = ["/home/phil/id_phil_prime_ai_nixos_ed25519"];
+                    };
+                    dogmatix = {
+                      hostname = "dogmatix.smp.uq.edu.au";
+                      user = "uqpdyer";
+                      forwardX11Trusted = true;
+                      identitiesOnly = true;
+                      identityFile = ["/home/phil/id_phil_prime_ai_nixos_ed25519"];
+                    };
+
+                  };
                 };
               };
             };
