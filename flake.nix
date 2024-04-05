@@ -4434,9 +4434,10 @@ the target and properties of the edge."
                       enable = true;
                       config = ''
                           ;;(setq inferior-ess-r-program "radian") ;;  ESS can't speak radian's language
+                          (setq ess-use-flymake nil)
                         '';
                       hook = [
-                        "(ess-mode . (lambda ()
+                    "(ess-r-mode . (lambda ()
                            (ess-set-style 'RStudio)))"
                       ];
                     };
