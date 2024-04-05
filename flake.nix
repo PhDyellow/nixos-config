@@ -4741,6 +4741,8 @@ the target and properties of the edge."
           self.nixosModules.cli.direnv
           #self.nixosModules.window-managers.xfce_desktop
 
+          self.nixosModules.cli.ryzen_monitor_test
+
           # Not sure how this fits in
           inputs.ragenix.nixosModules.age
         ];
