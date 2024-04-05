@@ -4471,10 +4471,14 @@ the target and properties of the edge."
                       enable = true;
                       after = [ "org" ];
                       config = ''
-                      (setq org-babel-latex-preamble (lambda (_)
+                      (add-to-list 'org-latex-packages-alist '("" "gensymb" t))
+                      (setq
+                        org-latex-compiler "lualatex"
+                        org-babel-latex-preamble (lambda (_)
                         "\\documentclass[tikz,crop]{standalone}
                          \\def\\pgfsysdriver{pgfsys-tex4ht.def}
                          "))
+
                       (add-to-list 'org-babel-load-languages (cons (intern "latex") t))
                           (org-babel-do-load-languages
                             'org-babel-load-languages
