@@ -8,6 +8,5 @@ in
   "user_phil_pwd.age".publicKeys = [prime-ai prime-ai-phil];
   "cifs_dpbagje_share.age".publicKeys = all_systems;
   "prime_ai_tailscale.age".publicKeys = [prime-ai prime-ai-phil];
-  "github_pat.age".publicKeys = all_systems;
   "munge_key.age".publicKeys = all_systems;
 }
