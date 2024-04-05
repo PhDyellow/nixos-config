@@ -180,12 +180,12 @@
               openFirewall = false;
             };
 
-          programs.ssh = {
-            #agentTimeout = "1h"; #request passphrase for keys every hour
-            startAgent = true;
-            askPassword = "systemd-ask-password";
+            programs.ssh = {
+              #agentTimeout = "1h"; #request passphrase for keys every hour
+              startAgent = true;
+              askPassword = "systemd-ask-password";
+            };
           };
-        };
         secure_boot = {config, pkgs, lib, ...}:
           {
             imports = [
@@ -214,7 +214,7 @@
           in
             {
               age.secrets.cifs_dpbagje_share.file = ./agenix/cifs_dpbagje_share.age;
-             fileSystems = {
+              fileSystems = {
                 "/nas/dpbagj/parent_share" = {
                   device = "//100.108.81.63/parent_share";
                   fsType = "cifs";
@@ -314,9 +314,10 @@
             };
           };
         stateversion = {config, pkgs, ...}:
-        {
-          system.stateVersion = "21.11";
-        };
+          {
+            system.stateVersion = "21.11";
+          };
+
         slurm-server = {config, pkgs, ...}:
           let
             gres = pkgs.writeTextFile {
@@ -445,6 +446,7 @@
               wireless = {
                 enable = true;
               };
+
               interfaces = {
                 #enp4s0.useDHCP = true;
                 #wlp5s0.useDHCP = true;
@@ -561,7 +563,7 @@
                     "tdpValues": []
                   },
                   "id": "0350erinz8o9lfg6puqi"
-                }
+              }
               ]
             '';
             };
@@ -577,7 +579,7 @@
               };
 
               #powerManagement.cpuFreqGovernor = "performance"; #forced to schedutil by tuxedo control center
-            #   hardware.tuxedo-control-center.enable = true;
+              # hardware.tuxedo-control-center.enable = true;
               systemd.services = {
                 create-tcc-profile = {
                   serviceConfig.Type = "oneshot";
@@ -590,8 +592,8 @@
             '';
                 };
               };
-                systemd.services = {
-                  create-tailor-profile = {
+              systemd.services = {
+                create-tailor-profile = {
                   serviceConfig.Type = "oneshot";
                   before = [ "tailord.service" ];
                   wantedBy = [ "multi-user.target" ];
@@ -618,9 +620,9 @@
               #   "tuxedo_keyboard.brightness=10"
               #   "tuxedo_keyboard.color_left=0xff0a0a"
               # ];
-              ## Needed by tuxedo-nixos
-              ## Supposed to be set by tuxedo-nixos, but
-              ## not being seen for some reason
+              # Needed by tuxedo-nixos
+              # Supposed to be set by tuxedo-nixos, but
+              # not being seen for some reason
               # nixpkgs.config.permittedInsecurePackages = [
               #   "openssl-1.1.1u"
               #   "openssl-1.1.1t"
@@ -630,7 +632,7 @@
               # ];
 
             };
-      hardware_config = { config, lib, pkgs, modulesPath, ...}:
+        hardware_config = { config, lib, pkgs, modulesPath, ...}:
           {
             imports = [
               (modulesPath + "/installer/scan/not-detected.nix")
@@ -764,204 +766,204 @@
           };
 
 
-      hardware_shared_crypt = { config, lib, pkgs, ...}:
-        {
-          fileSystems = {
-            #tested ntfs-3g and ntfs3 with
-            #dd if=/dev/urandom of=/para/test.bad oflag=direct count=32k bs=128k
-            #ntfs-3g (472, 448, 469)Mb/s
-            #ntfs3 (323, 324, 329)Mb/r
-            #ntfs-3g is faster!
-            "/para" = {
-              device = "/dev/mapper/para-crypt"; #after mounting from crypttab
-              fsType = "ntfs-3g";
-              options = [ "rw"
-                          "uid=1001"
-                          "gid=100"
-                          "windows_names" #added to kernel in 6.2, current kernel in NixOS is 6.1.9. Supported by ntfs-3g
-                          "fmask=133"
-                          "dmask=022"
-                          "norecover" # this is an ntfs-3g option, not supported by ntfs3
-                          #"discard" #ntfs3 only option
-                        ];
+        hardware_shared_crypt = { config, lib, pkgs, ...}:
+          {
+            fileSystems = {
+              #tested ntfs-3g and ntfs3 with
+              #dd if=/dev/urandom of=/para/test.bad oflag=direct count=32k bs=128k
+              #ntfs-3g (472, 448, 469)Mb/s
+              #ntfs3 (323, 324, 329)Mb/r
+              #ntfs-3g is faster!
+              "/para" = {
+                device = "/dev/mapper/para-crypt"; #after mounting from crypttab
+                fsType = "ntfs-3g";
+                options = [ "rw"
+                            "uid=1001"
+                            "gid=100"
+                            "windows_names" #added to kernel in 6.2, current kernel in NixOS is 6.1.9. Supported by ntfs-3g
+                            "fmask=133"
+                            "dmask=022"
+                            "norecover" # this is an ntfs-3g option, not supported by ntfs3
+                            #"discard" #ntfs3 only option
+                          ];
+              };
             };
-          };
-          environment.etc.crypttab = {
-            enable = true;
-            text = ''
+            environment.etc.crypttab = {
+              enable = true;
+              text = ''
             para-crypt /dev/disk/by-partuuid/1b5333c3-9421-44d5-8d21-fc2f22c8cbe3 /secrets/bitlocker/para.bek bitlk
           '';
+            };
           };
-        };
-      bootstrap_hardware = {config, pkgs, modulesPath, ...}:
-        {
+        bootstrap_hardware = {config, pkgs, modulesPath, ...}:
+          {
 
-          imports = [
-            (modulesPath + "/installer/scan/not-detected.nix")
-          ];
-          boot = {
-            loader = {
-              systemd-boot.enable = true;
-              efi.canTouchEfiVariables = true;
-            };
-            initrd = {
-              luks.devices."nixos-crypt".device =
-                "dev/disk/by-uuid/c4129dcf-90da-4d0c-8da9-880b9c111e6f";
-
-              availableKernelModules = [
-                "nvme"
-                "xhci_pci"
-                "ahci"
-                "sdhci_pci"
-              ];
-              kernelModules = [ ];
-            };
-
-            supportedFilesystems = [
-              "ntfs" #needed for NTFS support
-              "btrfs"
+            imports = [
+              (modulesPath + "/installer/scan/not-detected.nix")
             ];
-          };
-          fileSystems = {
-            "/" = {
-              device = "/dev/mapper/nixos-crypt";
-              fsType = "btrfs";
-            };
-            "/boot" = {
-              device = "/dev/disk/by-partuuid/5a687aae-d3c0-4f4e-b580-5ce32bec51b2";
-              fsType = "vfat";
-            };
-          };
-        };
-
-      bootstrap_user = {config, pkgs, ...}:
-        {
-          users.users = {
-            bootstrap = {
-              isNormalUser = true;
-              extraGroups = ["wheel"];
-              password = "tmppwd";
-            };
-          };
-        };
-      syncthing = {config, pkgs, ...}:
-        {
-          services.syncthing = {
-            enable = true;
-            dataDir = "/home/phil/syncthing";
-            configDir = config.services.syncthing.dataDir + "/.config/syncthing";
-            overrideDevices = true;
-            overrideFolders = true;
-            user = "phil";
-            group = "users";
-            openDefaultPorts = true;
-            settings = {
-              devices = {
-                dpbagje = {
-                  addresses = [
-                    "quic://192.168.20.10:22000"
-                    "quic://dpbagje.philjd.com:22000"
-                  ];
-                  id = "V2CZC46-XWNXBME-WDTOBSM-SHIO25H-KTTUFYQ-BXRRXFM-PQFYLYK-LUGCBQK";
-                };
-                galaxy_m62 = {
-                  addresses = [
-                    "quic://100.89.185.54:22000"
-                    "quic://192.168.20.14:22000"
-                    "quic://192.168.1.119:22000"
-                  ];
-                  id = "O4OCDD3-BN3WGHU-4U42GOR-CZQQTSQ-GTSULNM-YQM76V5-6R7RT2Y-TTOG5AG";
-                };
-                x1_carbon = {
-                  addresses = [
-                    "quic://100.103.6.30:2200"
-                  ];
-                  id = "PBQHAZ3-VEXG3K6-VC7AHMS-3OPLJOJ-SIL4UFP-MRIPZHL-PS2DUTD-DO6QXA6";
-                };
+            boot = {
+              loader = {
+                systemd-boot.enable = true;
+                efi.canTouchEfiVariables = true;
               };
-              folders = {
-                memx = {
-                  path = "/para/areas/memx___syncthing/";
-                  id = "nihsu-jd7zf";
-                  enable = true;
-                  devices = [
-                    "dpbagje"
-                    "galaxy_m62"
-                    "x1_carbon"
-                  ];
+              initrd = {
+                luks.devices."nixos-crypt".device =
+                  "dev/disk/by-uuid/c4129dcf-90da-4d0c-8da9-880b9c111e6f";
+
+                availableKernelModules = [
+                  "nvme"
+                  "xhci_pci"
+                  "ahci"
+                  "sdhci_pci"
+                ];
+                kernelModules = [ ];
+              };
+
+              supportedFilesystems = [
+                "ntfs" #needed for NTFS support
+                "btrfs"
+              ];
+            };
+            fileSystems = {
+              "/" = {
+                device = "/dev/mapper/nixos-crypt";
+                fsType = "btrfs";
+              };
+              "/boot" = {
+                device = "/dev/disk/by-partuuid/5a687aae-d3c0-4f4e-b580-5ce32bec51b2";
+                fsType = "vfat";
+              };
+            };
+          };
+
+        bootstrap_user = {config, pkgs, ...}:
+          {
+            users.users = {
+              bootstrap = {
+                isNormalUser = true;
+                extraGroups = ["wheel"];
+                password = "tmppwd";
+              };
+            };
+          };
+        syncthing = {config, pkgs, ...}:
+          {
+            services.syncthing = {
+              enable = true;
+              dataDir = "/home/phil/syncthing";
+              configDir = config.services.syncthing.dataDir + "/.config/syncthing";
+              overrideDevices = true;
+              overrideFolders = true;
+              user = "phil";
+              group = "users";
+              openDefaultPorts = true;
+              settings = {
+                devices = {
+                  dpbagje = {
+                    addresses = [
+                      "quic://192.168.20.10:22000"
+                      "quic://dpbagje.philjd.com:22000"
+                    ];
+                    id = "V2CZC46-XWNXBME-WDTOBSM-SHIO25H-KTTUFYQ-BXRRXFM-PQFYLYK-LUGCBQK";
+                  };
+                  galaxy_m62 = {
+                    addresses = [
+                      "quic://100.89.185.54:22000"
+                      "quic://192.168.20.14:22000"
+                      "quic://192.168.1.119:22000"
+                    ];
+                    id = "O4OCDD3-BN3WGHU-4U42GOR-CZQQTSQ-GTSULNM-YQM76V5-6R7RT2Y-TTOG5AG";
+                  };
+                  x1_carbon = {
+                    addresses = [
+                      "quic://100.103.6.30:2200"
+                    ];
+                    id = "PBQHAZ3-VEXG3K6-VC7AHMS-3OPLJOJ-SIL4UFP-MRIPZHL-PS2DUTD-DO6QXA6";
+                  };
                 };
-                memx_transition = {
-                  path = "/para/resources/memx___syncthing__transition";
-                  id = "raehb-7gn4q";
-                  enable = true;
-                  devices = [
-                    "dpbagje"
-                    "galaxy_m62"
-                    "x1_carbon"
-                  ];
-                };
-                manage_time_transition = {
-                  path = "/para/resources/manage_time___syncthing__transition";
-                  id = "tg7ol-vf4xc";
-                  enable = true;
-                  devices = [
-                    "dpbagje"
-                    "galaxy_m62"
-                    "x1_carbon"
-                  ];
-                };
-                transfer_sync = {
-                  path = "/para/resources/transfer_sync___syncthing";
-                  id = "0nae2-zo3f7";
-                  enable = true;
-                  devices = [
-                    "dpbagje"
-                    "galaxy_m62"
-                  "x1_carbon"
-                  ];
-                };
-                reading_transition = {
-                  path = "/para/resources/reading___syncthing__transition/";
-                  id = "sy3q4-6cput";
-                  enable = true;
-                  devices = [
-                    "dpbagje"
-                    "x1_carbon"
-                  ];
-                };
-                zettlekasten_transition = {
-                  path = "/para/resources/zettlekasten___syncthing__transition/";
-                  id = "wsbyx-rus2l";
-                  enable = true;
-                  devices = [
-                    "dpbagje"
-                    "x1_carbon"
-                  ];
-                };
-                zotfile_storage_transition = {
-                  path = "/para/resources/zotfile_storage___syncthing__transition/";
-                  id = "jzunu-qsesd";
-                  enable = true;
-                  devices = [
-                    "dpbagje"
-                    "x1_carbon"
-                  ];
-                };
-                phd_transition = {
-                  path = "/para/projects/phd___syncthing__transition/";
-                  id = "nbdjg-farns";
-                  enable = true;
-                  devices = [
-                    "x1_carbon"
-                  ];
-                };
-                phd_draft = {
-                  path = "/para/projects/phd_draft___syncthing/";
-                  id = "ceto7-fdkqr";
-                  enable = true;
-                  devices = [
-                    "x1_carbon"
-                  ];
+                folders = {
+                  memx = {
+                    path = "/para/areas/memx___syncthing/";
+                    id = "nihsu-jd7zf";
+                    enable = true;
+                    devices = [
+                      "dpbagje"
+                      "galaxy_m62"
+                      "x1_carbon"
+                    ];
+                  };
+                  memx_transition = {
+                    path = "/para/resources/memx___syncthing__transition";
+                    id = "raehb-7gn4q";
+                    enable = true;
+                    devices = [
+                      "dpbagje"
+                      "galaxy_m62"
+                      "x1_carbon"
+                    ];
+                  };
+                  manage_time_transition = {
+                    path = "/para/resources/manage_time___syncthing__transition";
+                    id = "tg7ol-vf4xc";
+                    enable = true;
+                    devices = [
+                      "dpbagje"
+                      "galaxy_m62"
+                      "x1_carbon"
+                    ];
+                  };
+                  transfer_sync = {
+                    path = "/para/resources/transfer_sync___syncthing";
+                    id = "0nae2-zo3f7";
+                    enable = true;
+                    devices = [
+                      "dpbagje"
+                      "galaxy_m62"
+                      "x1_carbon"
+                    ];
+                  };
+                  reading_transition = {
+                    path = "/para/resources/reading___syncthing__transition/";
+                    id = "sy3q4-6cput";
+                    enable = true;
+                    devices = [
+                      "dpbagje"
+                      "x1_carbon"
+                    ];
+                  };
+                  zettlekasten_transition = {
+                    path = "/para/resources/zettlekasten___syncthing__transition/";
+                    id = "wsbyx-rus2l";
+                    enable = true;
+                    devices = [
+                      "dpbagje"
+                      "x1_carbon"
+                    ];
+                  };
+                  zotfile_storage_transition = {
+                    path = "/para/resources/zotfile_storage___syncthing__transition/";
+                    id = "jzunu-qsesd";
+                    enable = true;
+                    devices = [
+                      "dpbagje"
+                      "x1_carbon"
+                    ];
+                  };
+                  phd_transition = {
+                    path = "/para/projects/phd___syncthing__transition/";
+                    id = "nbdjg-farns";
+                    enable = true;
+                    devices = [
+                      "x1_carbon"
+                    ];
+                  };
+                  phd_draft = {
+                    path = "/para/projects/phd_draft___syncthing/";
+                    id = "ceto7-fdkqr";
+                    enable = true;
+                    devices = [
+                      "x1_carbon"
+                    ];
                   };
                   synology_nas_admin = {
                     path = "/para/projects/synology_nas_admin___syncthing/";
@@ -974,31 +976,31 @@
                   };
                 };
               };
-            cert = "/secrets/syncthing/cert.pem";
-            key = "/secrets/syncthing/key.pem";
+              cert = "/secrets/syncthing/cert.pem";
+              key = "/secrets/syncthing/key.pem";
+            };
           };
-        };
-      tailscale = {config, pkgs, ...}:
-        {
-          age.secrets.prime_ai_tailscale.file = ./agenix/prime_ai_tailscale.age;
-          services.tailscale = {
-            enable = true;
-          };
-          # https://tailscale.com/blog/nixos-minecraft/
-          # create a oneshot job to authenticate to Tailscale
-          systemd.services.tailscale-autoconnect = {
-            description = "Automatic connection to Tailscale";
+        tailscale = {config, pkgs, ...}:
+          {
+            age.secrets.prime_ai_tailscale.file = ./agenix/prime_ai_tailscale.age;
+            services.tailscale = {
+              enable = true;
+            };
+            # https://tailscale.com/blog/nixos-minecraft/
+            # create a oneshot job to authenticate to Tailscale
+            systemd.services.tailscale-autoconnect = {
+              description = "Automatic connection to Tailscale";
 
-            # make sure tailscale is running before trying to connect to tailscale
-            after = [ "network-pre.target" "tailscale.service" ];
-            wants = [ "network-pre.target" "tailscale.service" ];
-            wantedBy = [ "multi-user.target" ];
+              # make sure tailscale is running before trying to connect to tailscale
+              after = [ "network-pre.target" "tailscale.service" ];
+              wants = [ "network-pre.target" "tailscale.service" ];
+              wantedBy = [ "multi-user.target" ];
 
-            # set this service as a oneshot job
-            serviceConfig.Type = "oneshot";
+              # set this service as a oneshot job
+              serviceConfig.Type = "oneshot";
 
-            # have the job run this shell script
-            script = with pkgs; ''
+              # have the job run this shell script
+              script = with pkgs; ''
             # wait for tailscaled to settle
             sleep 2
 
@@ -1011,121 +1013,68 @@
             # otherwise authenticate with tailscale
             ${tailscale}/bin/tailscale up -authkey file:${config.age.secrets.prime_ai_tailscale.path}
           '';
-          };
-
-        };
-      phil_user = {config, pkgs, ...}:
-        {
-          age.secrets.user_phil_pwd.file = ./agenix/user_phil_pwd.age;
-          users.users = {
-            phil = {
-              isNormalUser = true;
-              extraGroups = ["wheel"];
-              hashedPasswordFile = config.age.secrets.user_phil_pwd.path;
-              uid = 1001;
-              shell = pkgs.fish;
             };
+
           };
-          programs.fish.enable = true;
-        };
+        phil_user = {config, pkgs, ...}:
+          {
+            age.secrets.user_phil_pwd.file = ./agenix/user_phil_pwd.age;
+            users.users = {
+              phil = {
+                isNormalUser = true;
+                extraGroups = ["wheel"];
+                hashedPasswordFile = config.age.secrets.user_phil_pwd.path;
+                uid = 1001;
+                shell = pkgs.fish;
+              };
+            };
+            programs.fish.enable = true;
+          };
 
-      phil_home = {config, pkgs, ...}: {
-        imports = [
-          inputs.home-manager.nixosModules.home-manager
-        ];
+        phil_home = {config, pkgs, ...}: {
+          imports = [
+            inputs.home-manager.nixosModules.home-manager
+          ];
 
-        # This is the place to target emacs program versions
-        nixpkgs.overlays = [
-          inputs.emacs-overlay.overlays.default
-        ];
-
-
+          # This is the place to target emacs program versions
+          nixpkgs.overlays = [
+            inputs.emacs-overlay.overlays.default
+          ];
 
 
-        home-manager = {
-          useGlobalPkgs = true;
-          useUserPackages = true;
-          #config inserted before use-package
-          users.phil = {
-            imports = let
-              nurNoPkgs = import inputs.nur { pkgs = null; nurpkgs = pkgs; };
-            in [
-              nurNoPkgs.repos.rycee.hmModules.emacs-init
-              self.hmModules.emacs-hm-init
-              # self.hmModules.emacs-mwe
-              self.hmModules.gtk_setup
-              self.hmModules.gpg-agent-emacs
-              self.hmModules.hyprland-config
-              self.hmModules.git-config
-              self.hmModules.r-config
-              self.hmModules.tex-full
-            ];
-            manual.manpages.enable = false;
+          home-manager = {
+            useGlobalPkgs = true;
+            useUserPackages = true;
+            #config inserted before use-package
+            users.phil = {
+              imports = let
+                nurNoPkgs = import inputs.nur { pkgs = null; nurpkgs = pkgs; };
+              in [
+                nurNoPkgs.repos.rycee.hmModules.emacs-init
+                self.hmModules.emacs-hm-init
+                # self.hmModules.emacs-mwe
+                self.hmModules.gtk_setup
+                self.hmModules.gpg-agent-emacs
+                self.hmModules.hyprland-config
+                self.hmModules.git-config
+                self.hmModules.r-config
+                self.hmModules.tex-full
+              ];
+              manual.manpages.enable = false;
 
-            home = {
-              stateVersion = "23.05";
-              file = {
-                enchant-ordering = {
-                  target = ".config/enchant/enchant.ordering";
-                  text = ''
+              home = {
+                stateVersion = "23.05";
+                file = {
+                  enchant-ordering = {
+                    target = ".config/enchant/enchant.ordering";
+                    text = ''
                     en_AU:aspell,nuspell
                     en:aspell,nuspell
                     en_GB:aspell,nuspell'';
+                  };
                 };
               };
-            };
 
-            programs = {
-              bash = {
-                enable = true;
-              };
-              fish = {
-                enable = true;
-              };
-              nushell = {
-                enable = true;
-              };
-              gpg = {
-                enable = true;
-              };
-              ssh = {
-                enable = true;
-                matchBlocks = {
-                  rdm = {
-                    hostname = "data.qriscloud.org.au";
-                    user = "uqpdyer";
-                    forwardX11Trusted = true;
-                    identitiesOnly = true;
-                    identityFile = ["/home/phil/id_phil_prime_ai_nixos_ed25519"];
-                  };
-                  getafix = {
-                    hostname = "getafix.smp.uq.edu.au";
-                    user = "uqpdyer";
-                    forwardX11Trusted = true;
-                    identitiesOnly = true;
-                    identityFile = ["/home/phil/id_phil_prime_ai_nixos_ed25519"];
-                    port = 2022;
-                  };
-                  getafix0 = {
-                    hostname = "getafix1.smp.uq.edu.au";
-                    user = "uqpdyer";
-                    forwardX11Trusted = true;
-                    identitiesOnly = true;
-                    identityFile = ["/home/phil/id_phil_prime_ai_nixos_ed25519"];
-                    port = 2022;
-                  };
-                  getafix1 = {
-                    hostname = "getafix2.smp.uq.edu.au";
-                    user = "uqpdyer";
-                    forwardX11Trusted = true;
-                    identitiesOnly = true;
-                    identityFile = ["/home/phil/id_phil_prime_ai_nixos_ed25519"];
-                    port = 2022;
-                  };
-                  github = {
-                    hostname = "github.com";
-                    identitiesOnly = true;
-                    identityFile = ["/home/phil/id_phil_prime_ai_nixos_ed25519"];
               services = {
                 recoll = {
                   enable = true;
@@ -1148,12 +1097,9 @@
                       skippedNames = [ "recoll___cache" ];
                     };
                   };
-                  dogmatix = {
-                    hostname = "dogmatix.smp.uq.edu.au";
-                    user = "uqpdyer";
-                    forwardX11Trusted = true;
-                    identitiesOnly = true;
-                    identityFile = ["/home/phil/id_phil_prime_ai_nixos_ed25519"];
+                };
+              };
+
               programs = {
                 bash = {
                   enable = true;
@@ -1317,17 +1263,14 @@ screen:TREE=PID PPID USER Command
                 };
               };
             };
-
-
           };
         };
-      };
 
       };
 
 
 
-     #ssh_public_config
+      #ssh_public_config
 
       window-managers = {
         xfce_desktop = {config, pkgs, ...}:
@@ -1442,7 +1385,7 @@ screen:TREE=PID PPID USER Command
               };
             };
 
-        };
+          };
       };
       cli = {
         ryzen_monitor_test = {config, pkgs, ...}:
@@ -1457,7 +1400,7 @@ screen:TREE=PID PPID USER Command
               (python3.withPackages(ps: with ps; [
                 # inkex
               ]))
-          ];
+            ];
           };
 
         spell_checkers = {config, pkgs, ...}: {
@@ -1491,7 +1434,7 @@ screen:TREE=PID PPID USER Command
             programs.direnv = {
               enable = true;
               nix-direnv = {
-              enable = true;
+                enable = true;
               };
             };
           };
@@ -1859,98 +1802,99 @@ screen:TREE=PID PPID USER Command
               # });
               org-super-links = prev.emacs.pkgs.trivialBuild {
                 pname = "org-super-links";
-                    version = "git";
-                    src = inputs.org-super-links;
-                    packageRequires = [
-                    ];
+                version = "git";
+                src = inputs.org-super-links;
+                packageRequires = [
+                ];
               };
 
-                  org-slt-phdyellow = prev.emacs.pkgs.trivialBuild {
-                    pname = "org-slt-phdyellow";
-                    version = "git";
-                    src = inputs.org-slt-phdyellow;
-                    packageRequires = [
-                      final.org-super-links
-                      final.org-sltypes
-                      final.transient
-                      final.cl-lib
-                    ];
-                  };
-                  org-sltypes = prev.emacs.pkgs.trivialBuild {
-                    pname = "org-sltypes";
-                    version = "git";
-                    src = inputs.org-sltypes;
-                    packageRequires = [
-                      final.org-super-links
-                    ];
-                  };
-                  objed = prev.emacs.pkgs.trivialBuild {
-                    pname = "objed";
-                    version = "git";
-                    src = inputs.objed;
-                    packageRequires = [
-                      final.avy
-                      final.key-game
-                    ];
-                  };
-                  key-game = prev.emacs.pkgs.trivialBuild {
-                    pname = "key-game";
-                    version = "git";
-                    src = inputs.key-game;
-                    packageRequires = [
-                    ];
-                  };
-                  org-linker = prev.emacs.pkgs.trivialBuild {
-                    pname = "org-linker";
-                    version = "git";
-                    src = inputs.org-linker;
-                    packageRequires = [
-                    ];
-                  };
-                  org-linker-edna = prev.emacs.pkgs.trivialBuild {
-                    pname = "org-linker-edna";
-                    version = "git";
-                    src = inputs.org-linker-edna;
-                    packageRequires = [
-                      final.org-linker
-                      final.helm
-                    ];
-                  };
-                  org-transclusion = prev.emacs.pkgs.trivialBuild {
-                    pname = "org-transclusion";
-                    version = "git";
-                    src = inputs.org-transclusion;
-                    packageRequires = [
-                    ];
-                  };
-                  load-theme-buffer-local = prev.load-theme-buffer-local.overrideAttrs (oldAttrs: {
-                    src = inputs.color-theme-buffer-local;
-                  });
-                  isend-mode = prev.isend-mode.overrideAttrs (oldAttrs: {
-                    src = inputs.isend-mode;
-                  });
-                  smart-tabs-mode = prev.smart-tabs-mode.overrideAttrs (oldAttrs: {
-                    src = inputs.smart-tabs-mode;
-                  });
-                  # denote = prev.denote.overrideAttrs (oldAttrs: {
-                  # src = inputs.denote;
-                  # });
-                  # denote = prev.emacs.pkgs.trivialBuild {
-                  # pname = "denote";
-                  # version = "1.2.0";
-                  # src = inputs.denote;
-                  # };
-                };
-                init = {
-                  enable = true;
-                  packageQuickstart = true;
-                  recommendedGcSettings = true;
-                  startupTimer = true;
-                  earlyInit = "";
-                  #home-manager.users.<name> is an attribute set {} of users. Each user is a hmModule, so I can import
-                  #modules to it. Any modules imported by all users can go in home-manager.sharedModules
-                  prelude = ''
+              org-slt-phdyellow = prev.emacs.pkgs.trivialBuild {
+                pname = "org-slt-phdyellow";
+                version = "git";
+                src = inputs.org-slt-phdyellow;
+                packageRequires = [
+                  final.org-super-links
+                  final.org-sltypes
+                  final.transient
+                  final.cl-lib
+                ];
+              };
+              org-sltypes = prev.emacs.pkgs.trivialBuild {
+                pname = "org-sltypes";
+                version = "git";
+                src = inputs.org-sltypes;
+                packageRequires = [
+                  final.org-super-links
+                ];
+              };
+              objed = prev.emacs.pkgs.trivialBuild {
+                pname = "objed";
+                version = "git";
+                src = inputs.objed;
+                packageRequires = [
+                  final.avy
+                  final.key-game
+                ];
+              };
+              key-game = prev.emacs.pkgs.trivialBuild {
+                pname = "key-game";
+                version = "git";
+                src = inputs.key-game;
+                packageRequires = [
+                ];
+              };
+              org-linker = prev.emacs.pkgs.trivialBuild {
+                pname = "org-linker";
+                version = "git";
+                src = inputs.org-linker;
+                packageRequires = [
+                ];
+              };
+              org-linker-edna = prev.emacs.pkgs.trivialBuild {
+                pname = "org-linker-edna";
+                version = "git";
+                src = inputs.org-linker-edna;
+                packageRequires = [
+                  final.org-linker
+                  final.helm
+                ];
+              };
+              org-transclusion = prev.emacs.pkgs.trivialBuild {
+                pname = "org-transclusion";
+                version = "git";
+                src = inputs.org-transclusion;
+                packageRequires = [
+                ];
+              };
+              load-theme-buffer-local = prev.load-theme-buffer-local.overrideAttrs (oldAttrs: {
+                src = inputs.color-theme-buffer-local;
+              });
+              isend-mode = prev.isend-mode.overrideAttrs (oldAttrs: {
+                src = inputs.isend-mode;
+              });
+              smart-tabs-mode = prev.smart-tabs-mode.overrideAttrs (oldAttrs: {
+                src = inputs.smart-tabs-mode;
+              });
+              # denote = prev.denote.overrideAttrs (oldAttrs: {
+              # src = inputs.denote;
+              # });
+              # denote = prev.emacs.pkgs.trivialBuild {
+              # pname = "denote";
+              # version = "1.2.0";
+              # src = inputs.denote;
+              # };
+            };
+            init = {
+              enable = true;
+              packageQuickstart = true;
+              recommendedGcSettings = true;
+              startupTimer = true;
+              earlyInit = "";
+              #home-manager.users.<name> is an attribute set {} of users. Each user is a hmModule, so I can import
+              #modules to it. Any modules imported by all users can go in home-manager.sharedModules
+              prelude = ''
                       ;;(setq my-user-emacs-directory "/storage/emulated/0/memx/repos/phone_emacs/")
+
                       (setq my-memx-dir "/para/areas/memx___syncthing/"
                             my-memx-version "memx_v4"
                             my-bib-dir "/para/areas/bibliography___CITE/"
@@ -2007,8 +1951,8 @@ screen:TREE=PID PPID USER Command
                       (setq tramp-backup-directory-alist `(("." . ,(concat user-emacs-directory ".local/cache/backup/"))))
 
                     '';
-                  #config inserted after use-package
-                  postlude = ''
+              #config inserted after use-package
+              postlude = ''
                       ; Seems to break if called too early
                        (citar-org-roam-mode)
 
@@ -2020,72 +1964,72 @@ screen:TREE=PID PPID USER Command
                       ;; End:
                     '';
 
-                  #Packages configured
-                  usePackage = {
-                    ## Startup packages. 'After' needs to flow back to an always-loaded package
-                    editorconfig = {
-                      enable = true;
-                      config = ''
+              #Packages configured
+              usePackage = {
+                ## Startup packages. 'After' needs to flow back to an always-loaded package
+                editorconfig = {
+                  enable = true;
+                  config = ''
                           (editorconfig-mode 1)
                           (setq editorconfig-trim-whitespace-mode 'ws-butler-mode)
                         '';
-                    };
-                    envrc = {
-                      enable = true;
-                      config = ''
+                };
+                envrc = {
+                  enable = true;
+                  config = ''
                           (envrc-global-mode)
                         '';
-                    };
-                    pinentry = {
-                      enable = true;
-                      after = [ "epg" ];
-                      config = ''
+                };
+                pinentry = {
+                  enable = true;
+                  after = [ "epg" ];
+                  config = ''
                           (pinentry-start)
                         '';
-                    };
-                    epg = {
-                      enable = true;
-                      config = ''
+                };
+                epg = {
+                  enable = true;
+                  config = ''
                           (setq epg-pinentry-mode 'loopback)
                           ;; fix for gnupg 2.4.1 causing authinfo edits to hang
                           (fset 'epg-wait-for-status 'ignore)
                         '';
-                    };
+                };
                 arc-mode = {
                   enable = true;
                   extraPackages = [ pkgs.p7zip ];
                 };
-                    auth-source = {
-                      enable = true;
-                      config = ''
+                auth-source = {
+                  enable = true;
+                  config = ''
                           (setq auth-sources '("/secrets/gpg/.authinfo.gpg"))
                         '';
-                    };
-                    dash = {
-                      enable = true;
-                    };
-                    noflet = {
-                      after = ["dash"];
-                      enable = true;
-                      init = ''
+                };
+                dash = {
+                  enable = true;
+                };
+                noflet = {
+                  after = ["dash"];
+                  enable = true;
+                  init = ''
                           (require 'dash) ;;bug in noflet, uses dash without requiring it
                         '';
-                    };
-                    load-theme-buffer-local = {
-                      after = [ "noflet" "god-mode" ];
-                      enable = false;
-                      init = ''
+                };
+                load-theme-buffer-local = {
+                  after = [ "noflet" "god-mode" ];
+                  enable = false;
+                  init = ''
                           (require 'noflet) ;; bug in load-theme-buffer-local: uses noflet without requiring it
                         '';
-                      config = ''
+                  config = ''
                         '';
-                    };
-                    god-mode = {
-                      enable = false;
-                      init = ''
+                };
+                god-mode = {
+                  enable = false;
+                  init = ''
                           ;;(setq god-mode-enable-function-key-translation nil)
                         '';
-                      config = ''
+                  config = ''
                           (setq god-exempt-major-modes nil)
                           (setq god-exempt-predicates nil)
                           ;;(god-mode)
@@ -2093,29 +2037,29 @@ screen:TREE=PID PPID USER Command
                           ;; (add-hook 'god-mode-enabled-hook (lambda () (load-theme-buffer-local 'tango (current-buffer))))
                           ;; (add-hook 'god-mode-disabled-hook (lambda () (load-theme-buffer-local 'zenburn (current-buffer))))
                         '';
-                      chords = {
-                        "ii" = "god-mode-all";
-                      };
-                      bindLocal = {
-                        god-local-mode-map = {
-                          "j" = "god-mode-all";
-                          "." = "repeat";
-                        };
-                      };
+                  chords = {
+                    "ii" = "god-mode-all";
+                  };
+                  bindLocal = {
+                    god-local-mode-map = {
+                      "j" = "god-mode-all";
+                      "." = "repeat";
                     };
-                    undo-fu-session = {
-                      enable = true;
-                      config = ''
+                  };
+                };
+                undo-fu-session = {
+                  enable = true;
+                  config = ''
                           (undo-fu-session-global-mode)
                         '';
-                    };
-                    bind-key = {
-                      enable = true;
-                    };
-                    objed = {
-                      after = [ "avy" "expand-region" "magit" ];
-                      enable = true;
-                      config = ''
+                };
+                bind-key = {
+                  enable = true;
+                };
+                objed = {
+                  after = [ "avy" "expand-region" "magit" ];
+                  enable = true;
+                  config = ''
                           ;(objed-mode)
                           (add-hook 'ess-r-mode-hook #'objed-local-mode)
                           (add-hook 'nix-mode-hook #'objed-local-mode)
@@ -2157,18 +2101,18 @@ screen:TREE=PID PPID USER Command
                           (keymap-set objed-op-map "Z" #'embark-export)
                           (keymap-set objed-op-map "l" #'consult-line)
                         '';
-                    };
-                    objed-game = {
-                      after = ["objed"];
-                      enable = true;
-                    };
-                    expand-region = {
-                      enable = true;
-                    };
-                    avy = {
-                      after = [ "embark" ];
-                      enable = true;
-                      config = ''
+                };
+                objed-game = {
+                  after = ["objed"];
+                  enable = true;
+                };
+                expand-region = {
+                  enable = true;
+                };
+                avy = {
+                  after = [ "embark" ];
+                  enable = true;
+                  config = ''
                           (defun avy-action-embark (pt)
                             (unwind-protect
                               (save-excursion
@@ -2178,17 +2122,17 @@ screen:TREE=PID PPID USER Command
                             t)
                           (setf (alist-get ?o avy-dispatch-alist) 'avy-action-embark)
                         '';
-                    };
-                    embark = {
-                      enable = true;
-                      demand = true; # bind will prevent loading otherwise
-                      bind = {
-                        "C-h B" = "embark-bindings";
-                        "M-o" = "embark-act";
-                        "M-O" = "embark-export";
-                        "C-;" = "embark-dwim";
-                      };
-                      config = ''
+                };
+                embark = {
+                  enable = true;
+                  demand = true; # bind will prevent loading otherwise
+                  bind = {
+                    "C-h B" = "embark-bindings";
+                    "M-o" = "embark-act";
+                    "M-O" = "embark-export";
+                    "C-;" = "embark-dwim";
+                  };
+                  config = ''
                           ;; Hide the mode line of the Embark live/completions buffers
                           (add-to-list 'display-buffer-alist
                           '("\\`\\*Embark Collect \\(Live\\|Completions\\)\\*"
@@ -2196,7 +2140,7 @@ screen:TREE=PID PPID USER Command
                           (window-parameters (mode-line-format . none))))
 
                         '';
-                    };
+                };
                 consult-recoll = {
                   enable = true;
                   after = [ "consult" "embark" ];
@@ -2206,39 +2150,39 @@ screen:TREE=PID PPID USER Command
                       '';
                   # extraPackages = [ pkgs.recoll ]; # handling in home-manager
                 };
-                    embark-consult = {
-                      after = [ "embark" "consult" ];
-                      enable = true;
-                      hook = [
-                        "(embark-collect-mode . consult-preview-at-point-mode)"
-                      ];
-                    };
-                    avy-embark-collect = {
-                      after = [ "avy" "embark" ];
-                      enable = true;
-                    };
-                    ace-window = {
-                      after = ["avy"];
-                      enable = true;
-                      config = ''
+                embark-consult = {
+                  after = [ "embark" "consult" ];
+                  enable = true;
+                  hook = [
+                    "(embark-collect-mode . consult-preview-at-point-mode)"
+                  ];
+                };
+                avy-embark-collect = {
+                  after = [ "avy" "embark" ];
+                  enable = true;
+                };
+                ace-window = {
+                  after = ["avy"];
+                  enable = true;
+                  config = ''
                           (setq aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l)
                                 aw-dispatch-always t)
                           (keymap-set objed-op-map "o" #'ace-window)
                         '';
-                      bind = {
-                        "C-x o" = "ace-window";
-                      };
-                    };
-                    origami = {
-                      enable = true;
-                      config = ''
+                  bind = {
+                    "C-x o" = "ace-window";
+                  };
+                };
+                origami = {
+                  enable = true;
+                  config = ''
                           (add-to-list 'origami-parser-alist '(ess-r-mode . origami-c-style-parser))
                           (global-origami-mode)
                         '';
-                    };
-                    files = {
-                      enable = true;
-                      config = ''
+                };
+                files = {
+                  enable = true;
+                  config = ''
                           (setq auto-save-default t
                                 auto-save-include-big-deletions t
                                 auto-save-list-file-prefix (concat user-emacs-directory ".local/cache/autosave/")
@@ -2248,59 +2192,59 @@ screen:TREE=PID PPID USER Command
                                 revert-without-query '(".pdf")
                           )
                         '';
-                    };
-                    tramp = {
-                      enable = false;
-                      config = ''
+                };
+                tramp = {
+                  enable = false;
+                  config = ''
                           (add-to-list 'backup-directory-alist (cons tramp-file-name-regexp nil))
                           ;; Add the remote's PATH to tramp's search path (why isn't this the default?)
                           (add-to-list 'tramp-remote-path 'tramp-own-remote-path)
                           (setq tramp-backup-directory-alist `(("." . ,(concat user-emacs-directory ".local/cache/backup/"))))
                         '';
-                    };
-                    mouse = {
-                      enable = true;
-                      config =  ''
+                };
+                mouse = {
+                  enable = true;
+                  config =  ''
                           (setq mouse-yank-at-point t)
                         '';
-                    };
-                    apropos = {
-                      enable = true;
-                      config =  ''
+                };
+                apropos = {
+                  enable = true;
+                  config =  ''
                           (setq apropos-do-all t)
                         '';
-                    };
+                };
 
-                    menu-bar = {
-                      enable = true;
-                      config = ''
+                menu-bar = {
+                  enable = true;
+                  config = ''
                           (menu-bar-mode -1)
                         '';
-                    };
-                    tool-bar = {
-                      enable = true;
-                      config = ''
+                };
+                tool-bar = {
+                  enable = true;
+                  config = ''
                           (when (fboundp 'tool-bar-mode)
                           (tool-bar-mode -1))
                         '';
-                    };
-                    scroll-bar = {
-                      enable = true;
-                      config = ''
+                };
+                scroll-bar = {
+                  enable = true;
+                  config = ''
                           (when (fboundp 'scroll-bar-mode)
                           (scroll-bar-mode -1))
                         '';
-                    };
-                    uniquify = {
-                      enable = true;
-                      config = ''
+                };
+                uniquify = {
+                  enable = true;
+                  config = ''
                           (setq uniquify-buffer-name-style 'forward)
                         '';
-                    };
-                    ## May replace load-buffer-local-theme
-                    prism = {
-                      enable = true;
-                      config = ''
+                };
+                ## May replace load-buffer-local-theme
+                prism = {
+                  enable = true;
+                  config = ''
                           ;;prism-colors was generated by
                           ;;running
                           ;;(prism-set-colors :num 24
@@ -2321,14 +2265,14 @@ screen:TREE=PID PPID USER Command
                             )
                           (prism-set-colors)
                         '';
-                    };
-                    smartparens = {
-                      enable = true;
-                    };
-                    smartparens-config = {
-                      after = [ "smartparens" ];
-                      enable = true;
-                      config = ''
+                };
+                smartparens = {
+                  enable = true;
+                };
+                smartparens-config = {
+                  after = [ "smartparens" ];
+                  enable = true;
+                  config = ''
                           ;; Turn off smartparens auto features,
                           ;; Sometimes they don't hurt me,
                           ;; But other times I have to fight them
@@ -2347,20 +2291,20 @@ screen:TREE=PID PPID USER Command
                           ;; (smartparens-global-mode)
                           (show-smartparens-global-mode)
                         '';
-                    };
-                    vundo = {
-                      enable = true;
-                    };
-                    frame = {
-                      enable = true;
-                      config = ''
+                };
+                vundo = {
+                  enable = true;
+                };
+                frame = {
+                  enable = true;
+                  config = ''
                           (setq default-frame-alist '((font . "FiraCode Nerd Font 18")))
                           (blink-cursor-mode 0)
                         '';
-                    };
-                    crm = {
-                      enable = true;
-                      config = ''
+                };
+                crm = {
+                  enable = true;
+                  config = ''
                           (defun crm-indicator (args)
                             (cons (format "[CRM%s] %s"
                               (replace-regexp-in-string
@@ -2374,20 +2318,20 @@ screen:TREE=PID PPID USER Command
                           (setq read-extended-command-predicate
                           #'command-completion-default-include-p)
                         '';
-                    };
-                    simple = {
-                      enable = true;
-                      config = ''
+                };
+                simple = {
+                  enable = true;
+                  config = ''
                           (setq read-extended-command-predicate
                                   #'command-completion-default-include-p
                                 save-interprogram-paste-before-kill t
                           )
                           (setq-default indent-tabs-mode -1)
                         '';
-                    };
-                    emacs = {
-                      enable = true;
-                      config = ''
+                };
+                emacs = {
+                  enable = true;
+                  config = ''
                           (setq enable-recursive-minibuffers t)
 
                           (setq ring-bell-function
@@ -2403,10 +2347,10 @@ screen:TREE=PID PPID USER Command
                            (setq sentence-end-double-space nil)
 
                         '';
-                    };
-                    isend-mode = {
-                      enable = true;
-                    };
+                };
+                isend-mode = {
+                  enable = true;
+                };
                 agenix = {
                   enable = true;
                   extraPackages = [ pkgs.rage pkgs.pinentry-emacs ];
@@ -2432,21 +2376,21 @@ screen:TREE=PID PPID USER Command
                           (age-pinentry-mode 'ask)
                       '';
                 };
-                    magit = {
-                      enable = true;
-                      config = ''
+                magit = {
+                  enable = true;
+                  config = ''
                           (setq magit-refresh-status-buffer nil)
                         '';
-                    };
-                    orgit = {
-                      enable = true;
-                    };
-                    forge = {
-                      enable = true;
-                    };
-                    git-timemachine = {
-                      enable = true;
-                    };
+                };
+                orgit = {
+                  enable = true;
+                };
+                forge = {
+                  enable = true;
+                };
+                git-timemachine = {
+                  enable = true;
+                };
                 git-gutter = {
                   enable = true;
                   config = ''
@@ -2478,32 +2422,32 @@ screen:TREE=PID PPID USER Command
 
                   '';
                 };
-                    vterm = {
-                      enable = true;
-                    };
-                    eat = {
-                      enable = true;
-                    };
-                    xref = {
-                      enable = true;
-                    };
-                    consult-xref = {
-                      enable = true;
-                      command = [ "consult-xref" ];
-                      after = [ "consult" "xref" ];
-                      init = ''
+                vterm = {
+                  enable = true;
+                };
+                eat = {
+                  enable = true;
+                };
+                xref = {
+                  enable = true;
+                };
+                consult-xref = {
+                  enable = true;
+                  command = [ "consult-xref" ];
+                  after = [ "consult" "xref" ];
+                  init = ''
                           ;; Use Consult to select xref locations with preview
                           (setq xref-show-xrefs-function #'consult-xref
                           xref-show-definitions-function #'consult-xref)
                       '';
-                    };
-                    consult = {
-                      enable = true;
-                      command = [ "consult-xref" ];
-                      hook = [
-                        "(completion-list-mode . consult-preview-at-point-mode)"
-                      ];
-                      init = ''
+                };
+                consult = {
+                  enable = true;
+                  command = [ "consult-xref" ];
+                  hook = [
+                    "(completion-list-mode . consult-preview-at-point-mode)"
+                  ];
+                  init = ''
                           ;; Optionally configure the register formatting. This improves the register
                           ;; preview for `consult-register', `consult-register-load',
                           ;; `consult-register-store' and the Emacs built-ins.
@@ -2515,7 +2459,7 @@ screen:TREE=PID PPID USER Command
                           (advice-add #'register-preview :override #'consult-register-window)
 
                         '';
-                      config = ''
+                  config = ''
                           ;; Optionally configure preview. The default value
                           ;; is 'any, such that any key triggers the preview.
                           ;; (setq consult-preview-key 'any)
@@ -2536,77 +2480,77 @@ screen:TREE=PID PPID USER Command
                           ;; Both < and C-+ work reasonably well.
                           (setq consult-narrow-key "<") ;; (kbd "C-+")
                         '';
-                      bind = {
-                        "C-x C-b" = "consult-buffer";
-                        "C-x C-y" = "consult-yank-from-kill-ring";
-                        "C-x j b" = "consult-buffer";
-                        "C-x j l" = "consult-line";
-                        "C-x j y" = "consult-yank-from-kill-ring";
-                      };
-                    };
-                    consult-dir = {
-                      enable = true;
-                    };
+                  bind = {
+                    "C-x C-b" = "consult-buffer";
+                    "C-x C-y" = "consult-yank-from-kill-ring";
+                    "C-x j b" = "consult-buffer";
+                    "C-x j l" = "consult-line";
+                    "C-x j y" = "consult-yank-from-kill-ring";
+                  };
+                };
+                consult-dir = {
+                  enable = true;
+                };
                 consult-flycheck = {
-                      enable = true;
+                  enable = true;
                   command = [ "consult-flycheck"];
-                    };
-                    flycheck = {
-                      enable = true;
-                      config = ''
+                };
+                flycheck = {
+                  enable = true;
+                  config = ''
                         (global-flycheck-mode)
                         (setq flycheck-check-syntax-automatically '(save idle-change)
                               flycheck-idle-change-delay 5)
                       '';
-                    };
-                    consult-org = {
-                      enable = true;
-                      command = [ "consult-org" ];
-                    };
-                    marginalia = {
-                      enable = true;
-                      demand = true;
-                      config = ''
+                };
+                consult-org = {
+                  enable = true;
+                  command = [ "consult-org" ];
+                };
+                marginalia = {
+                  enable = true;
+                  demand = true;
+                  config = ''
                           (marginalia-mode)
                         '';
-                      bindLocal = {
-                        minibuffer-local-map = {
-                          "M-A" = "marginalia-cycle";
-                        };
-                      };
+                  bindLocal = {
+                    minibuffer-local-map = {
+                      "M-A" = "marginalia-cycle";
                     };
-                    orderless = {
-                      enable = true;
-                      init = ''
+                  };
+                };
+                orderless = {
+                  enable = true;
+                  init = ''
                           (setq completion-styles '(orderless basic)
                           completion-category-defaults nil
                           completion-category-overrides '((file (styles partial-completion))))
                         '';
-                    };
-                    autorevert = {
-                      enable = true;
-                      config = ''
+                };
+                autorevert = {
+                  enable = true;
+                  config = ''
                           (setq global-auto-revert-non-file-buffers t)
                           (global-auto-revert-mode 1)
                         '';
-                    };
-                    saveplace = {
-                      enable = true;
-                      config = ''
+                };
+                saveplace = {
+                  enable = true;
+                  config = ''
                           (save-place-mode 1)
                         '';
-                    };
-                    recentf = {
-                      enable = true;
-                      init = ''
+                };
+                recentf = {
+                  enable = true;
+                  init = ''
                           (setq recentf-max-saved-items nil
                                 recentf-save-file (concat user-emacs-directory ".local/cache/recentf"))
                           (recentf-mode 1)
                         '';
-                    };
-                    savehist = {
-                      enable = true;
-                      config = ''
+                };
+                savehist = {
+                  enable = true;
+                  config = ''
                           (setq savehist-additional-variables
                                 '(search-ring
                                   regexp-search-ring
@@ -2615,66 +2559,66 @@ screen:TREE=PID PPID USER Command
                           (setq history-length 250)
                           (savehist-mode)
                         '';
-                    };
-                    vertico = {
-                      enable = true;
-                      config = ''
+                };
+                vertico = {
+                  enable = true;
+                  config = ''
                           (vertico-mode)
                         '';
+                };
+                vertico-quick = {
+                  after = [ "vertico" ];
+                  enable = true;
+                  bindLocal = {
+                    vertico-map = {
+                      "M-q" = "vertico-quick-insert";
+                      "C-q" = "vertico-quick-exit";
                     };
-                    vertico-quick = {
-                      after = [ "vertico" ];
-                      enable = true;
-                      bindLocal = {
-                        vertico-map = {
-                          "M-q" = "vertico-quick-insert";
-                          "C-q" = "vertico-quick-exit";
-                        };
-                      };
-                    };
-                    vertico-buffer = {
-                      after = [ "vertico" ];
-                      enable = false;
-                      config = ''
+                  };
+                };
+                vertico-buffer = {
+                  after = [ "vertico" ];
+                  enable = false;
+                  config = ''
                           (vertico-buffer-mode)
                           (setq vertico-buffer-display-action
                           '(display-buffer-in-side-window (side . left)
                           (window-width . 0.5)))
                         '';
+                };
+                vertico-directory = {
+                  after = [ "vertico" ];
+                  enable = true;
+                  bindLocal = {
+                    vertico-map = {
+                      "RET" = "vertico-directory-enter";
+                      "DEL" = "vertico-directory-delete-char";
+                      "M-DEL" = "vertico-directory-delete-word";
                     };
-                    vertico-directory = {
-                      after = [ "vertico" ];
-                      enable = true;
-                      bindLocal = {
-                        vertico-map = {
-                          "RET" = "vertico-directory-enter";
-                          "DEL" = "vertico-directory-delete-char";
-                          "M-DEL" = "vertico-directory-delete-word";
-                        };
-                      };
-                      hook = [
-                        "(rfn-eshadow-update-overlay . vertico-directory-tidy)"
-                      ];
-                    };
-                    image-dired = {
-                      enable = true;
-                      config = ''
+                  };
+                  hook = [
+                    "(rfn-eshadow-update-overlay . vertico-directory-tidy)"
+                  ];
+                };
+                image-dired = {
+                  enable = true;
+                  config = ''
                           (setq image-dired-thumbnail-storage 'standard-large)
                         '';
-                    };
-                    one-themes = {
-                      enable = true;
-                    };
-                    nerd-icons = {
-                      enable = true;
-                      config = ''
+                };
+                one-themes = {
+                  enable = true;
+                };
+                nerd-icons = {
+                  enable = true;
+                  config = ''
                           (setq nerd-icons-font-family "FiraCode Nerd Font")
                         '';
-                    };
-                    kind-icon = {
-                      enable = true;
-                      after = [ "corfu" "nerd-icons" ];
-                      config = ''
+                };
+                kind-icon = {
+                  enable = true;
+                  after = [ "corfu" "nerd-icons" ];
+                  config = ''
                           (add-to-list 'corfu-margin-formatters #'kind-icon-margin-formatter)
                           (setq kind-icon-use-icons nil)
                           (setq kind-icon-mapping
@@ -2720,14 +2664,14 @@ screen:TREE=PID PPID USER Command
 
                           ;(setq kind-icon-default-face 'corfu-default)
                         '';
-                    };
-                    corfu = {
-                      enable = true;
-                      command = [ "global-corfu-mode" ];
-                      init = ''
+                };
+                corfu = {
+                  enable = true;
+                  command = [ "global-corfu-mode" ];
+                  init = ''
                           (global-corfu-mode)
                         '';
-                      config = ''
+                  config = ''
                           (setq corfu-quit-no-match nil
                                 corfu-quit-at-boundary 'separator
                                 corfu-preview-current nil
@@ -2774,59 +2718,59 @@ screen:TREE=PID PPID USER Command
 
 
                         '';
-                    };
-                    corfu-popupinfo = {
-                      enable = true;
-                      after = [ "corfu" ];
-                      config = ''
+                };
+                corfu-popupinfo = {
+                  enable = true;
+                  after = [ "corfu" ];
+                  config = ''
                           (corfu-popupinfo-mode 1)
                       '';
-                    };
-                    cape = {
-                      enable = true;
-                      after = [ "corfu" ];
-                      init = ''
+                };
+                cape = {
+                  enable = true;
+                  after = [ "corfu" ];
+                  init = ''
                           ;;Add `completion-at-point-functions' used by `completion-at-point'.
                           ;; Order matters
                           (add-to-list 'completion-at-point-functions #'cape-dabbrev)
                           (add-to-list 'completion-at-point-functions #'cape-file)
                           (add-to-list 'completion-at-point-functions #'cape-elisp-block)
                         '';
-                      bind = {
-                        "M-n f" = "cape-file";
-                        "M-n d" = "cape-dabbrev";
-                        "M-n e" = "cape-elisp-block";
-                      };
-                    };
-                    zenburn-theme = {
-                      enable = true;
-                      init = ''
+                  bind = {
+                    "M-n f" = "cape-file";
+                    "M-n d" = "cape-dabbrev";
+                    "M-n e" = "cape-elisp-block";
+                  };
+                };
+                zenburn-theme = {
+                  enable = true;
+                  init = ''
                           (setq zenburn-use-variable-pitch t)
                         '';
-                      config = ''
+                  config = ''
                           (load-theme 'zenburn t)
                         '';
-                    };
-                    browse-url = {
-                      enable = true;
-                      config = ''
+                };
+                browse-url = {
+                  enable = true;
+                  config = ''
                           (setq browse-url-generic-program "nyxt"
                                 browse-url-browser-function 'eww-browse-url
                                 browse-url-secondary-browser-function 'browse-url-generic)
                         '';
-                    };
-                    which-key = {
-                      enable = true;
-                      config = ''
+                };
+                which-key = {
+                  enable = true;
+                  config = ''
                           (which-key-mode)
                         '';
-                    };
-                    org = {
-                      enable = true;
-                      demand = true;
-                      init = ''
+                };
+                org = {
+                  enable = true;
+                  demand = true;
+                  init = ''
                         '';
-                      config = ''
+                  config = ''
                           ;;Add R to org-babel
                           (add-to-list 'org-babel-load-languages (cons (intern "R") t))
                           (org-babel-do-load-languages
@@ -2922,11 +2866,11 @@ screen:TREE=PID PPID USER Command
                           ;; TODO org-after-tags-change-hook in memx to rename file to match tags. filetags could be quite useful here if I set it to match my tag
 
                         '';
-                    };
-                    ox-pandoc = {
-                      after = [ "org" ] ;
-                      enable = true;
-                      config = ''
+                };
+                ox-pandoc = {
+                  after = [ "org" ] ;
+                  enable = true;
+                  config = ''
                         (setq org-pandoc-options '(
                           (standalone  . t)
                           (number-sections . t)
@@ -2936,11 +2880,11 @@ screen:TREE=PID PPID USER Command
 
 
                       '';
-                    };
-                    ox-latex = {
-                      after = [ "org" ];
-                      enable = true;
-                      config = ''
+                };
+                ox-latex = {
+                  after = [ "org" ];
+                  enable = true;
+                  config = ''
 (setq org-latex-prefer-user-labels t)
 
 ;; Override some ox-latex functions to support xltabular
@@ -3057,18 +3001,18 @@ a communication channel."
 
 
                       '';
-                    };
-                    ox-html = {
-                        after = [ "org" ];
-                        enable = true;
-                        config = ''
+                };
+                ox-html = {
+                  after = [ "org" ];
+                  enable = true;
+                  config = ''
                         (setq org-html-prefer-user-labels t)
                       '';
-                    };
-                    org-clock = {
-                      after = [ "org" ];
-                      enable = true;
-                      config = ''
+                };
+                org-clock = {
+                  after = [ "org" ];
+                  enable = true;
+                  config = ''
                           (setq
                                 ;;enable auto-clock resolution for finding open clocks
                                 org-clock-auto-clock-resolution 'when-no-clock-is-running
@@ -3081,11 +3025,11 @@ a communication channel."
                           org-clock-continuously nil
                           )
                         '';
-                    };
-                    org-ql = {
-                      enable = true;
-                      after = [ "org" ];
-                      config = ''
+                };
+                org-ql = {
+                  enable = true;
+                  after = [ "org" ];
+                  config = ''
 
                       (defun my-org-agenda-blocked-p (item)
                              "Returns t if the org-agenda item is blocked"
@@ -3162,10 +3106,10 @@ a communication channel."
                              :pred (lambda (item)
 																 (my-org-agenda-blocked-p item))))))
 '';
-                    };
-                    org-sidebar = {
-                      enable = true;
-                      config = ''
+                };
+                org-sidebar = {
+                  enable = true;
+                  config = ''
                         (defun my-org-sidebar ()
   "Display my Org Sidebar."
   (interactive)
@@ -3179,51 +3123,51 @@ a communication channel."
                                 (scheduled :on today)))
                        :action element-with-markers))))
                       '';
-                    };
-                    #org link library
-                    ol = {
-                      enable = true;
-                      after = [ "org" ];
-                      config = ''
+                };
+                #org link library
+                ol = {
+                  enable = true;
+                  after = [ "org" ];
+                  config = ''
                           (setq org-link-abbrev-alist
                           '(("websearch"      . "https://html.duckduckgo.com/html/?q=%s")
                              ("gscholar" . "https://scholar.google.com/scholar?q=%s")))
                         '';
-                    };
-                    helm = {
-                      enable = true;
-                    };
-                    helm-org-ql = {
-                      enable = true;
-                    };
-                    helm-org-rifle = {
-                      enable = true;
-                    };
-                    org-super-links = {
-                      enable = true;
-                      after = [ "org" ];
-                      config = ''
+                };
+                helm = {
+                  enable = true;
+                };
+                helm-org-ql = {
+                  enable = true;
+                };
+                helm-org-rifle = {
+                  enable = true;
+                };
+                org-super-links = {
+                  enable = true;
+                  after = [ "org" ];
+                  config = ''
                           (setq org-super-links-search-function "helm-org-rifle")
                         '';
+                };
+                org-sltypes = {
+                  after = [ "org-super-links" ];
+                  enable = true;
+                };
+                org-slt-phdyellow = {
+                  after = ["org-sltypes"];
+                  command = [ "org-slt-phdyellow" ];
+                  enable = true;
+                  bindLocal = {
+                    org-mode-map = {
+                      "C-c C-i" = "org-slt-phdyellow";
                     };
-                    org-sltypes = {
-                      after = [ "org-super-links" ];
-                      enable = true;
-                    };
-                    org-slt-phdyellow = {
-                      after = ["org-sltypes"];
-                      command = [ "org-slt-phdyellow" ];
-                      enable = true;
-                      bindLocal = {
-                        org-mode-map = {
-                          "C-c C-i" = "org-slt-phdyellow";
-                        };
-                      };
-                    };
-                    org-transclusion = {
-                      after = [ "org" "zenburn-theme" ];
-                      enable = true;
-                      config = ''
+                  };
+                };
+                org-transclusion = {
+                  after = [ "org" "zenburn-theme" ];
+                  enable = true;
+                  config = ''
 
                         (add-to-list 'org-transclusion-extensions 'org-transclusion-src-lines)
                         (require 'org-transclusion-src-lines)
@@ -3246,11 +3190,11 @@ a communication channel."
                         (set-face-attribute 'org-transclusion-source nil
                             :background (cdr (assoc "zenburn-green-5" zenburn-default-colors-alist)))
                       '';
-                    };
-                    org-edna = {
-                      after = [ "org" ];
-                      enable = true;
-                      config = ''
+                };
+                org-edna = {
+                  after = [ "org" ];
+                  enable = true;
+                  config = ''
                           (org-edna-mode)
 
 ;;; trc-workgraph.el --- Visualize org mode files as graphs  -*- lexical-binding: t; -*- <jacek@zlydach.pl>
@@ -3333,7 +3277,7 @@ That is either org-id or its title."
                      (org-element-property :todo-keyword headline)
                      (org-element-property :tags headline)
                      nil                ;TODO first-sentence
-                     ))
+  ))
 
 (defun trc/wg--parse-edna-blockers (blockers)
   "Turn BLOCKERS into a list of (ID TYPE).
@@ -3408,7 +3352,7 @@ ID is connected to another."
   "Compute label to be put on edge of a CONNECTION, if any."
   ;; TODO any relevant edge labels go here.
   ""
-  )
+)
 
 (defun trc/wg--compute-edge-attributes (connection)
   "Compute additional styling for CONNECTION edge."
@@ -3481,23 +3425,23 @@ the target and properties of the edge."
 
 
                         '';
-                    };
-                    org-linker-edna = {
-                      after = [ "org" "helm" ];
-                      enable = true;
-                    };
-                    org-linker = {
-                      after = [ "org" ];
-                      enable = true;
-                    };
-                    org-id = {
-                      after = [ "org" ];
-                      enable = true;
-                      config = ''
+                };
+                org-linker-edna = {
+                  after = [ "org" "helm" ];
+                  enable = true;
+                };
+                org-linker = {
+                  after = [ "org" ];
+                  enable = true;
+                };
+                org-id = {
+                  after = [ "org" ];
+                  enable = true;
+                  config = ''
                           (setq org-id-method 'ts
                                 org-id-prefix nil
                                 org-id-ts-format "%Y%m%dT%H%M%S%6N"
-                               )
+                          )
                           ;;Create id's agressively
                           (setq org-id-link-to-org-use-id 'create-if-interactive)
                           (defmacro my-add-id-to-heading (heading-func)
@@ -3520,14 +3464,14 @@ the target and properties of the edge."
 
 
                         '';
-                    };
+                };
                 s = {
                   enable = true;
                 };
-                    org-roam = {
+                org-roam = {
                   after = [ "org" "s" ];
-                      enable = true;
-                      config = ''
+                  enable = true;
+                  config = ''
                       (defun my-trim-slug (slug max-chars)
                              (require 's)
                              (let ((trimmed (substring slug 0 (min max-chars (length slug)))))
@@ -3547,7 +3491,7 @@ the target and properties of the edge."
                             ("iq" "capture into note: quote" plain
                               "\n#+begin_quote :source-link %a :date %U\n%i\n#+end_quote\n%?"
                               :target (file "''${id}-%(my-trim-slug \"''${slug}\" my-org-roam-max-file-slug-chars)___%(concat my-memx-version).org")
-                            :unnarrowed)
+                              :unnarrowed)
                             ("it" "capture into note: transclude" plain
                               "\n#+transclude: %a %?"
                             :target (file "''${id}-%(my-trim-slug \"''${slug}\" my-org-roam-max-file-slug-chars)___%(concat my-memx-version).org")
@@ -3752,22 +3696,22 @@ the target and properties of the edge."
 
                           )
 
-            )
+                        )
 
                         (org-roam-db-autosync-mode)
 
 
 
                       '';
-                    };
-                    org-roam-export = {
-                      enable = true;
-                      after = [ "org-roam" ];
-                    };
-                    org-roam-bibtex = {
-                      enable = false;
-                      after = [ "org-roam" ];
-                      config = ''
+                };
+                org-roam-export = {
+                  enable = true;
+                  after = [ "org-roam" ];
+                };
+                org-roam-bibtex = {
+                  enable = false;
+                  after = [ "org-roam" ];
+                  config = ''
                         (setq orb-preformat-templates t
                            orb-preformat-keywords '(
                              "=key="
@@ -3789,11 +3733,11 @@ the target and properties of the edge."
                         )
                         (org-roam-bibtex-mode)
                       '';
-                    };
-                    denote = {
-                      enable = false;
-                      after = [ "org" ];
-                      config = ''
+                };
+                denote = {
+                  enable = false;
+                  after = [ "org" ];
+                  config = ''
                           (setq denote-directory my-memx-dir
                                 denote-infer-keywords t
                                 denote-sort-keywords t
@@ -3816,11 +3760,11 @@ the target and properties of the edge."
                           (add-hook 'org-trigger-hook #'my-add-to-agenda)
 
                         '';
-                    };
-                    consult-notes = {
-                      enable = true;
-                      after = [ "org-roam" ];
-                      config = ''
+                };
+                consult-notes = {
+                  enable = true;
+                  after = [ "org-roam" ];
+                  config = ''
                         ;(setq consult-notes-file-dir-sources
                         ;  `(("Memx" ?m ,my-memx-dir))
                         ;)
@@ -3867,21 +3811,21 @@ the target and properties of the edge."
       (message "No notes cite this reference."))))
 
                         '';
-                    };
-                    oc = {
-                      enable = true;
-                      after = [ "org" "citar" "citar-org" ];
-                      config = ''
+                };
+                oc = {
+                  enable = true;
+                  after = [ "org" "citar" "citar-org" ];
+                  config = ''
                             (setq org-cite-global-bibliography my-bib-files
                                   org-cite-insert-processor 'citar
                                   org-cite-follow-processor 'citar
                                   org-cite-activate-processor 'citar)
                             (setq org-cite-export-processors `((t csl ,(file-name-concat my-bib-dir "apa.csl"))))
                       '';
-                    };
-                    ebib = {
-                      enable = false;
-                      config = ''
+                };
+                ebib = {
+                  enable = false;
+                  config = ''
                         (setq ebib-preload-bib-files my-bib-files
                         ebib-bibtex-dialect 'biblatex
                         ebib-file-search-dirs my-refs-dirs
@@ -3889,11 +3833,11 @@ the target and properties of the edge."
                         ebib-link-file-path-type 'relative)
 
                       '';
-                    };
-                    citar = {
-                      enable = true;
-                      after = [ "org" ];
-                      config = ''
+                };
+                citar = {
+                  enable = true;
+                  after = [ "org" ];
+                  config = ''
                         (setq citar-bibliography my-bib-files
                            citar-at-point-function 'embark-act
                            citar-library-paths (list my-ereading-dir)
@@ -3991,32 +3935,32 @@ the target and properties of the edge."
 
 '';
 
-                    };
-                    citar-org = {
-                      enable = true;
-                      after = [ "org"];
-                    };
-                    citar-capf = {
-                      enable = true;
-                      command = [ "citar-capf-setup" ];
-                      hook = [
-                        "(org-mode . citar-capf-setup)"
-                      ];
-                    };
-                    citar-embark = {
-                      enable = true;
-                      after = [ "citar" ];
-                      config = ''
+                };
+                citar-org = {
+                  enable = true;
+                  after = [ "org"];
+                };
+                citar-capf = {
+                  enable = true;
+                  command = [ "citar-capf-setup" ];
+                  hook = [
+                    "(org-mode . citar-capf-setup)"
+                  ];
+                };
+                citar-embark = {
+                  enable = true;
+                  after = [ "citar" ];
+                  config = ''
                         (citar-embark-mode)
                       '';
-                    };
-                    citar-org-roam = {
-                      enable = true;
-                      after = [ "citar" "org-roam" "org-roam-bibtex" ];
-                      init = ''
+                };
+                citar-org-roam = {
+                  enable = true;
+                  after = [ "citar" "org-roam" "org-roam-bibtex" ];
+                  init = ''
 
                       '';
-                      config = ''
+                  config = ''
                         (citar-register-notes-source
                           'orb-citar-source (list :name "Org Roam Notes"
                             :category 'org-roam-node
@@ -4045,34 +3989,34 @@ the target and properties of the edge."
 
 
                       '';
-                      extraConfig = ''
+                  extraConfig = ''
                       '';
-                    };
-                    citar-denote = {
-                      enable = false;
-                      after = [ "citar" "denote" ];
-                      config = ''
+                };
+                citar-denote = {
+                  enable = false;
+                  after = [ "citar" "denote" ];
+                  config = ''
                           ;; Use citekey as note title
                           (setq citar-denote-title-format nil)
                         '';
-                    };
-                    citeproc-bibtex = {
-                      enable = true;
-                    };
-                    biblio = {
-                      enable = true;
-                      config = ''
+                };
+                citeproc-bibtex = {
+                  enable = true;
+                };
+                biblio = {
+                  enable = true;
+                  config = ''
                         (setq biblio-bibtex-use-autokey t
                         biblio-download-directory (concat my-ereading-dir "/refile"))
                       '';
-                    };
-                    biblio-bibsonomy = {
-                      enable = false;
-                      # requires an account
-                    };
-                    bibtex = {
-                      enable = true;
-                      config = ''
+                };
+                biblio-bibsonomy = {
+                  enable = false;
+                  # requires an account
+                };
+                bibtex = {
+                  enable = true;
+                  config = ''
                         (setq bibtex-autokey-names 1
                           bibtex-autokey-names-stretch 1
                           bibtex-autokey-name-separator "-"
@@ -4106,11 +4050,11 @@ the target and properties of the edge."
 
                         (bibtex-set-dialect 'biblatex)
                       '';
-                    };
-                    ol-bibtex = {
-                      enable = true;
-                      after = [ "org" ];
-                      config = ''
+                };
+                ol-bibtex = {
+                  enable = true;
+                  after = [ "org" ];
+                  config = ''
                         (setq org-bibtex-prefix "BIB_"
                               org-bibtex-export-arbitrary-fields t
                               org-bibtex-headline-format-function (lambda (entry)
@@ -4138,16 +4082,16 @@ the target and properties of the edge."
 	))
                       '';
 
-                    };
-                    ## Part of helm-bibtex, and used by org-ref
-                    helm-bibtex = {
-                      enable = true;
-                      after = [ "citar" ];
-                    };
-                    bibtex-completion = {
-                      after = [ "citar" ];
-                      enable = true;
-                      config = ''
+                };
+                ## Part of helm-bibtex, and used by org-ref
+                helm-bibtex = {
+                  enable = true;
+                  after = [ "citar" ];
+                };
+                bibtex-completion = {
+                  after = [ "citar" ];
+                  enable = true;
+                  config = ''
                         ;; matches org-cite-global-bibliography
                         (setq bibtex-completion-bibliography my-bib-files
                           bibtex-completion-library-path my-ereading-dir
@@ -4155,11 +4099,11 @@ the target and properties of the edge."
                         )
 
                       '';
-                    };
-                    org-ref = {
-                      after = [ "org" "bibtex" "bibtex-completion" ];
-                      enable = true;
-                      config = ''
+                };
+                org-ref = {
+                  after = [ "org" "bibtex" "bibtex-completion" ];
+                  enable = true;
+                  config = ''
                           (require 'org-ref-refproc)
                           (require 'org-ref-wos)
                           (require 'org-ref-arxiv)
@@ -4167,30 +4111,30 @@ the target and properties of the edge."
                           (setq org-ref-bibtex-pdf-download-dir (concat my-ereading-dir "/refile"))
                           ;(add-hook 'org-export-before-parsing-functions #'org-ref-refproc)
 '';
-                    };
-                    org-ref-helm = {
-                      after = [ "org-ref" ];
-                      enable = true;
-                    };
-                    smart-tabs-mode = {
-                      enable = true;
-                      config = ''
+                };
+                org-ref-helm = {
+                  after = [ "org-ref" ];
+                  enable = true;
+                };
+                smart-tabs-mode = {
+                  enable = true;
+                  config = ''
                           ;(setq-default indent-tabs-mode nil)
                           (setq-default tab-width 2)
                           ;(add-hook 'ess-r-mode-hook
                           ;(lambda () (setq indent-tabs-mode -1)))
                         '';
-                    };
-                    ws-butler = {
-                      enable = true;
-                      config = ''
+                };
+                ws-butler = {
+                  enable = true;
+                  config = ''
                           (ws-butler-global-mode)
                         '';
-                    };
-                    whitespace = {
-                      enable = true;
-                      after = [ "zenburn-theme" ];
-                      config = ''
+                };
+                whitespace = {
+                  enable = true;
+                  after = [ "zenburn-theme" ];
+                  config = ''
                           (setq whitespace-style '(face tabs trailing lines-tail missing-newline-at-eof empty big-indent space-before-tab space-after-tab)
                                 whitespace-global-modes '(not magit-mode eat-mode))
 
@@ -4202,18 +4146,18 @@ the target and properties of the edge."
 
                           (global-whitespace-mode)
                           '';
-                    };
-                    jinx = {
-                      enable = true;
-                      bind = {
-                        "M-$" = "jinx-correct";
-                      };
-                      hook = [ "(emacs-startup . global-jinx-mode)"];
-                    };
-                    org-remark = {
-                      after = [ "org" ];
-                      enable = true;
-                      config = ''
+                };
+                jinx = {
+                  enable = true;
+                  bind = {
+                    "M-$" = "jinx-correct";
+                  };
+                  hook = [ "(emacs-startup . global-jinx-mode)"];
+                };
+                org-remark = {
+                  after = [ "org" ];
+                  enable = true;
+                  config = ''
                           (defun my-org-remark-notes-file-names ()
                                  (concat my-memx-dir
                                    (file-name-base (org-remark-notes-file-name-function))
@@ -4225,12 +4169,12 @@ the target and properties of the edge."
                                 org-remark-notes-file-name #'my-org-remark-notes-file-names)
                           (org-remark-global-tracking-mode +1)
                         '';
-                    };
-                    org-noter = {
-                      after = [ "org" "pdf-tools" "nov" "djvu"];
-                      enable = true;
-                      command = [ "org-noter" ];
-                      config = ''
+                };
+                org-noter = {
+                  after = [ "org" "pdf-tools" "nov" "djvu"];
+                  enable = true;
+                  command = [ "org-noter" ];
+                  config = ''
                         ;; hack to fix problems with compilation and macros not working
                         ;; The following function is copied straight out of org-noter-pdf.el
 (defun org-noter-pdf--show-arrow ()
@@ -4281,15 +4225,15 @@ the target and properties of the edge."
      dx dy)))
 
                       '';
-                    };
-                    pdf-tools = {
-                      enable = true;
-                      init = ''
+                };
+                pdf-tools = {
+                  enable = true;
+                  init = ''
                       '';
-                    };
-                    pdf-loader = { #part of pdf-tools
-                      enable = true;
-                      config = ''
+                };
+                pdf-loader = { #part of pdf-tools
+                  enable = true;
+                  config = ''
                         (pdf-loader-install)
 
 ;; fix, because temporary squashfs files contain a colon
@@ -4303,21 +4247,21 @@ the target and properties of the edge."
 (advice-add 'pdf-util-dedicated-directory :around #'redefine-tmp)
 
                       '';
-                    };
+                };
 
-                    shrface = {
-                      enable = true;
-                      config = ''
+                shrface = {
+                  enable = true;
+                  config = ''
                           (shrface-basic)
                           (shrface-trial)
                           (shrface-default-keybindings)
                           (setq shrface-href-versatile t)
                         '';
-                    };
-                    shr-tag-pre-highlight = {
-                      after = [ "shr" "shrface" ];
-                      enable = true;
-                      config = ''
+                };
+                shr-tag-pre-highlight = {
+                  after = [ "shr" "shrface" ];
+                  enable = true;
+                  config = ''
                           (add-to-list 'shr-external-rendering-functions '(pre . shrface-shr-tag-pre-highlight))
                           (defun shrface-shr-tag-pre-highlight (pre)
                             "Highlighting code in PRE."
@@ -4356,11 +4300,11 @@ the target and properties of the edge."
                              (advice-add 'eww-display-html :around
                                'eww-display-html--override-shr-external-rendering-functions)))
                         '';
-                    };
-                    org-web-tools = {
-                      after = [ "org" "shrface"  ];
-                      enable = true;
-                      config = ''
+                };
+                org-web-tools = {
+                  after = [ "org" "shrface"  ];
+                  enable = true;
+                  config = ''
                           (advice-add 'org-web-tools--html-to-org-with-pandoc :override 'shrface-html-convert-as-org-string)
 
                           (defun request-url-readable (url)
@@ -4381,40 +4325,40 @@ the target and properties of the edge."
                               (shrface-request-url url))
                               (shrface-html-export-as-org html))))))
                         '';
-                    };
+                };
 
 
-                    nov = {
-                      after = [ "shrface" ];
-                      enable = true;
-                      init = ''
+                nov = {
+                  after = [ "shrface" ];
+                  enable = true;
+                  init = ''
                           (add-hook 'nov-mode-hook #'shrface-mode)
                         '';
-                      config = ''
+                  config = ''
                           (setq nov-shr-rendering-functions '((img . nov-render-img) (title . nov-render-title)))
                           (setq nov-shr-rendering-functions (append nov-shr-rendering-functions shr-external-rendering-functions))
                         '';
-                    };
+                };
 
-                    djvu = {
-                      enable = true;
-                    };
+                djvu = {
+                  enable = true;
+                };
 
-                    eww = {
-                      after = [ "shrface" ];
-                      enable = true;
-                      init = ''
+                eww = {
+                  after = [ "shrface" ];
+                  enable = true;
+                  init = ''
                           (add-hook 'eww-after-render-hook #'shrface-mode)
                         '';
-                    };
-                    ##Packages loaded when needed
-                    free-keys = {
-                      enable = true;
-                      command = [ "free-keys" ];
-                    };
-                    ess-site = {
-                      enable= true;
-                      mode = [ ''
+                };
+                ##Packages loaded when needed
+                free-keys = {
+                  enable = true;
+                  command = [ "free-keys" ];
+                };
+                ess-site = {
+                  enable= true;
+                  mode = [ ''
                           ("\\.Rd\\'" . Rd-mode)
                           ("DESCRIPTION\\'" . conf-colon-mode)
                           ("\\.Rd\\'" . Rd-mode)
@@ -4430,53 +4374,53 @@ the target and properties of the edge."
                           ("\\.[Bb][Oo][Gg]\\'" . ess-bugs-mode)
                           ("\\.[Bb][Uu][Gg]\\'" . ess-bugs-mode)
                         '' ];
-                      extraConfig = ''
+                  extraConfig = ''
                           :interpreter (("r" . ess-r-mode)
                           ("Rscript" . ess-r-mode))
                         '';
-                    };
-                    ess = {
-                      after = [ "ess-site" ];
-                      enable = true;
-                      config = ''
+                };
+                ess = {
+                  after = [ "ess-site" ];
+                  enable = true;
+                  config = ''
                           ;;(setq inferior-ess-r-program "radian") ;;  ESS can't speak radian's language
                           (setq ess-use-flymake nil)
                         '';
-                      hook = [
+                  hook = [
                     "(ess-r-mode . (lambda ()
                            (ess-set-style 'RStudio)))"
-                      ];
-                    };
-                    nix-mode = {
-                      enable = true;
-                      mode = [ ''"\\\\.nix\\\\'"''];
-                    };
-                    nix-flake = {
-                      enable = true;
-                      command = [ "nix-flake" ];
-                      after = [ "nix-mode" ];
-                    };
-                    helm-nixos-options = {
-                      enable = true;
-                      command = [ "helm-nixos-options" ];
-                      mode = [ ''"\\\\.nix\\\\'"'' ];
-                    };
-                    ob-nix = {
-                      enable = true;
-                    };
-                    ob-d2 = {
-                      enable = true;
-                      config = ''
+                  ];
+                };
+                nix-mode = {
+                  enable = true;
+                  mode = [ ''"\\\\.nix\\\\'"''];
+                };
+                nix-flake = {
+                  enable = true;
+                  command = [ "nix-flake" ];
+                  after = [ "nix-mode" ];
+                };
+                helm-nixos-options = {
+                  enable = true;
+                  command = [ "helm-nixos-options" ];
+                  mode = [ ''"\\\\.nix\\\\'"'' ];
+                };
+                ob-nix = {
+                  enable = true;
+                };
+                ob-d2 = {
+                  enable = true;
+                  config = ''
 (add-to-list 'org-babel-load-languages (cons (intern "d2") t))
                           (org-babel-do-load-languages
                             'org-babel-load-languages
                             org-babel-load-languages)
                       '';
-                    };
-                    ob-latex = {
-                      enable = true;
-                      after = [ "org" ];
-                      config = ''
+                };
+                ob-latex = {
+                  enable = true;
+                  after = [ "org" ];
+                  config = ''
                       (add-to-list 'org-latex-packages-alist '("" "gensymb" t))
                       (setq
                         org-latex-compiler "lualatex"
@@ -4507,29 +4451,29 @@ the target and properties of the edge."
 
 
                       '';
-                    };
-                    tex = {
-                      extraPackages = [ pkgs.auctex ];
-                      enable = true;
-                      after = [ "ob-latex" ];
-                    };
-                    d2-mode = {
-                      enable = true;
-                      config = ''
+                };
+                tex = {
+                  extraPackages = [ pkgs.auctex ];
+                  enable = true;
+                  after = [ "ob-latex" ];
+                };
+                d2-mode = {
+                  enable = true;
+                  config = ''
                         (setq d2-tmp-dir temporary-file-directory)
                       '';
-                    };
-                    ob-plantuml = {
-                      enable = true;
-                      config = ''
+                };
+                ob-plantuml = {
+                  enable = true;
+                  config = ''
                         (setq org-plantuml-exec-mode 'plantuml)
                       '';
-                    };
-                    plantuml-mode = {
-                      enable = true;
-                      after = [ "org" ];
-                      mode = [ ''"\\\\.plantuml\\\\'"'' ];
-                      config = ''
+                };
+                plantuml-mode = {
+                  enable = true;
+                  after = [ "org" ];
+                  mode = [ ''"\\\\.plantuml\\\\'"'' ];
+                  config = ''
                         (setq plantuml-default-exec-mode 'executable)
                         (add-to-list 'org-src-lang-modes '("plantuml" . plantuml))
                           (add-to-list 'org-babel-load-languages (cons (intern "plantuml") t))
@@ -4537,18 +4481,19 @@ the target and properties of the edge."
                             'org-babel-load-languages
                             org-babel-load-languages)
                    '';
-                    };
-                    flycheck-plantuml = {
-                      enable = true;
-                      after = [ "flycheck" "plantuml-mode" ];
-                      config = ''
+                };
+                flycheck-plantuml = {
+                  enable = true;
+                  after = [ "flycheck" "plantuml-mode" ];
+                  config = ''
                         (flycheck-plantuml-setup)
                       '';
-                    };
-                    eglot = {
-                      enable = true;
-                      command = [ "eglot" "eglot-ensure" ];
-                      config = ''
+                };
+
+                eglot = {
+                  enable = true;
+                  command = [ "eglot" "eglot-ensure" ];
+                  config = ''
                           ;(add-to-list 'eglot-server-programs
                            ;   `(nix-mode . ("nil" :initializationOptions
                             ;     (:nix
@@ -4557,12 +4502,12 @@ the target and properties of the edge."
                                ;   :nixpkgsInputName "nixpkgs-unstable"))))))
                         ;; Eglot already has entries for R and nix
                         '';
-                      hook = [
-                        "(nix-mode . eglot-ensure)"
-                        "(ess-r-mode . eglot-ensure)"
-                        "(R-mode . eglot-ensure)"
-                      ];
-                    };
+                  hook = [
+                    "(nix-mode . eglot-ensure)"
+                    "(ess-r-mode . eglot-ensure)"
+                    "(R-mode . eglot-ensure)"
+                  ];
+                };
                 flycheck-eglot = {
                   enable = true;
                   after = [ "flycheck" "eglot" ];
@@ -4573,9 +4518,9 @@ the target and properties of the edge."
                 csv-mode = {
                   enable = true;
                 };
-                  };
-                };
-                        };
+              };
+            };
+          };
         };
       };
       emacs-mwe = {config, pkgs, ...}:
@@ -4610,26 +4555,26 @@ the target and properties of the edge."
                       ;; End:
                     '';
                 usePackage = {
-                    djvu = {
-                      enable = true;
-                    };
+                  djvu = {
+                    enable = true;
+                  };
 
                   org-noter = {
-                      after = [ "org" "pdf-tools" "nov" "djvu"];
-                      enable = true;
-                      command = [ "org-noter" ];
-                    };
-                    pdf-tools = {
-                      enable = true;
-                      init = ''
+                    after = [ "org" "pdf-tools" "nov" "djvu"];
+                    enable = true;
+                    command = [ "org-noter" ];
+                  };
+                  pdf-tools = {
+                    enable = true;
+                    init = ''
                       '';
-                    };
-                    pdf-loader = { #part of pdf-tools
-                      enable = true;
-                      config = ''
+                  };
+                  pdf-loader = { #part of pdf-tools
+                    enable = true;
+                    config = ''
                         (pdf-loader-install)
                       '';
-                    };
+                  };
 
                 };
 
@@ -4746,7 +4691,7 @@ the target and properties of the edge."
           inputs.ragenix.nixosModules.age
         ];
       };
-    
+
       phil-vm = nixpkgs-unstable.lib.nixosSystem {
         system = "x86_64-linux";
         modules = [
