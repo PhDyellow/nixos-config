@@ -2844,14 +2844,15 @@ screen:TREE=PID PPID USER Command
                           ;;never run blocks on export. Creates consisent results for R async session blocks.
                           (add-to-list 'org-babel-default-header-args '(:eval . "never-export"))
 
+                          (setq org-enforce-todo-dependencies t)
 
                           ;;set up todo entries
                           (setq org-todo-keywords '(
                             (sequence "QUERY(y)" "|" "RESOLVED(!)") ;A question
                             (sequence "GOAL(g)" "|" "ACHIEVED(!)") ;An outcome I want to see come about, ideally with a deadline
                             ;(sequence "PROJ(p)" "|" "COMPLETE(!)") ;A set of tasks supporting a goal or higher project
-                            (sequence "TASK(t)" "NEXT(n)" "|" "DONE(!)") ; A task. Tasks should pursue goals. A group of related tasks are really just subtasks, no projects.
-                            (sequence "SPARK(s)" "THINKING(h)" "|" "PROCESSED(!)") ;Transient notes that I want to capture
+                            (sequence "TASK(t)" "|" "DONE(!)") ; A task. Tasks should pursue goals. A group of related tasks are really just subtasks, no projects.
+                            (sequence "SPARK(s)" "THINKING(n)" "|" "PROCESSED(!)") ;Transient notes that I want to capture
                             (sequence "READ(r)" "|" "CITE(c)") ;bibliographic entries. Switch back and forth as needed
                             (sequence "|" "CONCEPT(w)" "VIEW(v)") ;evergreen concept note or overview of area
                             ;(sequence "PROBLEM" "|" "SOLVED" "SKIP")
