@@ -38,6 +38,11 @@
     #   # inputs.nixpkgs.follows = "nixpkgs-unstable"; # not working with nixpkgs unstable yet
     # };
 
+    openconnect-sso = {
+      # url = "github:vlaci/openconnect-sso";
+      url = "github:ThinkChaos/openconnect-sso/fix/nix-flake";
+    };
+
     nix-on-droid = {
       url = "github:t184256/nix-on-droid/release-23.05";
     };
@@ -133,7 +138,7 @@
         gui = {config, pkgs, ...}:
           {
             environment.systemPackages = with pkgs; [
-
+              bitwarden
             ];
           };
         cli = {config, pkgs, ...}:
@@ -147,7 +152,12 @@
               gitSVN
               wget
               curl
-
+              dig
+              pigz
+              certbot
+              squashfsTools
+              squashfs-tools-ng
+              inputs.ragenix.packages.x86_64-linux.default
             ];
           };
         allow-unfree = {config, pkgs, ...}:
@@ -362,6 +372,10 @@
 
         networking = {config, pkgs, ...}:
           {
+            environment.systemPackages = with pkgs; [
+              openconnect
+              inputs.openconnect-sso.packages.x86_64-linux.default
+            ];
             networking = {
               hostName = "prime-ai-nixos";
               firewall = {
@@ -4198,6 +4212,7 @@ the target and properties of the edge."
           self.nixosModules.system-conf.locale_au
           self.nixosModules.system-conf.cli
           self.nixosModules.system-conf.gui
+          self.nixosModules.system-conf.udisks
           self.nixosModules.system-conf.fonts
           self.nixosModules.system-conf.lock-root
           self.nixosModules.system-conf.nix-config
