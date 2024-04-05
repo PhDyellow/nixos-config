@@ -2009,7 +2009,7 @@ screen:TREE=PID PPID USER Command
                        (citar-org-roam-mode)
 
                       ;Always start emacs by showing Goals and tasks
-                      (org-ql-view  "Progressing Goals")
+                      ;(org-ql-view  "Progressing Goals")
 
                       ;; Local Variables:
                       ;; no-byte-compile: nil
