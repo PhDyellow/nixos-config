@@ -1353,7 +1353,6 @@ screen:TREE=PID PPID USER Command
 
             programs.hyprland = {
               enable = true;
-              enableNvidiaPatches = true;
             };
 
 
