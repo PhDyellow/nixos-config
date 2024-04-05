@@ -4557,8 +4557,17 @@ the target and properties of the edge."
                         "(R-mode . eglot-ensure)"
                       ];
                     };
+                flycheck-eglot = {
+                  enable = true;
+                  after = [ "flycheck" "eglot" ];
+                  config = ''
+                               (global-flycheck-eglot-mode 1)
+                      '';
+                };
+                csv-mode = {
+                  enable = true;
+                };
                   };
-
                 };
                         };
         };
