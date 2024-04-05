@@ -471,7 +471,7 @@
               text = ''
                 [
                   {"temp":20,"fan":0},
-                  {"temp":65,"fan":100},
+                  {"temp":80,"fan":100},
                   {"temp":100,"fan":100}
                 ]
               '';
@@ -504,12 +504,12 @@
                   },
                   "cpu": {
                          "useMaxPerfGov": false,
-                         "governor": "powersave",
-                         "energyPerformancePreference": "balance_performance",
+                         "governor": "performance",
+                         "energyPerformancePreference": "performance",
                          "noTurbo": false,
                          "onlineCores": 24,
-                         "scalingMinFrequency": 2200000,
-                         "scalingMaxFrequency": 4700000
+                         "scalingMinFrequency": 500000,
+                         "scalingMaxFrequency": 4900000
                   },
                   "webcam": {
                     "status": true,
@@ -532,7 +532,7 @@
                   "name": "freezy",
                   "description": "Edit profile to change behaviour",
                   "display": {
-                    "brightness": 50,
+                    "brightness": 5,
                     "useBrightness": true
                   },
                   "cpu": {
