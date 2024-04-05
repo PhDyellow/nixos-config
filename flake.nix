@@ -4159,7 +4159,8 @@ the target and properties of the edge."
                           (require 'org-ref-arxiv)
                           (require 'org-ref-scopus)
                           (setq org-ref-bibtex-pdf-download-dir (concat my-ereading-dir "/refile"))
-                          (add-hook 'org-export-before-parsing-functions #'org-ref-refproc)                        '';
+                          ;(add-hook 'org-export-before-parsing-functions #'org-ref-refproc)
+'';
                     };
                     org-ref-helm = {
                       after = [ "org-ref" ];
