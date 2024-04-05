@@ -3515,10 +3515,18 @@ the target and properties of the edge."
 
                         '';
                     };
+                s = {
+                  enable = true;
+                };
                     org-roam = {
-                      after = [ "org" ];
+                  after = [ "org" "s" ];
                       enable = true;
                       config = ''
+                      (defun my-trim-slug (slug max-chars)
+                             (require 's)
+                             (let ((trimmed (substring slug 0 (min max-chars (length slug)))))
+                             (s-replace-regexp "_+$" "" trimmed)))
+
                         (setq org-roam-directory (file-truename my-memx-dir)
                           org-roam-node-display-template
                             (concat "''${title:60} "
@@ -3526,28 +3534,41 @@ the target and properties of the edge."
                               (propertize "''${todo:15}" 'face 'org-todo))
                           org-roam-database-connector 'sqlite-builtin
                           org-roam-db-gc-threshold most-positive-fixnum
-
+                          my-org-roam-max-file-slug-chars 80
                           org-roam-capture-templates '(
 
                             ("i" "Capture into note")
                             ("iq" "capture into note: quote" plain
                               "\n#+begin_quote :source-link %a :date %U\n%i\n#+end_quote\n%?"
-                              :target (file "''${id}-''${slug}___%(concat my-memx-version).org")
+                              :target (file "''${id}-%(my-trim-slug \"''${slug}\" my-org-roam-max-file-slug-chars)___%(concat my-memx-version).org")
                             :unnarrowed)
                             ("it" "capture into note: transclude" plain
                               "\n#+transclude: %a %?"
-                            :target (file "''${id}-''${slug}___%(concat my-memx-version).org")
+                            :target (file "''${id}-%(my-trim-slug \"''${slug}\" my-org-roam-max-file-slug-chars)___%(concat my-memx-version).org")
                             :unnarrowed)
-                          ("p" "new: plain note" plain
+                          ("p" "New: find no edit (not for insert)" plain
                             "%?"
-                            :target (file+head "''${id}-''${slug}___%(concat my-memx-version).org"
+                            :target (file+head "''${id}-%(substring \"''${slug}\" my-org-roam-max-file-slug-chars)___%(concat my-memx-version).org"
 "* SPARK ''${title}  :%(concat my-memx-version):
 :PROPERTIES:
 :ID: ''${id}-''${slug}
 :ROAM_ALIASES:
 :CREATED: %U
 :END:
-"))
+")
+                          :immediate-finish)
+                          ("j" "New: find edit or insert no edit" plain
+                            "%?"
+                            :target (file+head "''${id}-%(substring \"''${slug}\" 0 (min my-org-roam-max-file-slug-chars (length \"''${slug}\")))___%(concat my-memx-version).org"
+"* SPARK ''${title}  :%(concat my-memx-version):
+:PROPERTIES:
+:ID: ''${id}-''${slug}
+:ROAM_ALIASES:
+:CREATED: %U
+:END:
+")
+                          :immediate-finish
+                          :jump-to-captured)
 ;
 ;
 ;                            ("T" "CITAR: new CITE note" plain
