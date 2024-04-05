@@ -2403,6 +2403,31 @@ screen:TREE=PID PPID USER Command
                     isend-mode = {
                       enable = true;
                     };
+                agenix = {
+                  enable = true;
+                  extraPackages = [ pkgs.rage pkgs.pinentry-emacs ];
+                  config = ''
+                        (setq agenix-age-program "rage"
+                           agenix-key-files
+                             '(
+                               "/home/phil/.ssh/id_phil_prime_ai_nixos_ed25519"
+                             ))
+                      '';
+                };
+                age = {
+                  enable = true;
+                  extraPackages = [ pkgs.rage pkgs.pinentry-emacs ];
+                  config = ''
+                        (age-file-enable)
+                      '';
+                  extraConfig = ''
+                        :custom (age-program "rage")
+                           (age-default-identity `(,(expand-file-name "~/.ssh/id_phil_prime_ai_nixos_ed25519")))
+                           (age-default-recipient `(,(expand-file-name "~/.ssh/id_phil_prime_ai_nixos_ed25519.pub")))
+                          (age-always-use-default-keys nil)
+                          (age-pinentry-mode 'ask)
+                      '';
+                };
                     magit = {
                       enable = true;
                       config = ''
@@ -2418,6 +2443,37 @@ screen:TREE=PID PPID USER Command
                     git-timemachine = {
                       enable = true;
                     };
+                git-gutter = {
+                  enable = true;
+                  config = ''
+                    (setq git-gutter:update-interval 5)
+                    ;(set-face-foreground 'git-gutter:added "#00FF00")
+                  '';
+                  hook = [
+                    "(prog-mode . git-gutter-mode)"
+                    "(org-mode . git-gutter-mode)"
+                  ];
+                  # extraConfig = ''
+                  #       :custom
+                  #         ;(git-gutter:window-width 2)
+                  #         ;(git-gutter:modified-sign (nerd-icons-octicon "nf-oct-diff_modified"))
+                  #         ;(git-gutter:added-sign (nerd-icons-octicon "nf-oct-diff_added"))
+                  #         ;(git-gutter:deleted-sign (nerd-icons-octicon "nf-oct-diff_removed"))
+                  # '';
+                };
+                git-gutter-fringe = {
+                  enable = false;
+                  config = ''
+                    (define-fringe-bitmap 'git-gutter-fr:added [#b11100000] nil nil '(center repeated))
+                    (define-fringe-bitmap 'git-gutter-fr:modified [#b11100000] nil nil '(center repeated))
+                    (define-fringe-bitmap 'git-gutter-fr:added [#b10000000
+                                                                #b11000000
+                                                                #b11100000
+                                                                #b11110000] nil nil 'bottom)
+
+
+                  '';
+                };
                     vterm = {
                       enable = true;
                     };
