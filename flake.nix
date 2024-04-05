@@ -164,17 +164,21 @@
           {
             nixpkgs.config.allowUnfree = true;
           };
-        openssh = {config, pkgs, ...}:
-        {
-          #Enable OpenSSH daemon
-          #Primary use here is for agenix.
-          #Enabling openssh creates host keys, which agenix uses for secrets
-          #password entry is therefore disabled, and firewall ports are not opened
-          services.openssh = {
-            enable = true;
-            settings.PasswordAuthentication = false;
-            openFirewall = false;
+        udisks = {config, pkgs, ...}:
+          {
+            services.udisks2.enable = true;
           };
+        openssh = {config, pkgs, ...}:
+          {
+            #Enable OpenSSH daemon
+            #Primary use here is for agenix.
+            #Enabling openssh creates host keys, which agenix uses for secrets
+            #password entry is therefore disabled, and firewall ports are not opened
+            services.openssh = {
+              enable = true;
+              settings.PasswordAuthentication = false;
+              openFirewall = false;
+            };
 
           programs.ssh = {
             #agentTimeout = "1h"; #request passphrase for keys every hour
