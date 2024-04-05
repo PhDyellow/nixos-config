@@ -3131,8 +3131,12 @@ a communication channel."
                           :super-groups (
                             (:name "Values"
 												     :tag "VALUE")
+                            (:name "Dangling Goals (No tasks blocking Goal)"
+                             :and (:todo "GOAL"
+                                   :not (:pred (lambda (item)
+																 (my-org-agenda-blocked-p item)))))
 									          (:todo "GOAL"
-												     :name "Unachieved Goals")
+												     :name "Active Goals")
                             (:name "Blocked Deadlines"
                              :and (:pred (lambda (item)
 																 (my-org-agenda-blocked-p item))
@@ -3145,7 +3149,7 @@ a communication channel."
                                  :scheduled t))
                             (:name "Scheduled"
                              :scheduled t)
-                            (:name "Unblocked Tasks"
+                            (:name "Next Task (Block some if more than one)"
                              :not (:pred (lambda (item)
 																 (my-org-agenda-blocked-p item))))
                             (:name "Blocked Tasks"
