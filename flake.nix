@@ -4109,7 +4109,29 @@ the target and properties of the edge."
                               org-bibtex-export-arbitrary-fields t
                               org-bibtex-headline-format-function (lambda (entry)
                                 (cdr (assq :key entry))))
+
+
+(defun my-insert-org-bibtex-from-doi (doi)
+	"take a doi, get the bibtex, clean up the bibtex to my liking, then return the formatted org-bibtex entry."
+	(interactive "*sDOI: " org-mode)
+	(let ((biblio-synchronous t)
+				(clean-doi
+				 (string-remove-prefix "doi.org/"
+					(string-remove-prefix "http://"
+					 (string-remove-prefix "https://" doi)))))
+
+		(save-excursion
+			(with-temp-buffer
+				(doi-insert-bibtex clean-doi)
+				(goto-char (point-min))
+				(org-ref-title-case)
+				(bibtex-clean-entry '(4))
+				(org-bibtex-read)))
+
+		(org-bibtex-write)
+	))
                       '';
+
                     };
                     ## Part of helm-bibtex, and used by org-ref
                     helm-bibtex = {
