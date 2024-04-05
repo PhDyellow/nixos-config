@@ -2935,7 +2935,121 @@ screen:TREE=PID PPID USER Command
                       after = [ "org" ];
                       enable = true;
                       config = ''
-                        (setq org-latex-prefer-user-labels t)
+(setq org-latex-prefer-user-labels t)
+
+;; Override some ox-latex functions to support xltabular
+(defun org-latex--org-table (table contents info)
+  "Return appropriate LaTeX code for an Org table.
+
+TABLE is the table type element to transcode.  CONTENTS is its
+contents, as a string.  INFO is a plist used as a communication
+channel.
+
+This function assumes TABLE has `org' as its `:type' property and
+`table' as its `:mode' attribute."
+  (let* ((attr (org-export-read-attribute :attr_latex table))
+	 (alignment (org-latex--align-string table info))
+         (opt (org-export-read-attribute :attr_latex table :options))
+	 (table-env (or (plist-get attr :environment)
+			(plist-get info :latex-default-table-environment)))
+	 (width
+	  (let ((w (plist-get attr :width)))
+	    (cond ((not w) "")
+		  ((member table-env '("tabular" "longtable")) "")
+		  ((member table-env '("tabu" "longtabu"))
+		   (format (if (plist-get attr :spread) " spread %s "
+			     " to %s ")
+			   w))
+		  (t (format "{%s}" w)))))
+	 (caption (org-latex--caption/label-string table info))
+	 (above? (org-latex--caption-above-p table info)))
+    (cond
+     ((member table-env '("longtable" "longtabu" "xltabular"))
+      (let ((fontsize (let ((font (plist-get attr :font)))
+			(and font (concat font "\n")))))
+	(concat (and fontsize (concat "{" fontsize))
+		(format "\\begin{%s}%s{%s}\n" table-env width alignment)
+		(and above?
+		     (org-string-nw-p caption)
+		     (concat caption org-latex-line-break-safe "\n"))
+		contents
+		(and (not above?)
+		     (org-string-nw-p caption)
+		     (concat caption org-latex-line-break-safe "\n"))
+		(format "\\end{%s}" table-env)
+		(and fontsize "}"))))
+     (t
+      (let ((output (format "\\begin{%s}%s%s{%s}\n%s\\end{%s}"
+			    table-env
+                            (if opt (format "[%s]" opt) "")
+			    width
+			    alignment
+			    contents
+			    table-env)))
+	(org-latex--decorate-table output attr caption above? info))))))
+
+(defun org-latex-table-row (table-row contents info)
+  "Transcode a TABLE-ROW element from Org to LaTeX.
+CONTENTS is the contents of the row.  INFO is a plist used as
+a communication channel."
+  (let* ((attr (org-export-read-attribute :attr_latex
+					  (org-export-get-parent table-row)))
+	 (booktabsp (if (plist-member attr :booktabs) (plist-get attr :booktabs)
+		      (plist-get info :latex-tables-booktabs)))
+	 (longtablep
+	  (member (or (plist-get attr :environment)
+		      (plist-get info :latex-default-table-environment))
+		  '("longtable" "xltabular" "longtabu"))))
+    (if (eq (org-element-property :type table-row) 'rule)
+	(cond
+	 ((not booktabsp) "\\hline")
+	 ((not (org-export-get-previous-element table-row info)) "\\toprule")
+	 ((not (org-export-get-next-element table-row info)) "\\bottomrule")
+	 ((and longtablep
+	       (org-export-table-row-ends-header-p
+		(org-export-get-previous-element table-row info) info))
+	  "")
+	 (t "\\midrule"))
+      (concat
+       ;; When BOOKTABS are activated enforce top-rule even when no
+       ;; hline was specifically marked.
+       (and booktabsp (not (org-export-get-previous-element table-row info))
+	    "\\toprule\n")
+       contents org-latex-line-break-safe "\n"
+       (cond
+	;; Special case for long tables.  Define header and footers.
+	((and longtablep (org-export-table-row-ends-header-p table-row info))
+	 (let ((columns (cdr (org-export-table-dimensions
+			      (org-export-get-parent-table table-row) info))))
+	   (format "%s
+\\endfirsthead
+\\multicolumn{%d}{l}{%s} \\\\[0pt]
+%s
+%s \\\\[0pt]\n
+%s
+\\endhead
+%s\\multicolumn{%d}{r}{%s} \\\\
+\\endfoot
+\\endlastfoot"
+		   (if booktabsp "\\midrule" "\\hline")
+		   columns
+		   (org-latex--translate "Continued from previous page" info)
+		   (cond
+		    ((not (org-export-table-row-starts-header-p table-row info))
+		     "")
+		    (booktabsp "\\toprule\n")
+		    (t "\\hline\n"))
+		   contents
+		   (if booktabsp "\\midrule" "\\hline")
+		   (if booktabsp "\\midrule" "\\hline")
+		   columns
+		   (org-latex--translate "Continued on next page" info))))
+	;; When BOOKTABS are activated enforce bottom rule even when
+	;; no hline was specifically marked.
+	((and booktabsp (not (org-export-get-next-element table-row info)))
+	 "\\bottomrule"))))))
+
+
                       '';
                     };
                     ox-html = {
