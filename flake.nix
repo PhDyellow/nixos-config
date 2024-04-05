@@ -2043,8 +2043,14 @@ screen:TREE=PID PPID USER Command
                       enable = true;
                       config = ''
                           (setq epg-pinentry-mode 'loopback)
+                          ;; fix for gnupg 2.4.1 causing authinfo edits to hang
+                          (fset 'epg-wait-for-status 'ignore)
                         '';
                     };
+                arc-mode = {
+                  enable = true;
+                  extraPackages = [ pkgs.p7zip ];
+                };
                     auth-source = {
                       enable = true;
                       config = ''
