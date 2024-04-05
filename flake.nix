@@ -4076,6 +4076,7 @@ the target and properties of the edge."
                           bibtex-autokey-titlewords 3
                           bibtex-autokey-titlewords-stretch 2
                           bibtex-autokey-titleword-length t
+                          bibtex-autokey-titleword-separator "-"
                           bibtex-autokey-year-title-separator ""
 
                           bibtex-include-OPTcrossref '("InProceedings" "InCollection" "InBook")
