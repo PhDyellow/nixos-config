@@ -2193,6 +2193,15 @@ screen:TREE=PID PPID USER Command
 
                         '';
                     };
+                consult-recoll = {
+                  enable = true;
+                  after = [ "consult" "embark" ];
+                  config = ''
+                        (consult-recoll-embark-setup)
+                        (setq consult-recoll-inline-snippets t)
+                      '';
+                  # extraPackages = [ pkgs.recoll ]; # handling in home-manager
+                };
                     embark-consult = {
                       after = [ "embark" "consult" ];
                       enable = true;
