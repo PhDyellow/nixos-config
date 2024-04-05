@@ -2548,14 +2548,16 @@ screen:TREE=PID PPID USER Command
                     consult-dir = {
                       enable = true;
                     };
-                    consult-flymake = {
+                consult-flycheck = {
                       enable = true;
-                      command = [ "consult-flymake"];
+                  command = [ "consult-flycheck"];
                     };
                     flycheck = {
                       enable = true;
                       config = ''
                         (global-flycheck-mode)
+                        (setq flycheck-check-syntax-automatically '(save idle-change)
+                              flycheck-idle-change-delay 5)
                       '';
                     };
                     consult-org = {
