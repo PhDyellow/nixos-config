@@ -962,6 +962,7 @@
                   devices = [
                     "x1_carbon"
                   ];
+                  };
                   synology_nas_admin = {
                     path = "/para/projects/synology_nas_admin___syncthing/";
                     id = "rfra6-xulze";
@@ -973,7 +974,6 @@
                   };
                 };
               };
-            };
             cert = "/secrets/syncthing/cert.pem";
             key = "/secrets/syncthing/key.pem";
           };
@@ -1844,15 +1844,15 @@ screen:TREE=PID PPID USER Command
             extraPackages = epkgs: [
             ];
             overrides = final: prev: {
-              org-ref = prev.org-ref.overrideAttrs (old: {
-                src = pkgs.fetchFromGitHub {
-                  owner = "PhDyellow";
-                  repo = "org-ref";
-                  rev = "11013e702630a6ce2f7fd5da0bc0ac13e53eeea4";
-                  hash = "sha256-friWP2Hyk6aq/+0esnbpI1xr8Z36I3HtXQq5Di0yVzA=";
-                };
-                commit = "11013e702630a6ce2f7fd5da0bc0ac13e53eeea4";
-              });
+              # org-ref = prev.org-ref.overrideAttrs (old: {
+              #   src = pkgs.fetchFromGitHub {
+              #     owner = "PhDyellow";
+              #     repo = "org-ref";
+              #     rev = "11013e702630a6ce2f7fd5da0bc0ac13e53eeea4";
+              #     hash = "sha256-friWP2Hyk6aq/+0esnbpI1xr8Z36I3HtXQq5Di0yVzA=";
+              #   };
+              #   commit = "11013e702630a6ce2f7fd5da0bc0ac13e53eeea4";
+              # });
               org-super-links = prev.emacs.pkgs.trivialBuild {
                 pname = "org-super-links";
                     version = "git";
