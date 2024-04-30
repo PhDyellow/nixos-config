@@ -2352,7 +2352,7 @@ screen:TREE=PID PPID USER Command
                   enable = true;
                 };
                 agenix = {
-                  enable = true;
+                  enable = false;
                   extraPackages = [ pkgs.rage pkgs.pinentry-emacs ];
                   config = ''
                         (setq agenix-age-program "rage"
@@ -2363,7 +2363,7 @@ screen:TREE=PID PPID USER Command
                       '';
                 };
                 age = {
-                  enable = true;
+                  enable = false;
                   extraPackages = [ pkgs.rage pkgs.pinentry-emacs ];
                   config = ''
                         (age-file-enable)
