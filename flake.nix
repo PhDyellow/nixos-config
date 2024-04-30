@@ -412,7 +412,7 @@
             };
           };
         };
-        phil_user = {
+        phil_user = {config, pkgs, ...}: {
           age.secrets.user_phil_pwd_vm.file = ./agenix/user_phil_pwd_vm.age;
             users.users = {
               phil = {
