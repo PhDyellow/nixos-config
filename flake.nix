@@ -1390,7 +1390,7 @@ screen:TREE=PID PPID USER Command
       cli = {
         ryzen_monitor_test = {config, pkgs, ...}:
           {
-            programs.ryzen_monitor_ng.enable = true;
+            programs.ryzen-monitor-ng.enable = true;
           };
 
         # System-wide python
