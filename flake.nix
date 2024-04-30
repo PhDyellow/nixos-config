@@ -4735,6 +4735,7 @@ the target and properties of the edge."
           self.nixosModules.direnv
 
           ## Need to get phil_home in here somehow
+          self.nixosModules.prime-ai.phil_home
 
         ];
       };
