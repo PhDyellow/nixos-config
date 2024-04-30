@@ -379,6 +379,7 @@
 
 
       };
+
       x1carbon-vm = {
         boot = {config, pkgs, ...}: {
           boot = {
@@ -412,6 +413,18 @@
           };
         };
         phil_user = {
+          age.secrets.user_phil_pwd_vm.file = ./agenix/user_phil_pwd_vm.age;
+            users.users = {
+              phil = {
+                isNormalUser = true;
+                extraGroups = ["wheel"];
+                hashedPasswordFile = config.age.secrets.user_phil_pwd_vm.path;
+                uid = 1001;
+                shell = pkgs.fish;
+              };
+            };
+            programs.fish.enable = true;
+
         };
       };
       prime-ai = {
@@ -4665,6 +4678,7 @@ the target and properties of the edge."
           self.nixosModules.system-conf.network_fs
           self.nixosModules.system-conf.wifi_secrets
           self.nixosModules.system-conf.secure_boot
+
           self.nixosModules.system-conf.openssh
           self.nixosModules.system-conf.allow-unfree
           self.nixosModules.system-conf.locale_au
@@ -4695,15 +4709,17 @@ the target and properties of the edge."
       phil-vm = nixpkgs-unstable.lib.nixosSystem {
         system = "x86_64-linux";
         modules = [
+          # vm specific config
           self.nixosModules.x1carbon-vm.boot
           self.nixosModules.x1carbon-vm.networking
           self.nixosModules.x1carbon-vm.trackpad
           self.nixosModules.x1carbon-vm.fs
           self.nixosModules.x1carbon-vm.phil_user
-          self.nixosModules.x1carbon-vm.phil_home
 
+          # Not sure how this fits in
+          inputs.ragenix.nixosModules.age
 
-
+          # general system modules
           self.nixosModules.system-conf.openssh
           self.nixosModules.system-conf.allow-unfree
           self.nixosModules.system-conf.locale_au
@@ -4712,6 +4728,7 @@ the target and properties of the edge."
           self.nixosModules.system-conf.nix-config
           self.nixosModules.system-conf.stateversion
 
+          self.nixosModules.window-managers.hyprland
 
           self.nixosModules.python-system
           self.nixosModules.spell_checkers
