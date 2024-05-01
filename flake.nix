@@ -417,7 +417,7 @@
             };
             "/boot" = {
               fsType = "fat";
-              device = "/dev/disk/by-label/BOOTPART";
+              device = "/dev/disk/by-partlabel/boot";
             };
           };
           swapDevices = [
