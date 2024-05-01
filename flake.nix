@@ -4747,7 +4747,7 @@ the target and properties of the edge."
 
           self.nixosModules.cli.python-system
           self.nixosModules.cli.spell_checkers
-          self.nixosModules.cli.direnv
+          # self.nixosModules.cli.direnv
 
           self.nixosModules.system-conf.network_fs
 
