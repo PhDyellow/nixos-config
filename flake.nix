@@ -416,7 +416,7 @@
               device = "/dev/disk/by-label/nixos";
             };
             "/boot" = {
-              fsType = "fat";
+              fsType = "vfat";
               device = "/dev/disk/by-partlabel/ESP";
             };
           };
