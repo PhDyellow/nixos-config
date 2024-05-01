@@ -410,7 +410,21 @@
               device = "para";
               options = ["rw" "uid=1001" "gid=100"];
             };
+            "/" = {
+              fsType = "btrfs";
+              device = "/dev/disk/by-label/nixos";
+            };
+            "/boot" = {
+              fsType = "fat";
+              device = "/dev/disk/by-label/BOOT";
+            };
           };
+          swapDevices = [
+            {
+              device = "/dev/disk/by-label/swap";
+            }
+          ];
+
         };
         phil_user = {config, pkgs, ...}: {
           age.secrets.user_phil_pwd_vm.file = ./agenix/user_phil_pwd_vm.age;
