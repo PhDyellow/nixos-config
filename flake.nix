@@ -404,7 +404,7 @@
           };
         };
         fs = {config, pkgs, ...}: {
-          boot.initrd.checkJournallingFS = false;
+          boot.initrd.checkJournalingFS = false;
           fileSystems = {
             "/para" = {
               fsType = "vboxsf";
