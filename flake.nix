@@ -4749,6 +4749,8 @@ the target and properties of the edge."
           self.nixosModules.spell_checkers
           self.nixosModules.direnv
 
+          self.nixosModules.system-conf.network_fs
+
           ## Need to get phil_home in here somehow
           self.nixosModules.prime-ai.phil_home
 
