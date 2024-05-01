@@ -4745,9 +4745,9 @@ the target and properties of the edge."
 
           self.nixosModules.window-managers.hyprland
 
-          self.nixosModules.python-system
-          self.nixosModules.spell_checkers
-          self.nixosModules.direnv
+          self.nixosModules.cli.python-system
+          self.nixosModules.cli.spell_checkers
+          self.nixosModules.cli.direnv
 
           self.nixosModules.system-conf.network_fs
 
