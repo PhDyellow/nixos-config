@@ -406,7 +406,7 @@
             twoFingerScroll = true;
           };
         };
-        desktop = config, pkgs, ...}: {
+        desktop = {config, pkgs, ...}: {
           services.xserver.displayManager.lightdm.enable = true;
           services.xserver.displayManager.defaultSession = "none+dwm";
           services.xserver.windowManager.dwm.enable = true;
