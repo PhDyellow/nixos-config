@@ -406,6 +406,12 @@
             twoFingerScroll = true;
           };
         };
+        desktop = config, pkgs, ...}: {
+          services.xserver.displayManager.lightdm.enable = true;
+          services.xserver.displayManager.defaultSession = "none+dwm";
+          services.xserver.windowManager.dwm.enable = true;
+
+        };
         fs = {config, pkgs, ...}: {
           boot.initrd.checkJournalingFS = false;
           fileSystems = {
@@ -4731,6 +4737,7 @@ the target and properties of the edge."
           self.nixosModules.x1carbon-vm.boot
           self.nixosModules.x1carbon-vm.networking
           self.nixosModules.x1carbon-vm.trackpad
+          self.nixosModules.x1carbon-vm.desktop
           self.nixosModules.x1carbon-vm.fs
           self.nixosModules.x1carbon-vm.phil_user
           self.nixosModules.x1carbon-vm.vm-settings
@@ -4748,7 +4755,7 @@ the target and properties of the edge."
           self.nixosModules.system-conf.stateversion
 
           # self.nixosModules.window-managers.hyprland
-          self.nixosModules.window-managers.xfce_desktop
+          # self.nixosModules.window-managers.xfce_desktop
 
           self.nixosModules.cli.python-system
           self.nixosModules.cli.spell_checkers
