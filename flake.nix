@@ -416,7 +416,21 @@
           services.xserver.windowManager.dwm.enable = true;
         };
         fs = {config, pkgs, ...}: {
-          boot.initrd.checkJournalingFS = false;
+          boot.initrd = {
+            checkJournalingFS = false;
+            availableKernelModules = [
+              "xhci_pci"
+              "ahci"
+              "nvme"
+              "sd_mod"
+              "sr_mod"
+            ];
+            kernelModules = [];
+          };
+          boot = {
+            kernelModules = [];
+            extraModulePackages = [];
+          };
           fileSystems = {
             "/para" = {
               fsType = "vboxsf";
