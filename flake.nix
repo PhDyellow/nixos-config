@@ -405,6 +405,9 @@
             enable = true;
             twoFingerScroll = true;
           };
+          # libinput is incompatible with synaptics, but is not disabled when
+          # synaptics is enabled
+          services.xserver.libinput.enable = false;
         };
         desktop = {config, pkgs, ...}: {
           services.xserver.enable = true;
