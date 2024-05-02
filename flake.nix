@@ -381,6 +381,9 @@
       };
 
       x1carbon-vm = {
+        vm-settings = {config, pkgs, ...}: {
+          virtualisation.virtualbox.guest.enable = true;
+        };
         boot = {config, pkgs, ...}: {
           boot = {
             kernelModules = ["kvm-intel"];
@@ -4730,6 +4733,7 @@ the target and properties of the edge."
           self.nixosModules.x1carbon-vm.trackpad
           self.nixosModules.x1carbon-vm.fs
           self.nixosModules.x1carbon-vm.phil_user
+          self.nixosModules.x1carbon-vm.vm-settings
 
           # Not sure how this fits in
           inputs.ragenix.nixosModules.age
