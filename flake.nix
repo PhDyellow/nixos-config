@@ -1336,9 +1336,10 @@ screen:TREE=PID PPID USER Command
                 xterm.enable = false;
                 xfce.enable = true;
               };
-              displayManager.defaultSession = "xfce";
+
               dpi = 300;
             };
+            services.displayManager.defaultSession = "xfce";
           };
 
         hyprland = {config, pkgs, ...}:
@@ -4771,8 +4772,8 @@ the target and properties of the edge."
           self.nixosModules.system-conf.nix-config
           self.nixosModules.system-conf.stateversion
 
-          # self.nixosModules.window-managers.hyprland
-          self.nixosModules.window-managers.xfce_desktop
+          self.nixosModules.window-managers.hyprland
+          # self.nixosModules.window-managers.xfce_desktop
 
           self.nixosModules.cli.python-system
           self.nixosModules.cli.spell_checkers
