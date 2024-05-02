@@ -4743,11 +4743,12 @@ the target and properties of the edge."
           self.nixosModules.system-conf.allow-unfree
           self.nixosModules.system-conf.locale_au
           self.nixosModules.system-conf.fonts
-          # self.nixosModules.system-conf.lock-root
+          self.nixosModules.system-conf.lock-root
           self.nixosModules.system-conf.nix-config
           self.nixosModules.system-conf.stateversion
 
-          self.nixosModules.window-managers.hyprland
+          # self.nixosModules.window-managers.hyprland
+          self.nixosModules.window-managers.xfce_desktop
 
           self.nixosModules.cli.python-system
           self.nixosModules.cli.spell_checkers
