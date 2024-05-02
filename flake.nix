@@ -1329,17 +1329,27 @@ screen:TREE=PID PPID USER Command
       window-managers = {
         xfce_desktop = {config, pkgs, ...}:
           {
-            services.xserver.windowManager.dwm.enable = true;
             services.xserver = {
               enable = true;
               desktopManager = {
                 xterm.enable = false;
-                xfce.enable = true;
+                xfce = {
+                  enable = true;
+                  noDesktop = true;
+                  enableXfwm = false;
+                };
               };
-
+              windowManager.i3 = {
+              enable = true;
+              extraPackages = with pkgs; [
+                dmenu
+                i3status
+              ];
+            };
               dpi = 300;
             };
-            services.displayManager.defaultSession = "xfce";
+            services.displayManager.defaultSession = "xfce+i3";
+            services.xserver.displayManager.lightdm.enable = true;
           };
 
         hyprland = {config, pkgs, ...}:
@@ -4772,8 +4782,8 @@ the target and properties of the edge."
           self.nixosModules.system-conf.nix-config
           self.nixosModules.system-conf.stateversion
 
-          self.nixosModules.window-managers.hyprland
-          # self.nixosModules.window-managers.xfce_desktop
+          # self.nixosModules.window-managers.hyprland
+          self.nixosModules.window-managers.xfce_desktop
 
           self.nixosModules.cli.python-system
           self.nixosModules.cli.spell_checkers
