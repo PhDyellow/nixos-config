@@ -407,12 +407,12 @@
           };
           # libinput is incompatible with synaptics, but is not disabled when
           # synaptics is enabled
-          services.xserver.libinput.enable = false;
+          services.libinput.enable = false;
         };
         desktop = {config, pkgs, ...}: {
           services.xserver.enable = true;
-          services.xserver.displayManager.lightdm.enable = true;
-          services.xserver.displayManager.defaultSession = "none+dwm";
+          services.displayManager.lightdm.enable = true;
+          services.displayManager.defaultSession = "none+dwm";
           services.xserver.windowManager.dwm.enable = true;
         };
         fs = {config, pkgs, ...}: {
