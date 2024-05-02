@@ -407,10 +407,10 @@
           };
         };
         desktop = {config, pkgs, ...}: {
+          services.xserver.enable = true;
           services.xserver.displayManager.lightdm.enable = true;
           services.xserver.displayManager.defaultSession = "none+dwm";
           services.xserver.windowManager.dwm.enable = true;
-
         };
         fs = {config, pkgs, ...}: {
           boot.initrd.checkJournalingFS = false;
