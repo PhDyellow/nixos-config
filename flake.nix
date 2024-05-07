@@ -1349,7 +1349,7 @@ screen:TREE=PID PPID USER Command
               # dpi = 300;
             };
             services.displayManager.defaultSession = "xfce";
-            # services.xserver.displayManager.lightdm.enable = true;
+            services.xserver.displayManager.lightdm.enable = true;
           };
 
         hyprland = {config, pkgs, ...}:
