@@ -1327,6 +1327,19 @@ screen:TREE=PID PPID USER Command
       #ssh_public_config
 
       window-managers = {
+        sway = {config, pkgs, ...}: {
+          services.gnome.gnome-keyring.enable = true;
+          environment.systemPackages = with pkgs; [
+            grim
+            slurp
+            wl-clipboard
+            mako
+          ];
+          programs.sway = {
+            enable = true;
+            wrapperFeatures.gtk = true;
+          };
+        };
         xfce_desktop = {config, pkgs, ...}:
           {
             services.xserver = {
@@ -4792,7 +4805,8 @@ the target and properties of the edge."
           self.nixosModules.system-conf.stateversion
 
           # self.nixosModules.window-managers.hyprland
-          self.nixosModules.window-managers.xfce_desktop
+          # self.nixosModules.window-managers.xfce_desktop
+          self.nixosModules.window-managers.sway
 
           self.nixosModules.cli.python-system
           self.nixosModules.cli.spell_checkers
