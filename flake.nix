@@ -1349,7 +1349,16 @@ screen:TREE=PID PPID USER Command
               # dpi = 300;
             };
             services.displayManager.defaultSession = "xfce";
-            services.xserver.displayManager.lightdm.enable = true;
+            services.greetd = {
+              enable = true;
+              settings = {
+                default_session = {
+                  command = "${pkgs.greetd.tuigreet}/bin/tuigreet -t -r -g 'Init: Prime-AI' --cmd Hyprland";
+                  user = "phil";
+                };
+              };
+            };
+            # services.xserver.displayManager.lightdm.enable = true;
           };
 
         hyprland = {config, pkgs, ...}:
