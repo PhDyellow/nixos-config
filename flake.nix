@@ -1335,21 +1335,21 @@ screen:TREE=PID PPID USER Command
                 xterm.enable = false;
                 xfce = {
                   enable = true;
-                  noDesktop = true;
-                  enableXfwm = false;
+                  # noDesktop = true;
+                  # enableXfwm = false;
                 };
               };
-              windowManager.i3 = {
-              enable = true;
-              extraPackages = with pkgs; [
-                dmenu
-                i3status
-              ];
+              # windowManager.i3 = {
+              # enable = true;
+              # extraPackages = with pkgs; [
+                # dmenu
+                # i3status
+              # ];
+              # };
+              # dpi = 300;
             };
-              dpi = 300;
-            };
-            services.displayManager.defaultSession = "xfce+i3";
-            services.xserver.displayManager.lightdm.enable = true;
+            services.displayManager.defaultSession = "xfce";
+            # services.xserver.displayManager.lightdm.enable = true;
           };
 
         hyprland = {config, pkgs, ...}:
