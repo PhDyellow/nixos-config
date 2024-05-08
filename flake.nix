@@ -1435,7 +1435,8 @@ bar {
               };
             in
               [
-                "--config ${custom-config-vm}"
+                "--config"
+                "${custom-config-vm}"
               ];
         };
         xfce_desktop = {config, pkgs, ...}:
