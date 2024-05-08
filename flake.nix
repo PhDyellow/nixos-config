@@ -1334,11 +1334,24 @@ screen:TREE=PID PPID USER Command
             slurp
             wl-clipboard
             mako
+            foot
           ];
           programs.sway = {
             enable = true;
             wrapperFeatures.gtk = true;
           };
+        };
+        sway-config-vm = {config, pkgs, ...}: {
+          programs.sway.extraOptions =
+            let
+              custom-config-vm = writeTextFile {
+                name = "sway-config-vm";
+                text = "mod1";
+              };
+            in
+              [
+                "--config ${custom-config-vm}"
+              ];
         };
         xfce_desktop = {config, pkgs, ...}:
           {
