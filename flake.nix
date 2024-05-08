@@ -4905,6 +4905,7 @@ the target and properties of the edge."
           # self.nixosModules.window-managers.hyprland
           # self.nixosModules.window-managers.xfce_desktop
           self.nixosModules.window-managers.sway
+          self.nixosModules.window-managers.sway-config-vm
 
           self.nixosModules.cli.python-system
           self.nixosModules.cli.spell_checkers
