@@ -4919,6 +4919,46 @@ the target and properties of the edge."
 
         ];
       };
+      phil-vm-bootstrap = nixpkgs-unstable.lib.nixosSystem {
+        system = "x86_64-linux";
+        modules = [
+          # vm specific config
+          self.nixosModules.x1carbon-vm.boot
+          self.nixosModules.x1carbon-vm.networking
+          self.nixosModules.x1carbon-vm.trackpad
+          # self.nixosModules.x1carbon-vm.desktop
+          self.nixosModules.x1carbon-vm.fs
+          self.nixosModules.x1carbon-vm.phil_user
+          self.nixosModules.x1carbon-vm.vm-settings
+
+          # Not sure how this fits in
+          inputs.ragenix.nixosModules.age
+
+          # general system modules
+          self.nixosModules.system-conf.openssh
+          self.nixosModules.system-conf.allow-unfree
+          self.nixosModules.system-conf.locale_au
+          self.nixosModules.system-conf.fonts
+          self.nixosModules.system-conf.lock-root
+          self.nixosModules.system-conf.nix-config
+          self.nixosModules.system-conf.stateversion
+
+          # self.nixosModules.window-managers.hyprland
+          # self.nixosModules.window-managers.xfce_desktop
+          self.nixosModules.window-managers.sway
+          self.nixosModules.window-managers.sway-config-vm
+
+          self.nixosModules.cli.python-system
+          self.nixosModules.cli.spell_checkers
+          # self.nixosModules.cli.direnv
+
+          self.nixosModules.system-conf.network_fs
+
+          ## Need to get phil_home in here somehow
+          # self.nixosModules.prime-ai.phil_home
+
+        ];
+      };
 
     };
     nixOnDroidConfigurations = {
