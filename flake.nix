@@ -4904,6 +4904,7 @@ the target and properties of the edge."
           self.nixosModules.system-conf.lock-root
           self.nixosModules.system-conf.nix-config
           self.nixosModules.system-conf.stateversion
+          self.nixosModules.system-conf.cli
 
           # self.nixosModules.window-managers.hyprland
           # self.nixosModules.window-managers.xfce_desktop
