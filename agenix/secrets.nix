@@ -2,7 +2,7 @@ let
   prime-ai = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKXuv00yB0lA43P4HGyTkund20jlbZvmV88uT3XcRRJM";
   prime-ai-phil = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDi6zlsK1OVU71zsgMRBzF48XKIj6zo24WCOYA+VrKir";
   nixos-vm-i = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIAtI8IJwwmeUSBwsGEPdiTo1f16Gi7miMpdUl1zSVh8N";
-  nixos-vm-i-phil = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIBUBlCSiXpi3WHEPimV4jh3KYznNnJOOCwmZtinlCo1";
+  nixos-vm-i-phil = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIBUBlCSiXpi3WHEPimV4jh3KYznNnJOOCwmZtinlCo1A";
   users-only = [nixos-vm-i-phil prime-ai-phil];
   all-prime-ai = [prime-ai prime-ai-phil];
   all-vm = [nixos-vm-i nixos-vm-i-phil];
