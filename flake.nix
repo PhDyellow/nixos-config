@@ -712,8 +712,8 @@
           '';
               initrd = {
                 luks.devices."nixos-crypt".device =
-                  "dev/disk/by-uuid/c4129dcf-90da-4d0c-8da9-880b9c111e6f";
-
+                  # "dev/disk/by-uuid/c4129dcf-90da-4d0c-8da9-880b9c111e6f";
+                  "dev/disk/by-partlabel/nixos";
                 availableKernelModules = [
                   "nvme"
                   "xhci_pci"
@@ -747,7 +747,8 @@
                 fsType = "btrfs";
               };
               "/boot" = {
-                device = "/dev/disk/by-partuuid/5a687aae-d3c0-4f4e-b580-5ce32bec51b2";
+                # device = "/dev/disk/by-partuuid/5a687aae-d3c0-4f4e-b580-5ce32bec51b2";
+                device = "/dev/disk/by-label/EFIBOOT";
                 fsType = "vfat";
               };
             };
@@ -845,7 +846,8 @@
             environment.etc.crypttab = {
               enable = true;
               text = ''
-            para-crypt /dev/disk/by-partuuid/1b5333c3-9421-44d5-8d21-fc2f22c8cbe3 /secrets/bitlocker/para.bek bitlk
+            # para-crypt /dev/disk/by-partuuid/1b5333c3-9421-44d5-8d21-fc2f22c8cbe3 /secrets/bitlocker/para.bek bitlk
+            para-crypt /dev/disk/by-partlabel/PARA /secrets/bitlocker/para.bek bitlk
           '';
             };
           };
