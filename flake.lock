@@ -1143,11 +1143,11 @@
     },
     "nixpkgs-unstable": {
       "locked": {
-        "lastModified": 1715318091,
-        "narHash": "sha256-MuXu6H2jKHRxw2BUaepNLUvFZiIuzZxsvKygFS+V5bo=",
+        "lastModified": 1715320268,
+        "narHash": "sha256-7VXvSSVn7VZi9yfdkos3avRTKrvW8vsVruGdmtoFUk0=",
         "owner": "PhDyellow",
         "repo": "nixpkgs",
-        "rev": "d2211ee28cb6de99311adf2604138be7121eadb8",
+        "rev": "830b8cf1f26fb657334c1478f4a5258f0aff70fb",
         "type": "github"
       },
       "original": {
