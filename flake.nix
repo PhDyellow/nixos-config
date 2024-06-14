@@ -124,6 +124,8 @@
       url = "sourcehut:~l3kn/org-fc/main";
       flake = false;
     };
+    org-roam-review = {
+      url = "github:chrisbarrett/nursery/main?dir=lisp";
       flake = false;
     };
   };

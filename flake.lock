@@ -1404,6 +1404,25 @@
         "type": "github"
       }
     },
+    "org-roam-review": {
+      "flake": false,
+      "locked": {
+        "dir": "lisp",
+        "lastModified": 1714726259,
+        "narHash": "sha256-x+/TTSdHzQ+GKHV6jgvoQrwZCH4cZQfQGKDIBzFbJRw=",
+        "owner": "chrisbarrett",
+        "repo": "nursery",
+        "rev": "00a169c75b934a2eb42ea8620e8eebf34577d4ca",
+        "type": "github"
+      },
+      "original": {
+        "dir": "lisp",
+        "owner": "chrisbarrett",
+        "ref": "main",
+        "repo": "nursery",
+        "type": "github"
+      }
+    },
     "org-slt-phdyellow": {
       "flake": false,
       "locked": {
@@ -1606,6 +1625,7 @@
         "org-fc": "org-fc",
         "org-linker": "org-linker",
         "org-linker-edna": "org-linker-edna",
+        "org-roam-review": "org-roam-review",
         "org-slt-phdyellow": "org-slt-phdyellow",
         "org-sltypes": "org-sltypes",
         "org-super-links": "org-super-links",
