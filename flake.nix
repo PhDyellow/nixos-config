@@ -2953,6 +2953,14 @@ bar {
                           (which-key-mode)
                         '';
                 };
+                org-drill = {
+                  enable = true;
+                  config = ''
+                    (setq org-drill-scope 'directory
+                          org-drill-add-random-noise-to-intervals-p t
+                          org-drill-adjust-intervals-for-early-and-late-repetitions-p t)
+                          '';
+                };
                 org = {
                   enable = true;
                   demand = true;
