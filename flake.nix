@@ -2088,8 +2088,8 @@ bar {
                 ];
                 preInstall = ''
                   LISPDIR=$out/share/emacs/site-lisp
-                  install -d $LISPDIR
-                  install awk $LISPDIR
+                  mkdir -p $LISPDIR
+                  cp -R awk $LISPDIR
                 '';
               };
             };
