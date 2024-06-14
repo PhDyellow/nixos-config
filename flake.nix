@@ -2075,7 +2075,7 @@ bar {
               # version = "1.2.0";
               # src = inputs.denote;
               # };
-              org-fc = prev.emacs.pks.trivialBuild {
+              org-fc = prev.emacs.pkgs.trivialBuild {
                 pname = "org-fc";
                 version = 0.6.2;
                 src = inputs.org-fc;
