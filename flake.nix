@@ -2080,6 +2080,7 @@ bar {
               # version = "1.2.0";
               # src = inputs.denote;
               # };
+              # Org-fc should probably use a melpabuilder
               org-fc = prev.emacs.pkgs.trivialBuild {
                 pname = "org-fc";
                 version = "0.6.2";
