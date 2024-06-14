@@ -2079,6 +2079,9 @@ bar {
                 pname = "org-fc";
                 version = "0.6.2";
                 src = inputs.org-fc;
+                packageRequires = [
+                  final.hydra
+                ];
               };
             };
             init = {
