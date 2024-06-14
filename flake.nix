@@ -121,7 +121,9 @@
       flake = false;
     };
     org-fc = {
-      url = "github:l3kn/org-fc/main";
+      url = "sourcehut:~l3kn/org-fc/main";
+      flake = false;
+    };
       flake = false;
     };
   };
@@ -2082,6 +2084,11 @@ bar {
                 packageRequires = [
                   final.hydra
                 ];
+                preInstall = ''
+                  LISPDIR=$out/share/emacs/site-lisp
+                  install -d $LISPDIR
+                  install awk $LISPDIR
+                '';
               };
             };
             init = {

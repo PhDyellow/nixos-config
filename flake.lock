@@ -1360,16 +1360,16 @@
       "locked": {
         "lastModified": 1717172793,
         "narHash": "sha256-wzMSgS4iZfpKOICqQQuQYNPb2h7i4tTWsMs7mVmgBt8=",
-        "owner": "l3kn",
+        "owner": "~l3kn",
         "repo": "org-fc",
         "rev": "cc191458a991138bdba53328690a569b8b563502",
-        "type": "github"
+        "type": "sourcehut"
       },
       "original": {
-        "owner": "l3kn",
+        "owner": "~l3kn",
         "ref": "main",
         "repo": "org-fc",
-        "type": "github"
+        "type": "sourcehut"
       }
     },
     "org-linker": {
