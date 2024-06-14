@@ -120,6 +120,10 @@
       url = "github:nobiot/org-transclusion/main";
       flake = false;
     };
+    org-fc = {
+      url = "github:i3kn/org-fc/main";
+      flake = false;
+    };
   };
 
   outputs = {self, nixpkgs-unstable, ...}@inputs: {
@@ -2071,6 +2075,11 @@ bar {
               # version = "1.2.0";
               # src = inputs.denote;
               # };
+              org-fc = prev.emacs.pks.trivialBuild {
+                pname = "org-fc";
+                version = 0.6.2;
+                src = inputs.org-fc;
+              };
             };
             init = {
               enable = true;
@@ -2960,6 +2969,19 @@ bar {
                           org-drill-add-random-noise-to-intervals-p t
                           org-drill-adjust-intervals-for-early-and-late-repetitions-p t)
                           '';
+                };
+                hydra = {
+                  enable = true;
+                };
+                org-fc = {
+                  enable = true;
+                  after = [ "hydra" ];
+                  config = ''
+                    (require 'org-fc-hydra)
+                  '';
+                  extraConfig = ''
+                    :custom (org-fc-directories `(,my-memx-dir))
+                  '';
                 };
                 org = {
                   enable = true;
