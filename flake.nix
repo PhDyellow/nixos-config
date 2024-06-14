@@ -124,7 +124,8 @@
       url = "sourcehut:~l3kn/org-fc/main";
       flake = false;
     };
-    org-roam-review = {
+    # Primarily for org-roam-review
+    chrisbarrett-nursery = {
       url = "github:chrisbarrett/nursery/main?dir=lisp";
       flake = false;
     };
@@ -2092,6 +2093,19 @@ bar {
                   cp -R awk $LISPDIR
                 '';
               };
+              chrisbarrett-nursery = prev.emacs.pkgs.trivialBuild {
+                pname = "chrisbarrett-nursery";
+                version = "0.0.1";
+
+                src = inputs.chrisbarrett-nursery;
+
+                packageRequires = [
+                  final.dash
+                  final.org-drill
+                  final.org-roam
+                  final.ts
+                ];
+              };
             };
             init = {
               enable = true;
@@ -2981,6 +2995,9 @@ bar {
                           org-drill-add-random-noise-to-intervals-p t
                           org-drill-adjust-intervals-for-early-and-late-repetitions-p t)
                           '';
+                };
+                org-roam-review = {
+                  enable = true;
                 };
                 hydra = {
                   enable = true;
