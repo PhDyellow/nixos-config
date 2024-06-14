@@ -121,7 +121,7 @@
       flake = false;
     };
     org-fc = {
-      url = "github:i3kn/org-fc/main";
+      url = "github:l3kn/org-fc/main";
       flake = false;
     };
   };
