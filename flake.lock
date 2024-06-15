@@ -86,7 +86,6 @@
     "chrisbarrett-nursery": {
       "flake": false,
       "locked": {
-        "dir": "lisp",
         "lastModified": 1714726259,
         "narHash": "sha256-x+/TTSdHzQ+GKHV6jgvoQrwZCH4cZQfQGKDIBzFbJRw=",
         "owner": "chrisbarrett",
@@ -95,7 +94,6 @@
         "type": "github"
       },
       "original": {
-        "dir": "lisp",
         "owner": "chrisbarrett",
         "ref": "main",
         "repo": "nursery",
