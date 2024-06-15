@@ -126,7 +126,7 @@
     };
     # Primarily for org-roam-review
     chrisbarrett-nursery = {
-      url = "github:chrisbarrett/nursery/main?dir=lisp";
+      url = "github:chrisbarrett/nursery/main";
       flake = false;
     };
   };
@@ -2094,7 +2094,9 @@ bar {
                   cp -R awk $LISPDIR
                 '';
               };
-              chrisbarrett-nursery = prev.emacs.pkgs.trivialBuild {
+              # trivialBuild assumes all list files are in the root dir
+              # Using melpaBuild
+              chrisbarrett-nursery = prev.emacs.pkgs.melpaBuild {
                 pname = "chrisbarrett-nursery";
                 version = "git";
 
@@ -2106,6 +2108,12 @@ bar {
                   final.org-roam
                   final.ts
                 ];
+                recipe = pkgs.writeText "recipe" ''
+                  (chrisbarrett-nursery
+                    :repo "chrisbarrett/nursery"
+                    :fetcher github
+                    :files ("lisp/*.el"))
+                '';
               };
             };
             init = {
