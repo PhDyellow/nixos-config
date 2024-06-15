@@ -2111,6 +2111,8 @@ bar {
                   final.ts
                   final.ht
                   final.consult
+                  final.async
+                  final.f
                 ];
 
               };
