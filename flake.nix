@@ -2109,6 +2109,8 @@ bar {
                   final.org-drill
                   final.org-roam
                   final.ts
+                  final.ht
+                  final.consult
                 ];
 
               };
