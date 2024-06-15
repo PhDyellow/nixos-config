@@ -2096,11 +2096,13 @@ bar {
               };
               # trivialBuild assumes all list files are in the root dir
               # Using melpaBuild
-              chrisbarrett-nursery = prev.emacs.pkgs.melpaBuild {
+              # melpaBuild is more complex than expected, trying
+              # path concatenation
+              chrisbarrett-nursery = prev.emacs.pkgs.trivialBuild {
                 pname = "chrisbarrett-nursery";
                 version = "git";
 
-                src = inputs.chrisbarrett-nursery;
+                src = inputs.chrisbarrett-nursery + "/lisp";
 
                 packageRequires = [
                   final.dash
@@ -2108,12 +2110,7 @@ bar {
                   final.org-roam
                   final.ts
                 ];
-                recipe = pkgs.writeText "recipe" ''
-                  (chrisbarrett-nursery
-                    :repo "chrisbarrett/nursery"
-                    :fetcher github
-                    :files ("lisp/*.el"))
-                '';
+
               };
             };
             init = {
