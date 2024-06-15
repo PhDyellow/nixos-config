@@ -2115,6 +2115,7 @@ bar {
                   final.f
                   final.org-transclusion
                   final.magit
+                  final.pcre2el
                 ];
 
               };
