@@ -2114,7 +2114,6 @@ bar {
                   final.async
                   final.f
                   final.org-transclusion
-                  final.magit-diff
                   final.magit
                 ];
 
