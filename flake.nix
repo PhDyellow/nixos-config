@@ -2083,7 +2083,7 @@ bar {
               # Org-fc should probably use a melpabuilder
               org-fc = prev.emacs.pkgs.trivialBuild {
                 pname = "org-fc";
-                version = "0.6.2";
+                version = "git";
                 src = inputs.org-fc;
                 packageRequires = [
                   final.hydra
@@ -2096,7 +2096,7 @@ bar {
               };
               chrisbarrett-nursery = prev.emacs.pkgs.trivialBuild {
                 pname = "chrisbarrett-nursery";
-                version = "0.0.1";
+                version = "git";
 
                 src = inputs.chrisbarrett-nursery;
 
