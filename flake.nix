@@ -2999,7 +2999,7 @@ bar {
                 };
                 org-roam-review = {
                   enable = true;
-                  package = epkgs.chrisbarrette-nursery;
+                  package = pkgs.emacs.pkgs.chrisbarrett-nursery;
                 };
                 hydra = {
                   enable = true;
