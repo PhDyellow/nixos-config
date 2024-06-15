@@ -2999,7 +2999,7 @@ bar {
                 };
                 org-roam-review = {
                   enable = true;
-                  package = chrisbarrett-nursery;
+                  package = "chrisbarrett-nursery";
                 };
                 hydra = {
                   enable = true;
