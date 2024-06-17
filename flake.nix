@@ -3003,7 +3003,7 @@ bar {
                         '';
                 };
                 org-drill = {
-                  enable = true;
+                  enable = false;
                   config = ''
                     (setq org-drill-scope 'directory
                           org-drill-add-random-noise-to-intervals-p t
