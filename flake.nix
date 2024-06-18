@@ -3013,6 +3013,32 @@ bar {
                 org-roam-review = {
                   enable = true;
                   package = "chrisbarrett-nursery";
+                  config = ''
+                    ;; org-roam-review assumes notes are file notes
+                    ;; below is a modified org-roam-review-list-due
+                    ;; function that also allows heading notes
+
+(defun org-roam-review-list-due ()
+  "List nodes that are due for review."
+  (interactive)
+  (display-buffer
+   (org-roam-review-create-buffer
+    :title "Due Notes"
+    :instructions "The nodes below are due for review.
+Read each node and add new thoughts and connections, then mark
+them as reviewed with `org-roam-review-accept',
+`org-roam-review-bury' or by updating their maturity."
+    :placeholder (concat (propertize "You're up-to-date!" 'face 'font-lock-comment-face) " 😸")
+    :group-on #'org-roam-review--maturity-header
+    :sort (-on #'ts< #'org-roam-review-node-next-review)
+    :nodes
+    (lambda ()
+      (seq-filter (lambda (node)
+                    (and (null (seq-intersection (org-roam-node-tags node)
+                                                 org-roam-review-tags-ignored-for-review-buffer))
+                         (org-roam-review-node-due-p node)))
+                  (org-roam-review-node-list))))))
+                  '';
                 };
                 hydra = {
                   enable = true;
