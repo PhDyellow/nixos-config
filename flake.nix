@@ -2622,6 +2622,10 @@ bar {
                 orgit = {
                   enable = true;
                 };
+                org-git-link = {
+                  enable = true;
+                  package = "org-contrib";
+                };
                 forge = {
                   enable = true;
                 };
