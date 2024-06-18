@@ -2622,7 +2622,7 @@ bar {
                 orgit = {
                   enable = true;
                 };
-                org-git-link = {
+                ol-git-link = {
                   enable = true;
                   package = "org-contrib";
                 };
