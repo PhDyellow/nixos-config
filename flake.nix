@@ -3071,6 +3071,8 @@ them as reviewed with `org-roam-review-accept',
                             'org-babel-load-languages
                             org-babel-load-languages)
 
+                          ;; Don't hide links. Uglier, but easier to manipulate
+                          (setq org-link-descriptive nil)
 
                           (setq org-agenda-files `(,my-memx-dir)
                                 org-directory my-memx-dir
