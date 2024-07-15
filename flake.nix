@@ -2571,6 +2571,8 @@ bar {
                   config = ''
                           (setq enable-recursive-minibuffers t)
 
+                          (setq truncate-lines t)
+
                           (setq ring-bell-function
                                 (lambda ()
                                   (let ((orig-fg (face-foreground 'mode-line)))
