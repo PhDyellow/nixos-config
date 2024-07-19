@@ -3095,12 +3095,12 @@ them as reviewed with `org-roam-review-accept',
                           ;;set up todo entries
                           (setq org-todo-keywords '(
                             (sequence "QUERY(y)" "|" "RESOLVED(!)") ;A question
-                            (sequence "GOAL(g)" "|" "ACHIEVED(!)") ;An outcome I want to see come about, ideally with a deadline
-                            ;(sequence "PROJ(p)" "|" "COMPLETE(!)") ;A set of tasks supporting a goal or higher project
+                            (sequence "GOAL(g)" "|" "ACHIEVED(!)") ;An outcome I want to see come about, ideally with a deadline using SMART principles
+                            ;(sequence "PROJ(p)" "|" "COMPLETE(!)") ;A set of tasks supporting a goal or higher project. Make redundant
                             (sequence "TASK(t)" "|" "DONE(!)") ; A task. Tasks should pursue goals. A group of related tasks are really just subtasks, no projects.
                             (sequence "SPARK(s)" "THINKING(n)" "|" "PROCESSED(!)") ;Transient notes that I want to capture
                             (sequence "READ(r)" "|" "CITE(c)") ;bibliographic entries. Switch back and forth as needed
-                            (sequence "|" "CONCEPT(w)" "VIEW(v)") ;evergreen concept note or overview of area
+                            (sequence "|" "CONCEPT(w)" "VIEW(v)" "JOURNAL(j)") ;evergreen concept note, overview of area, fleeting note
                             ;(sequence "PROBLEM" "|" "SOLVED" "SKIP")
                             ;(sequence "ATTEMPT" "|" "FAIL" "SUCCESS")
                             ;(sequence "BLOCKED(b)" "TODO(t)" "NEXT(n!)" "WAIT(b@/!)" "IDEA(i@)" "|" "NEVER(x@)" "DONE(d!)")
