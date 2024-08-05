@@ -3095,6 +3095,7 @@ them as reviewed with `org-roam-review-accept',
                           ;;set up todo entries
                           (setq org-todo-keywords '(
                             (sequence "QUERY(y)" "|" "RESOLVED(!)") ;A question
+                            (sequence "ROUTINE(o)" "|" "DROPPED(!)") ; A routine activity that repeats regularly. Should have justification, activity and active timestamp
                             (sequence "GOAL(g)" "|" "ACHIEVED(!)") ;An outcome I want to see come about, ideally with a deadline using SMART principles
                             ;(sequence "PROJ(p)" "|" "COMPLETE(!)") ;A set of tasks supporting a goal or higher project. Make redundant
                             (sequence "TASK(t)" "|" "DONE(!)") ; A task. Tasks should pursue goals. A group of related tasks are really just subtasks, no projects.
