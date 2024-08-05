@@ -2571,7 +2571,7 @@ bar {
                   config = ''
                           (setq enable-recursive-minibuffers t)
 
-                          (setq truncate-lines t)
+                          (set-default 'truncate-lines t)
 
                           (setq ring-bell-function
                                 (lambda ()
