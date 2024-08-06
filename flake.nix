@@ -705,6 +705,9 @@
               inputs.nixos-hardware.nixosModules.common-pc
               inputs.nixos-hardware.nixosModules.common-gpu-nvidia-nonprime
             ];
+            # Dual booting with Windows requires one of the OS's
+            # to change how they interpret the hardware clock
+            time.hardwareClockInLocalTime = true;
             boot.kernelPackages = pkgs.linuxPackages_latest;
 
             boot = {
