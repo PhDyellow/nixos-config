@@ -777,13 +777,11 @@
                 }
             ];
             boot.kernelParams = [
-              "resume_offset=4503599627370495"
               "zswap.enable=1"
               "zswap.zpool=zsmalloc"
               "zswap.compressor=zstd"
               "zswap.max_pool_percent=60" #defaults to 20
             ];
-            boot.resumeDevice = "/dev/mapper/nixos-crypt";
             services.xserver.videoDrivers = ["nvidia"];
             hardware = {
               nvidia = {
