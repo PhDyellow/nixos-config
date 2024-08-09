@@ -764,36 +764,25 @@
                 fsType = "vfat";
               };
             };
-            #Swapfile
-            #Swapfile is created by
-            #sudo btrfs subvolume create /swap
-            systemd.services = {
-              create-swapfile = {
-                serviceConfig.Type = "oneshot";
-                wantedBy = [ "swap-swapfile.swap" ];
-                script = ''
-              swapfile="/swap/swapfile"
-              if [[ -f "$swapfile" ]]; then
-              echo "Swap file $swapfile already exists, taking no action"
-              else
-              echo "Setting up swap file $swapfile"
-              ${pkgs.coreutils}/bin/truncate -s 0 "$swapfile"
-              ${pkgs.e2fsprogs}/bin/chattr +C "$swapfile"
-              fi
-            '';
-              };
-            };
+
             swapDevices = [
               {
-                device = "/swap/swapfile";
-                # 8GB swap. RAM is AT LEAST 5x faster
-                # than M2 NVME. Almost always faster to
-                # just OOM, then restart the analysis
-                # either batched or sequentially.
-                size = (1024 * 1) * 8;
-              }
+                label = "swap_hibernate";
+                # Partition big enough for hibernation.
+                # If compute is thrashing, kill compute,
+                # batch, and restart.
+                # If REALLY necessary, create a swapfile
+                # in BTRFS on the fly, it should
+                # get reclaimed by impermanence after restart.
+                }
             ];
-            boot.kernelParams = ["resume_offset=4503599627370495"];
+            boot.kernelParams = [
+              "resume_offset=4503599627370495"
+              "zswap.enable=1"
+              "zswap.zpool=zsmalloc"
+              "zswap.compressor=zstd"
+              "zswap.max_pool_percent=60" #defaults to 20
+            ];
             boot.resumeDevice = "/dev/mapper/nixos-crypt";
             services.xserver.videoDrivers = ["nvidia"];
             hardware = {
