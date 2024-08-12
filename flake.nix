@@ -1217,7 +1217,7 @@
                 self.hmModules.impermanence_phil
 
               ];
-              manual.manpages.enable = false;
+              manual.manpages.enable = true;
 
               home = {
                 stateVersion = "23.05";
