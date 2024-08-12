@@ -830,23 +830,26 @@
               #ntfs-3g is faster!
               "/para" = {
                 device = "/dev/mapper/para-crypt"; #after mounting from crypttab
-                fsType = "ntfs-3g";
-                options = [ "rw"
-                            "uid=1001"
-                            "gid=100"
-                            "windows_names" #added to kernel in 6.2, current kernel in NixOS is 6.1.9. Supported by ntfs-3g
-                            "fmask=133"
-                            "dmask=022"
-                            "norecover" # this is an ntfs-3g option, not supported by ntfs3
-                            #"discard" #ntfs3 only option
-                          ];
+                fsType = "btrfs";
+                options = [
+                  "noacl" # single user system
+                  "compress=zstd:8" # moderately aggressive compression
+                  "space_cache=v2"
+                  "discard=async" # Use trim occasionally
+                  "max_inline=28k" # 28k files are inlined.
+                     #I configured 32k nodes, so this is not too large
+                  "ssd" # force SSD
+                  "noatime" #reduce writes by not updating atimes on each read
+                  "nofail"
+                  #"discard" #ntfs3 only option
+                ];
               };
             };
             environment.etc.crypttab = {
               enable = true;
               text = ''
             # para-crypt /dev/disk/by-partuuid/1b5333c3-9421-44d5-8d21-fc2f22c8cbe3 /secrets/bitlocker/para.bek bitlk
-            para-crypt /dev/disk/by-partlabel/PARA /secrets/bitlocker/para.bek bitlk
+            para-crypt /dev/disk/by-partlabel/PARA /secrets/bitlocker/para.bek bitlk,nofail
           '';
             };
           };
