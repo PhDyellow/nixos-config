@@ -21,6 +21,11 @@
       url = "github:nix-community/lanzaboote";
       inputs.nixpkgs.follows = "nixpkgs-unstable"; #needs unstable
     };
+
+    impermanence = {
+      url = "github:nix-community/impermanence";
+    };
+
     home-manager = {
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs-unstable";
@@ -723,9 +728,9 @@
 
           '';
               initrd = {
-                luks.devices."nixos-crypt".device =
+                luks.devices."nixos_lvm".device =
                   # "dev/disk/by-uuid/c4129dcf-90da-4d0c-8da9-880b9c111e6f";
-                  "dev/disk/by-partlabel/nixos";
+                  "dev/disk/by-partlabel/NIXOSCRYPT";
                 availableKernelModules = [
                   "nvme"
                   "xhci_pci"
@@ -753,11 +758,70 @@
                 "btrfs"
               ];
             };
+            # Cleans out root on each boot, while saving
+            # previous root to a snapshot and deleting
+            # snapshots after a while
+            boot.initrd.postDeviceCommands = lib.mkAfter ''
+    mkdir /btrfs_tmp
+    mount /dev/nixos_lvm_group/nix_persistent /btrfs_tmp
+    if [[ -e /btrfs_tmp/root ]]; then
+        mkdir -p /btrfs_tmp/old_roots
+        timestamp=$(date --date="@$(stat -c %Y /btrfs_tmp/root)" "+%Y-%m-%-d_%H:%M:%S")
+        mv /btrfs_tmp/root "/btrfs_tmp/old_roots/$timestamp"
+    fi
+
+    delete_subvolume_recursively() {
+        IFS=$'\n'
+        for i in $(btrfs subvolume list -o "$1" | cut -f 9- -d ' '); do
+            delete_subvolume_recursively "/btrfs_tmp/$i"
+        done
+        btrfs subvolume delete "$1"
+    }
+
+    for i in $(find /btrfs_tmp/old_roots/ -maxdepth 1 -mtime +30); do
+        delete_subvolume_recursively "$i"
+    done
+
+    btrfs subvolume create /btrfs_tmp/root
+    umount /btrfs_tmp
+  '';
+
             fileSystems = {
               "/" = {
-                device = "/dev/mapper/nixos-crypt";
+                device = "/dev/nixos_lvm_group/nix_persistent";
                 fsType = "btrfs";
+                options = [
+                  "noacl" # single user system
+                  "compress=zstd:8" # moderately aggressive compression
+                  "space_cache=v2"
+                  "discard=async" # Use trim occasionally
+                  "max_inline=28k" # 28k files are inlined.
+                     #I configured 32k nodes, so this is not too large
+                  "ssd" # force SSD
+                  "noatime" #reduce writes by not updating atimes on each read
+
+                  "subvol=root" # for impermanence
+                ];
               };
+              "/persistent" = {
+                device = "dev/nixos_lvm_group/nix_persistent";
+                neededForBoot = true;
+                fsType = "btrfs";
+                options = [
+                  "noacl" # single user system
+                  "compress=zstd:8" # moderately aggressive compression
+                  "space_cache=v2"
+                  "discard=async" # Use trim occasionally
+                  "max_inline=28k" # 28k files are inlined.
+                     #I configured 32k nodes, so this is not too large
+                  "ssd" # force SSD
+                  "noatime" #reduce writes by not updating atimes on each read
+
+                  "subvol=persistent" # persistent files for impermanence
+
+                ];
+              };
+
               "/boot" = {
                 # device = "/dev/disk/by-partuuid/5a687aae-d3c0-4f4e-b580-5ce32bec51b2";
                 device = "/dev/disk/by-label/EFIBOOT";
@@ -819,7 +883,40 @@
             ];
           };
 
+        impermanence = {config, lib, pkgs, ...}:
+          {
+            imports = [
+              inputs.impermanence.nixosModules.impermanence
+            ];
 
+            environment.persistence."/persistent" = {
+              enable = true;
+              hideMounts = true;
+              directories = [
+                # This will grow as I discover things
+                # Persistece is for things that either
+                # 1. Must not go in the nix store
+                # 2. Are frequently updated by the application
+                # examples of 2. are cache files and data, but
+                # where possible these should be configured to go elsewhere
+                {
+                  directory = "/secrets"; # syncthing is here too
+                  mode = "0700";
+                  user = "root";
+                  group = "root";
+                }
+                "/etc/ssh"
+                # TODO syncthing needs data dir persistent in home directory
+
+                # quick note, these are mounted from /persistent/{dir} to /{dir}
+                # That may be necessary knowledge for initial install
+              ];
+
+              files = [
+
+              ];
+            };
+          };
         hardware_shared_crypt = { config, lib, pkgs, ...}:
           {
             fileSystems = {
@@ -1092,6 +1189,7 @@
         phil_home = {config, pkgs, ...}: {
           imports = [
             inputs.home-manager.nixosModules.home-manager
+
           ];
 
           # This is the place to target emacs program versions
@@ -1117,6 +1215,8 @@
                 self.hmModules.git-config
                 self.hmModules.r-config
                 self.hmModules.tex-full
+                self.hmModules.impermanence_phil
+
               ];
               manual.manpages.enable = false;
 
@@ -1694,6 +1794,23 @@ bar {
     };
     #Modules for importing into home-manager.users.<name>.imports = [ here ];
     hmModules = {
+      impermanence_phil = {config, pkgs, ...}: {
+        imports = [
+          inputs.impermanence.nixosModules.home-manager.impermanence
+        ];
+
+        home.persistence."/persistence/home/phil" = {
+          directories = [
+            ".ssh"
+            ".emacs.d"
+            "syncthing"
+
+          ];
+          files = [
+            ".local/share/fish/fish_history"
+          ];
+        };
+      };
       r-config = {config, pkgs, ...}: {
         home.file.r-config = {
           target = ".Rprofile";

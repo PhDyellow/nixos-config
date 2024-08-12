@@ -740,6 +740,21 @@
         "type": "indirect"
       }
     },
+    "impermanence": {
+      "locked": {
+        "lastModified": 1719091691,
+        "narHash": "sha256-AxaLX5cBEcGtE02PeGsfscSb/fWMnyS7zMWBXQWDKbE=",
+        "owner": "nix-community",
+        "repo": "impermanence",
+        "rev": "23c1f06316b67cb5dabdfe2973da3785cfe9c34a",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nix-community",
+        "repo": "impermanence",
+        "type": "github"
+      }
+    },
     "isend-mode": {
       "flake": false,
       "locked": {
@@ -1612,6 +1627,7 @@
         "emacs-overlay": "emacs-overlay",
         "emacs-overlay-pinned-android": "emacs-overlay-pinned-android",
         "home-manager": "home-manager",
+        "impermanence": "impermanence",
         "isend-mode": "isend-mode",
         "key-game": "key-game",
         "lanzaboote": "lanzaboote",
