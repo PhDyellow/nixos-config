@@ -906,8 +906,7 @@
                   group = "root";
                 }
                 "/etc/ssh"
-                # TODO syncthing needs data dir persistent in home directory
-
+                "/nix"
                 # quick note, these are mounted from /persistent/{dir} to /{dir}
                 # That may be necessary knowledge for initial install
               ];
