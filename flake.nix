@@ -855,7 +855,7 @@
                 #forceFullCompositionPipeline = true;
                 nvidiaPersistenced = true;
               };
-              opengl = {
+              graphics = {
                 enable = true;
                 extraPackages = with pkgs; [
                   vaapiVdpau
