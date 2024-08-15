@@ -1806,6 +1806,7 @@ bar {
           files = [
             ".local/share/fish/fish_history"
           ];
+          allowOther = false;
         };
       };
       r-config = {config, pkgs, ...}: {
