@@ -1203,16 +1203,16 @@
               imports = let
                 nurNoPkgs = import inputs.nur { pkgs = null; nurpkgs = pkgs; };
               in [
-                nurNoPkgs.repos.rycee.hmModules.emacs-init
-                self.hmModules.emacs-hm-init
-                # self.hmModules.emacs-mwe
-                self.hmModules.gtk_setup
-                self.hmModules.gpg-agent-emacs
-                self.hmModules.hyprland-config
-                self.hmModules.git-config
-                self.hmModules.r-config
-                self.hmModules.tex-full
-                self.hmModules.impermanence_phil
+                # nurNoPkgs.repos.rycee.hmModules.emacs-init
+                # self.hmModules.emacs-hm-init
+                # ## self.hmModules.emacs-mwe
+                # self.hmModules.gtk_setup
+                # self.hmModules.gpg-agent-emacs
+                # self.hmModules.hyprland-config
+                # self.hmModules.git-config
+                # self.hmModules.r-config
+                # self.hmModules.tex-full
+                # self.hmModules.impermanence_phil
 
               ];
               manual.manpages.enable = true;
