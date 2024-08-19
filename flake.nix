@@ -1209,9 +1209,9 @@
               imports = let
                 nurNoPkgs = import inputs.nur { pkgs = null; nurpkgs = pkgs; };
               in [
-                # nurNoPkgs.repos.rycee.hmModules.emacs-init
-                # self.hmModules.emacs-hm-init
-                # ## self.hmModules.emacs-mwe
+                nurNoPkgs.repos.rycee.hmModules.emacs-init
+                self.hmModules.emacs-hm-init
+                ## self.hmModules.emacs-mwe
                 self.hmModules.gtk_setup
                 self.hmModules.gpg-agent-emacs
                 self.hmModules.hyprland-config
