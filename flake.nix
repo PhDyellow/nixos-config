@@ -5127,6 +5127,8 @@ the target and properties of the edge."
           self.nixosModules.system-conf.network_fs
           self.nixosModules.system-conf.wifi_secrets
           self.nixosModules.system-conf.lock-root
+          self.nixosModules.system-conf.stateversion
+          self.nixosModules.system-conf.nix-config
           self.nixosModules.prime-ai.bootstrap_user
           inputs.ragenix.nixosModules.age
         ];
