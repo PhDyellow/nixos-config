@@ -1209,7 +1209,7 @@
               imports = let
                 nurNoPkgs = import inputs.nur { pkgs = null; nurpkgs = pkgs; };
               in [
-                #nurNoPkgs.repos.rycee.hmModules.emacs-init
+                nurNoPkgs.repos.rycee.hmModules.emacs-init
                 self.hmModules.emacs-hm-init
                 ## self.hmModules.emacs-mwe
                 self.hmModules.gtk_setup
