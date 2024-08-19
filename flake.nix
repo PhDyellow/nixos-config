@@ -956,6 +956,7 @@
             imports = [
               (modulesPath + "/installer/scan/not-detected.nix")
             ];
+            age.identityPaths = [ "/mnt/persistent/etc/ssh/ssh_hosted25519_key" ];
             boot = {
               loader = {
                 systemd-boot = {
