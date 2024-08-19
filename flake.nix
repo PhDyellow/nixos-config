@@ -956,7 +956,7 @@
             imports = [
               (modulesPath + "/installer/scan/not-detected.nix")
             ];
-            age.identityPaths = [ "/mnt/persistent/etc/ssh/ssh_hosted25519_key" ];
+
             boot = {
               loader = {
                 systemd-boot = {
@@ -5125,13 +5125,10 @@ the target and properties of the edge."
         modules = [
           self.nixosModules.prime-ai.bootstrap_hardware
           self.nixosModules.prime-ai.impermanence
-          self.nixosModules.system-conf.network_fs
-          self.nixosModules.system-conf.wifi_secrets
           self.nixosModules.system-conf.lock-root
           self.nixosModules.system-conf.stateversion
           self.nixosModules.system-conf.nix-config
           self.nixosModules.prime-ai.bootstrap_user
-          inputs.ragenix.nixosModules.age
         ];
       };
       prime-ai = nixpkgs-unstable.lib.nixosSystem {
