@@ -717,7 +717,10 @@
 
             boot = {
               loader = {
-                systemd-boot.enable = true;
+                systemd-boot = {
+                  enable = true;
+                  editor = false;
+                };
                 efi.canTouchEfiVariables = true;
               };
               #The next line may fix a system crash in nvidia 525.xx.xx
