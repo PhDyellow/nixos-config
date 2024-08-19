@@ -1877,7 +1877,6 @@ bar {
             ".ssh"
             ".emacs.d"
             "syncthing"
-
           ];
           files = [
             ".local/share/fish/fish_history"
