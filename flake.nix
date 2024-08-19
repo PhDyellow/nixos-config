@@ -1212,8 +1212,8 @@
                 # nurNoPkgs.repos.rycee.hmModules.emacs-init
                 # self.hmModules.emacs-hm-init
                 # ## self.hmModules.emacs-mwe
-                # self.hmModules.gtk_setup
-                # self.hmModules.gpg-agent-emacs
+                self.hmModules.gtk_setup
+                self.hmModules.gpg-agent-emacs
                 self.hmModules.hyprland-config
                 self.hmModules.git-config
                 self.hmModules.r-config
