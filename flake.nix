@@ -943,7 +943,7 @@
               enable = true;
               text = ''
             # para-crypt /dev/disk/by-partuuid/1b5333c3-9421-44d5-8d21-fc2f22c8cbe3 /secrets/bitlocker/para.bek bitlk
-            para-crypt /dev/disk/by-partlabel/PARA /secrets/bitlocker/para.bek bitlk,nofail
+            para-crypt /dev/disk/by-partlabel/PARACRYPT /secrets/bitlocker/para.bek bitlk,nofail
           '';
             };
           };
