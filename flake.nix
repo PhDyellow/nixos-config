@@ -5161,6 +5161,7 @@ the target and properties of the edge."
           self.nixosModules.prime-ai.hardware_config_tuxedo
           self.nixosModules.prime-ai.hardware_shared_crypt
           self.nixosModules.prime-ai.impermanence
+          self.nixosModules.prime-ai.impermanence-agenix #not needed for bootstrap
           self.nixosModules.prime-ai.syncthing
           self.nixosModules.prime-ai.tailscale
           self.nixosModules.prime-ai.phil_home
