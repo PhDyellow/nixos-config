@@ -915,6 +915,7 @@
                 "/etc/ssh"
                 "/etc/secureboot"
                 "/nix"
+                "/var/log"
                 # quick note, these are mounted from /persistent/{dir} to /{dir}
                 # That may be necessary knowledge for initial install
               ];
