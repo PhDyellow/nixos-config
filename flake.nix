@@ -1894,7 +1894,7 @@ bar {
           inputs.impermanence.nixosModules.home-manager.impermanence
         ];
 
-        home.persistence."/persistence/home/phil" = {
+        home.persistence."/persistent/home/phil" = {
           directories = [
             ".ssh"
             ".emacs.d"
