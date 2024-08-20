@@ -459,7 +459,7 @@
               fsType = "vfat";
               device = "/dev/disk/by-partlabel/ESP";
               options = [
-                  "umask=077";
+                  "umask=077"
               ];
             };
           };
@@ -833,7 +833,7 @@
                 device = "/dev/disk/by-label/EFIBOOT";
                 fsType = "vfat";
                 options = [
-                  "umask=077";
+                  "umask=077"
                 ];
               };
             };
@@ -1056,7 +1056,7 @@
                 device = "/dev/disk/by-label/EFIBOOT";
                 fsType = "vfat";
                 options = [
-                  "umask=077";
+                  "umask=077"
                 ];
               };
             };
