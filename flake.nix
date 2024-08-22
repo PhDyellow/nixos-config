@@ -1905,6 +1905,11 @@ bar {
           ];
           allowOther = false;
         };
+        # Force syncthing to start AFTER persistent is mounted
+        systemd.services.syncthing.after = [
+          "network.target" # standard for syncthing
+          "paths.target" # paths.target waits for persistence
+        ];
       };
       r-config = {config, pkgs, ...}: {
         home.file.r-config = {
