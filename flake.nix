@@ -935,7 +935,7 @@
                 "/etc/ssh"
                 "/etc/secureboot"
                 "/var/lib/nixos" # persist random nixos serice UIDs
-                "/var/lib/systemd/coredump"
+                "/var/lib/systemd"
                 "/nix"
                 "/var/log"
                 # quick note, these are mounted from /persistent/{dir} to /{dir}
@@ -944,12 +944,6 @@
 
               files = [
                 "/etc/machine-id"
-                {
-                  file = "/var/lib/systemd/timesync/clock";
-                  parentDirectory = {
-                    mode = "0700";
-                  };
-                }
               ];
             };
           };
