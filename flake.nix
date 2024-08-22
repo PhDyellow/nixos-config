@@ -912,8 +912,8 @@
 
             # Don't ask multi-user.target to want syncthing to
             # avoid circular dependency
-            systemd.services.syncthing.wantedBy = lib.mkForce [];
-            systemd.services.syncthing-init.wantedBy = lib.mkForce [];
+#            systemd.services.syncthing.wantedBy = lib.mkForce [];
+#            systemd.services.syncthing-init.wantedBy = lib.mkForce [];
           };
         impermanence = {config, lib, pkgs, ...}:
           {
