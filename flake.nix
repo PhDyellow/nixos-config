@@ -902,6 +902,14 @@
               "/persistent/etc/ssh/ssh_host_rsa_key"
             ];
           };
+        impermanence-syncthing = {config, lib, pkgs, ...}:
+          {
+            # Force syncthing to start AFTER persistent is mounted
+            systemd.services.syncthing.after = [
+              "network.target" # standard for syncthing
+              "paths.target" # paths.target waits for persistence
+            ];
+          };
         impermanence = {config, lib, pkgs, ...}:
           {
             imports = [
@@ -1905,11 +1913,7 @@ bar {
           ];
           allowOther = false;
         };
-        # Force syncthing to start AFTER persistent is mounted
-        systemd.services.syncthing.after = [
-          "network.target" # standard for syncthing
-          "paths.target" # paths.target waits for persistence
-        ];
+
       };
       r-config = {config, pkgs, ...}: {
         home.file.r-config = {
@@ -5168,6 +5172,7 @@ the target and properties of the edge."
           self.nixosModules.prime-ai.impermanence
           self.nixosModules.prime-ai.impermanence-agenix #not needed for bootstrap
           self.nixosModules.prime-ai.syncthing
+          self.nixosModules.prime-ai.impermanence-syncthing
           self.nixosModules.prime-ai.tailscale
           self.nixosModules.prime-ai.phil_home
           self.nixosModules.prime-ai.phil_user
