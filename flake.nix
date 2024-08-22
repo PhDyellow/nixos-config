@@ -910,10 +910,10 @@
                 "network.target" # standard for syncthing
                 "multi-user.target" # paths.target waits for persistence
               ];
-              lib.mkForce wantedBy = []; # Not an error if syncthing fails
+              wantedBy = []; # Not an error if syncthing fails
             };
-            systemd.services.syncthing = {
-              lib.mkForce wantedBy = []; # Not an error if syncthing fails
+            systemd.services.syncthing-init = {
+              wantedBy = []; # Not an error if syncthing fails
             };
           };
         impermanence = {config, lib, pkgs, ...}:
