@@ -906,13 +906,15 @@
           {
             # Force syncthing to start AFTER persistent is mounted
             systemd.services.syncthing.after =  [
-
               "multi-user.target" # paths.target waits for persistence
             ];
 
-            # Don't ask multi-user.target to want syncthing to
-            # avoid circular dependency
-#            systemd.services.syncthing.wantedBy = lib.mkForce [];
+            # Default dependencies cause syncthing-init.service to
+            # set "Before=multi-user.target" which, along with setting
+            # "After=multi-user.target" for syncthing.service, leads to
+            # circular dependency.
+            # Turning off default dependencies, explicit dependencies were
+            # sufficient.
             systemd.services.syncthing-init.unitConfig.DefaultDependencies = false;
           };
         impermanence = {config, lib, pkgs, ...}:
