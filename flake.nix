@@ -934,14 +934,19 @@
                 }
                 "/etc/ssh"
                 "/etc/secureboot"
+                "/var/lib/nixos" # persist random nixos serice UIDs
                 "/nix"
-                "/var/log"
+                {
+                  directory = "/var/log";
+                  method = "symlink";
+                }
                 # quick note, these are mounted from /persistent/{dir} to /{dir}
                 # That may be necessary knowledge for initial install
               ];
 
               files = [
-
+                "/etc/machine-id"
+                "/var/lib/systemd/timesync/clock"
               ];
             };
           };
