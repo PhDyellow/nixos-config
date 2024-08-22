@@ -905,16 +905,15 @@
         impermanence-syncthing = {config, lib, pkgs, ...}:
           {
             # Force syncthing to start AFTER persistent is mounted
-            systemd.services.syncthing = {
-              after =  [
-                "network.target" # standard for syncthing
-                "multi-user.target" # paths.target waits for persistence
-              ];
-              lib.mkForce wantedBy = []; # Not an error if syncthing fails
-            };
-            systemd.services.syncthing-init = {
-              lib.mkForce wantedBy = []; # Not an error if syncthing fails
-            };
+            systemd.services.syncthing.after =  [
+              "network.target" # standard for syncthing
+              "multi-user.target" # paths.target waits for persistence
+            ];
+
+            # Don't ask multi-user.target to want syncthing to
+            # avoid circular dependency
+            systemd.services.syncthing.wantedBy = lib.mkForce [];
+            systemd.services.syncthing-init.wantedBy = lib.mkForce [];
           };
         impermanence = {config, lib, pkgs, ...}:
           {
