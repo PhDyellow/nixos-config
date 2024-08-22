@@ -935,6 +935,7 @@
                 "/etc/ssh"
                 "/etc/secureboot"
                 "/var/lib/nixos" # persist random nixos serice UIDs
+                "/var/lib/systemd/coredump"
                 "/nix"
                 "/var/log"
                 # quick note, these are mounted from /persistent/{dir} to /{dir}
