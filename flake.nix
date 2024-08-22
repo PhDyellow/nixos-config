@@ -944,7 +944,12 @@
 
               files = [
                 "/etc/machine-id"
-                "/var/lib/systemd/timesync/clock"
+                {
+                  file = "/var/lib/systemd/timesync/clock";
+                  parentDirectory = {
+                    mode = "0700";
+                  };
+                }
               ];
             };
           };
