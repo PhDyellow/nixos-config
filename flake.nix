@@ -906,7 +906,7 @@
           {
             # Force syncthing to start AFTER persistent is mounted
             systemd.services.syncthing.after =  [
-              "network.target" # standard for syncthing
+
               "multi-user.target" # paths.target waits for persistence
             ];
 
