@@ -1911,7 +1911,10 @@ bar {
           directories = [
             ".ssh"
             ".emacs.d"
-            "syncthing"
+            {
+              directory = "syncthing";
+              method = "symlink";
+            }
           ];
           files = [
             ".local/share/fish/fish_history"
