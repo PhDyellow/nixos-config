@@ -2024,7 +2024,7 @@ bar {
 
                 layout = dwindle
 
-                no_cursor_warps = true
+
                 }
 
                 decoration {
@@ -2066,7 +2066,7 @@ bar {
 
                 master {
                 # See https://wiki.hyprland.org/Configuring/Master-Layout/ for more
-                new_is_master = true
+
                 }
 
                 gestures {
