@@ -910,9 +910,12 @@
           {
             # Force syncthing to start AFTER persistent is mounted
             systemd.services.syncthing.after =  [
-              "local-fs.target" # paths.target waits for persistence
+              "home-phil-syncthingdb___persistent.mount" # paths.target waits for persistence
             ];
 
+            systemd.services.syncthing.bindsTo =  [
+              "home-phil-syncthingdb___persistent.mount" # paths.target waits for persistence
+            ];
             # Default dependencies cause syncthing-init.service to
             # set "Before=multi-user.target" which, along with setting
             # "After=multi-user.target" for syncthing.service, leads to
