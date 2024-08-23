@@ -909,9 +909,9 @@
         impermanence-syncthing = {config, lib, pkgs, ...}:
           {
             # Force syncthing to start AFTER persistent is mounted
-            systemd.services.syncthing.after =  [
-              "home-phil-syncthingdb___persistent.mount" # paths.target waits for persistence
-            ];
+            # systemd.services.syncthing.after =  [
+            #   "home-phil-syncthingdb___persistent.mount" # paths.target waits for persistence
+            # ];
 
             # Default dependencies cause syncthing-init.service to
             # set "Before=multi-user.target" which, along with setting
@@ -947,6 +947,7 @@
                 "/etc/secureboot"
                 "/var/lib/nixos" # persist random nixos serice UIDs
                 "/var/lib/systemd"
+                "/var/lib/syncthing"
                 "/nix"
                 "/var/log"
                 # quick note, these are mounted from /persistent/{dir} to /{dir}
@@ -1121,9 +1122,7 @@
           {
             services.syncthing = {
               enable = true;
-              dataDir = "/home/phil/syncthing_default_folder_root";
-              databaseDir = "/home/phil/syncthingdb___persistent";
-              configDir = "/home/phil/.config/syncthing";
+              dataDir = "/var/lib/syncthing"; # default, also persisted
               overrideDevices = true;
               overrideFolders = true;
               user = "phil";
@@ -1920,7 +1919,6 @@ bar {
           directories = [
             ".ssh"
             ".emacs.d"
-            "syncthingdb___persistent"
             ".local/share/fish"
           ];
           files = [
