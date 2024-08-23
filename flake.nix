@@ -906,21 +906,6 @@
               "/persistent/etc/ssh/ssh_host_rsa_key"
             ];
           };
-        impermanence-syncthing = {config, lib, pkgs, ...}:
-          {
-            # Force syncthing to start AFTER persistent is mounted
-            # systemd.services.syncthing.after =  [
-            #   "home-phil-syncthingdb___persistent.mount" # paths.target waits for persistence
-            # ];
-
-            # Default dependencies cause syncthing-init.service to
-            # set "Before=multi-user.target" which, along with setting
-            # "After=multi-user.target" for syncthing.service, leads to
-            # circular dependency.
-            # Turning off default dependencies, explicit dependencies were
-            # sufficient.
-            #systemd.services.syncthing-init.unitConfig.DefaultDependencies = false;
-          };
         impermanence = {config, lib, pkgs, ...}:
           {
             imports = [
@@ -5185,7 +5170,6 @@ the target and properties of the edge."
           self.nixosModules.prime-ai.impermanence
           self.nixosModules.prime-ai.impermanence-agenix #not needed for bootstrap
           self.nixosModules.prime-ai.syncthing
-          self.nixosModules.prime-ai.impermanence-syncthing
           self.nixosModules.prime-ai.tailscale
           self.nixosModules.prime-ai.phil_home
           self.nixosModules.prime-ai.phil_user
