@@ -1920,7 +1920,7 @@ bar {
           directories = [
             ".ssh"
             ".emacs.d"
-            "syncthingdb___persistent;
+            "syncthingdb___persistent"
           ];
           files = [
             ".local/share/fish/fish_history"
