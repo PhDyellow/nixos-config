@@ -910,7 +910,7 @@
           {
             # Force syncthing to start AFTER persistent is mounted
             systemd.services.syncthing.after =  [
-              "multi-user.target" # paths.target waits for persistence
+              "local-fs.target" # paths.target waits for persistence
             ];
 
             # Default dependencies cause syncthing-init.service to
@@ -919,7 +919,7 @@
             # circular dependency.
             # Turning off default dependencies, explicit dependencies were
             # sufficient.
-            systemd.services.syncthing-init.unitConfig.DefaultDependencies = false;
+            #systemd.services.syncthing-init.unitConfig.DefaultDependencies = false;
           };
         impermanence = {config, lib, pkgs, ...}:
           {
