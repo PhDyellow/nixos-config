@@ -1327,7 +1327,7 @@
                 self.hmModules.git-config
                 self.hmModules.r-config
                 self.hmModules.tex-full
-                self.hmModules.impermanence_phil
+                self.hmModules.impermanence-phil
 
               ];
               manual.manpages.enable = true;
@@ -1906,7 +1906,7 @@ bar {
     };
     #Modules for importing into home-manager.users.<name>.imports = [ here ];
     hmModules = {
-      impermanence_phil = {config, pkgs, ...}: {
+      impermanence-phil = {config, pkgs, ...}: {
         imports = [
           inputs.impermanence.nixosModules.home-manager.impermanence
         ];
