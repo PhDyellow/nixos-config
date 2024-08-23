@@ -1921,9 +1921,10 @@ bar {
             ".ssh"
             ".emacs.d"
             "syncthingdb___persistent"
+            ".local/share/fish"
           ];
           files = [
-            ".local/share/fish/fish_history"
+
           ];
           allowOther = false;
         };
