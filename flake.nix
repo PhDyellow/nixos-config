@@ -1117,8 +1117,9 @@
           {
             services.syncthing = {
               enable = true;
-              dataDir = "/home/phil/syncthing";
-              configDir = config.services.syncthing.dataDir + "/.config/syncthing";
+              dataDir = "/home/phil/syncthing_default_folder_root";
+              databaseDir = "/home/phil/syncthingdb___persistent";
+              configDir = "/home/phil/.config/syncthing";
               overrideDevices = true;
               overrideFolders = true;
               user = "phil";
@@ -1915,10 +1916,7 @@ bar {
           directories = [
             ".ssh"
             ".emacs.d"
-            {
-              directory = "syncthing";
-              method = "symlink";
-            }
+            "syncthingdb___persistent;
           ];
           files = [
             ".local/share/fish/fish_history"
