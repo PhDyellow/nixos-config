@@ -148,6 +148,10 @@
       #   Only use gui or cli for programs that need tweaking
 
       system-conf = {
+        umask = {config, pkgs, ...}:
+          {
+            environment.extraInit = "umask 0027";
+          };
         # Programs that I want on all devices, and dont need to configure
         gui = {config, pkgs, ...}:
           {
@@ -5195,6 +5199,7 @@ the target and properties of the edge."
           self.nixosModules.system-conf.openssh
           self.nixosModules.system-conf.allow-unfree
           self.nixosModules.system-conf.locale_au
+          self.nixosModules.system-conf.umask
           self.nixosModules.system-conf.cli
           self.nixosModules.system-conf.gui
           self.nixosModules.system-conf.udisks
