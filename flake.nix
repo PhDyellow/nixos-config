@@ -36,12 +36,6 @@
       # url = "github:hyprwm/Hyprland?rev=f0e4f6622e3e9addc530119b804d2f71395455e7";
       #not following nixpkgs to get caching
     # };
-    # tuxedo-nixos = {
-    #   url = "github:blitz/tuxedo-nixos";
-    #   # Avoid pulling in the nixpkgs that we pin in the tuxedo-nixos repo.
-    #   # This should give the least surprises and saves on disk space.
-    #   # inputs.nixpkgs.follows = "nixpkgs-unstable"; # not working with nixpkgs unstable yet
-    # };
 
     openconnect-sso = {
       # url = "github:vlaci/openconnect-sso";
@@ -57,10 +51,6 @@
     };
     emacs-overlay = {
       url = "github:nix-community/emacs-overlay";
-      # url = "github:nix-community/emacs-overlay?rev=42a2a718bdcbe389e7ef284666d4aba09339a416";
-      # url = "github:nix-community/emacs-overlay?rev=0acd590f3b518dfc8354bf9ed5c82e1401c4e6b0";
-      #;https://github.com/nix-community/emacs-overlay/commit/e9e67599cda6f57f37178fd33ccff86cc2c2d6c4
-      #url = "github:nix-community/emacs-overlay?rev=f57192297f370f8f01b1476023ca29caf032b20a";https://github.com/nix-community/emacs-overlay/commit/#start-of-content
     };
 
     emacs-overlay-pinned-android = {
