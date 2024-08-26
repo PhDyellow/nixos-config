@@ -932,6 +932,7 @@
                 "/var/lib/nixos" # persist random nixos serice UIDs
                 "/var/lib/systemd"
                 "/var/lib/syncthing"
+                "/var/lib/tailscale"
                 "/nix"
                 "/var/log"
                 # quick note, these are mounted from /persistent/{dir} to /{dir}
