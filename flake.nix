@@ -47,6 +47,7 @@
     nur = {
       url = "github:nix-community/NUR";
     };
+
     emacs-overlay = {
       url = "github:nix-community/emacs-overlay";
     };
@@ -140,7 +141,7 @@
           {
             environment.extraInit = "umask 0027";
           };
-        # Programs that I want on all devices, and dont need to configure
+        # Programs that I want on all devices, and don't need to configure
         gui = {config, pkgs, ...}:
           {
             environment.systemPackages = with pkgs; [
@@ -275,14 +276,11 @@
               packages = with pkgs; [
                 (nerdfonts.override { fonts = [ "FiraCode" "RobotoMono" ]; })
               ];
-
               fontconfig.defaultFonts = {
                 monospace = [ "RobotoMono" ];
               };
             };
-
           };
-
         lock-root = {config, pkgs, ...}:
           {
             users.mutableUsers = false;
@@ -753,7 +751,8 @@
                 "k10temp"
               ];
               extraModulePackages = [
-                config.boot.kernelPackages.zenpower];
+                config.boot.kernelPackages.zenpower
+              ];
               bootspec.enable = true; #needed for lanzaboote secureboot
               supportedFilesystems = [
                 "ntfs" #needed for NTFS support
@@ -1765,7 +1764,6 @@ bar {
                 };
               };
             };
-
           };
       };
       cli = {
@@ -2139,9 +2137,7 @@ bar {
             extraConfig = ''
                   allow-loopback-pinentry
                 '';
-
             maxCacheTtl = 72000;
-
           };
         };
       };
