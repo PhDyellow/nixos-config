@@ -1715,6 +1715,7 @@ bar {
                   user = "phil";
                 };
               };
+              vt = 2; #attempt to prevent boot message clutter
             };
             environment = {
               systemPackages = with pkgs; [
