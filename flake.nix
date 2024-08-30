@@ -701,7 +701,6 @@
               inputs.nixos-hardware.nixosModules.common-cpu-amd
               inputs.nixos-hardware.nixosModules.common-pc-ssd
               inputs.nixos-hardware.nixosModules.common-pc
-              inputs.nixos-hardware.nixosModules.common-gpu-nvidia-nonprime
             ];
             # Dual booting with Windows requires one of the OS's
             # to change how they interpret the hardware clock
@@ -862,6 +861,7 @@
                 modesetting.enable = true;
                 #forceFullCompositionPipeline = true;
                 nvidiaPersistenced = true;
+                gsp.enable = true;
               };
               graphics = {
                 enable = true;
