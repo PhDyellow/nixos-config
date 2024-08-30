@@ -31,7 +31,7 @@
       inputs.nixpkgs.follows = "nixpkgs-unstable";
     };
     hyprland = {
-      url = "git+https://github.com/hyprwm/Hyprland?submodules=1"
+      url = "git+https://github.com/hyprwm/Hyprland?submodules=1";
       # not following nixpkgs to get caching
     };
 
