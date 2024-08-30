@@ -30,12 +30,10 @@
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs-unstable";
     };
-    # hyprland = {
-      # url = "github:hyprwm/Hyprland?rev=c4dec4f79697cb789b585f8e4febf92e929b5291"; # failed to build
-      # url = "github:hyprwm/Hyprland?rev=e43f7fc98defc3d9a5bc2fe249895d23e490392f"; #failed to build
-      # url = "github:hyprwm/Hyprland?rev=f0e4f6622e3e9addc530119b804d2f71395455e7";
-      #not following nixpkgs to get caching
-    # };
+    hyprland = {
+      url = "git+https://github.com/hyprwm/Hyprland?submodules=1"
+      # not following nixpkgs to get caching
+    };
 
     openconnect-sso = {
       # url = "github:vlaci/openconnect-sso";
@@ -311,11 +309,9 @@
                   "recursive-nix"
                 ];
                 substituters = [
-                  "https://hyprland.cachix.org" # for hyprland
                   "https://nix-community.cachix.org" # for nix-community
                 ];
                 trusted-public-keys = [
-                  "hyprland.cachix.org-1:a7pgxzMz7+chwVL3/pzj6jIBMioiJM7ypFP8PwtkuGc=" #for hyprland
                   "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs=" #For Nix-community
                 ];
               };
@@ -723,8 +719,10 @@
               #The next line may fix a system crash in nvidia 525.xx.xx
               #Nvidia has enabled a new feature in 510, GSP, but logs
               #show it was the cause of failure in my laptop.
+              # options nvidia NVreg_EnableGpuFirmware=0
               extraModprobeConfig = ''
-            options nvidia NVreg_EnableGpuFirmware=0
+              options nvidia_drm modeset=1 fbdv=1
+
 
           '';
               initrd = {
@@ -737,7 +735,12 @@
                   "ahci"
                   "sdhci_pci"
                 ];
-                kernelModules = [ ];
+                kernelModules = [
+                  "nvidia"
+                  "nvidia_modeset"
+                  "nvidia_uvm"
+                  "nvidia_drm"
+                ];
               };
               kernelModules = [
                 "kvm-amd"
@@ -848,6 +851,8 @@
               "zswap.zpool=zsmalloc"
               "zswap.compressor=zstd"
               "zswap.max_pool_percent=60" #defaults to 20
+
+              "nvidia.NVreg_PreserveVideoMemoryAllocations=1"
             ];
             services.xserver.videoDrivers = ["nvidia"];
             hardware = {
@@ -865,6 +870,7 @@
                   libvdpau-va-gl
                   libva
                   qt5.qtwayland
+                  qt6.qtwayland
                   nvidia-vaapi-driver
                 ];
               };
@@ -1672,9 +1678,24 @@ bar {
             # services.xserver.displayManager.lightdm.enable = true;
           };
 
+        wayland.clipboard = {config, pkgs, ...}:
+          {
+            environment = {
+              systemPackages = with pkgs; [
+                wl-clipboard
+              ];
+            };
+          };
         hyprland = {config, pkgs, ...}:
           {
-
+            nix.settings = {
+              substituters = [
+                  "https://hyprland.cachix.org" # for hyprland
+                ];
+                trusted-public-keys = [
+                  "hyprland.cachix.org-1:a7pgxzMz7+chwVL3/pzj6jIBMioiJM7ypFP8PwtkuGc=" #for hyprland
+                ];
+            };
             nixpkgs.overlays = [
               self.overlays.lsix_configured
             ];
@@ -1683,6 +1704,9 @@ bar {
               enable = true;
             };
 
+            programs.hyprlock = {
+              enable = true;
+            };
 
             services.greetd = {
               enable = true;
@@ -1694,45 +1718,18 @@ bar {
               };
             };
             environment = {
-
               systemPackages = with pkgs; [
                 pipewire #Audio
                 wireplumber
                 fnott #desktop notifications. see also mako, dunst
                 polkit #request root priveliges
                 polkit_gnome #gnome app for polkit requests
-                waylock
-                #swaylock
-                swayimg
                 kitty
                 foot
                 lsix
                 libsixel
-                wl-clipboard
               ];
               sessionVariables = {
-                _JAVA_AWT_WM_NONREPARENTING="1";
-                XCURSOR_SIZE="24";
-                # NIXOS_OZONE_WL = "1"; #Already set by hyprland module
-                LIBVA_DRIVER_NAME="nvidia";
-                XDG_SESSION_TYPE = "wayland";
-                GBM_BACKEND = "nvidia-drm";
-                __GLX_VENDOR_LIBRARY_NAME = "nvidia";
-                WLR_NO_HARDWARE_CURSORS = "1";
-                HYPRLAND_LOG_WLR="1";
-                # __GL_GSYNC_ALLOWED = "0";
-                # __GL_VRR_ALLOWED = "0";
-                # DISABLE_QT5_COMPAT = "0";
-                # ANKI_WAYLAND = "1";
-                # DIRENV_LOG_FORMAT = "";
-                # WLR_DRM_NO_ATOMIC = "1";
-                # QT_QPA_PLATFORM = "wayland";
-                # QT_WAYLAND_DISABLE_WINDOWDECORATION = "1";
-                # QT_QPA_PLATFORMTHEME = "qt5ct";
-                # MOZ_ENABLE_WAYLAND = "1";
-                # WLR_BACKEND = "vulkan";
-                # CLUTTER_BACKEND = "wayland";
-                # WLR_DRM_DEVICES = "/dev/dri/card1:/dev/dri/card0";
               };
             };
 
@@ -1751,8 +1748,7 @@ bar {
             #Enable polkit for passwords, and activate agent
             security.polkit.enable = true;
             security.pam.services = {
-              swaylock = {};
-              waylock = {};
+              hyprlock = {};
             };
             systemd = {
               user.services.polkit-gnome-authentication-agent-1 = {
@@ -1945,196 +1941,182 @@ bar {
         };
       };
       hyprland-config = {config, pkgs, ...}: {
-        home.file = {
-          hyprland-config = {
-            target = ".config/hypr/hyprland.conf";
-            text = ''
-                # This is an example Hyprland config file.
-                #
-                # Refer to the wiki for more information.
+        imports = [
+          inputs.hyprland.homeManagerModules.default
+        ];
+        home.pointerCursor = {
+          x11.enable = true;
+          gtk.enable = true;
+          package = pkgs.catppuccin-cursors.frappeYellow;
+          name = "catppuccin-frappe-yellow-cursors";
+          size = 24;
+        };
+        wayland.windowManager.hyprland = {
+          enable = true;
+          systemd.enable = true;
+          settings = {
 
-                #
-                # Please note not all available settings / options are set here.
-                # For a full list, see the wiki
-                #
+            # settings for NVIDIA
+            env = [
+              "LIBVA_DRIVER_NAME,nvidia"
+              "XDG_SESSION_TYPE,wayland"
+              "GBM_BACKEND,nvidia-drm"
+              "__GLX_VENDOR_LIBRARY_NAME,nvidia"
+              "NVD_BACKEND,direct"
+              "NIXOS_OZONE_WL,1"
 
-                # See https://wiki.hyprland.org/Configuring/Monitors/
-                monitor=eDP-1,2560x1440@165,0x0,1
+              "HYPRCURSOR_THEME,catppuccin-frappe-yellow-cursors"
+              "HYPRCURSOR_SIZE,24"
+            ];
+            cursor = {
+              # experimental with nvidia
+              no_hardware_cursors = false;
+              allow_dumb_copy = true;
+            };
+            monitor="eDP-1,2560x1440@165,0x0,1";
+            exec-once = "emacs";
+            input = {
+              kb_layout = "us";
+              kb_variant = "";
+              kb_model = "";
+              kb_options = "";
+              kb_rules = "";
 
+              follow_mouse = 2;
 
-                # See https://wiki.hyprland.org/Configuring/Keywords/ for more
+              sensitivity = 0; # -1.0 - 1.0, 0 means no modification.
 
-                # Execute your favorite apps at launch
-                # exec-once = waybar & hyprpaper & firefox
-
-                # Source a file (multi-file configs)
-                # source = ~/.config/hypr/myColors.conf
-
-                # Some default env vars.
-                env = XCURSOR_SIZE,24
-
-                # For all categories, see https://wiki.hyprland.org/Configuring/Variables/
-                input {
-                kb_layout = us
-                kb_variant =
-                kb_model =
-                kb_options =
-                kb_rules =
-
-                follow_mouse = 2
-
-                touchpad {
-                natural_scroll = false
-                }
-
-                sensitivity = 0 # -1.0 - 1.0, 0 means no modification.
-                }
-
-                general {
+              touchpad = {
+                natural_scroll = false;
+              };
+            };
+            general = {
                 # See https://wiki.hyprland.org/Configuring/Variables/ for more
-
-                gaps_in = 5
-                gaps_out = 20
-                border_size = 2
-                col.active_border = rgba(33ccffee) rgba(00ff99ee) 45deg
-                col.inactive_border = rgba(595959aa)
-
-                layout = dwindle
-
-
-                }
-
-                decoration {
+              gaps_in = 5;
+              gaps_out = 20;
+              border_size = 2;
+              col = {
+                active_border = "rgba(33ccffee) rgba(00ff99ee) 45deg";
+                inactive_border = "rgba(595959aa)";
+                layout = "dwindle";
+              };
+            };
+            decoration = {
                 # See https://wiki.hyprland.org/Configuring/Variables/ for more
-
-                rounding = 10
-                  blur {
-                    enabled = true
-                    size = 3
-                    passes = 1
-                    new_optimizations = true
-                  }
-                drop_shadow = true
-                shadow_range = 4
-                shadow_render_power = 3
-                col.shadow = rgba(1a1a1aee)
-                }
-
-                animations {
-                enabled = true
+              rounding = 10;
+              blur = {
+                enabled = true;
+                size = 3;
+                passes = 1;
+                new_optimizations = true;
+              };
+              drop_shadow = true;
+              shadow_range = 4;
+              shadow_render_power = 3;
+              col.shadow = "rgba(1a1a1aee)";
+            };
+            animations = {
+              enabled = true;
 
                 # Some default animations, see https://wiki.hyprland.org/Configuring/Animations/ for more
 
-                bezier = myBezier, 0.05, 0.9, 0.1, 1.05
+              bezier = "myBezier, 0.05, 0.9, 0.1, 1.05";
 
-                animation = windows, 1, 7, myBezier
-                animation = windowsOut, 1, 7, default, popin 80%
-                animation = border, 1, 10, default
-                animation = borderangle, 1, 8, default
-                animation = fade, 1, 7, default
-                animation = workspaces, 1, 6, default
-                }
+              animation = [
+                "windows, 1, 7, myBezier"
+                "windowsOut, 1, 7, default, popin 80%"
+                "border, 1, 10, default"
+                "borderangle, 1, 8, default"
+                "fade, 1, 7, default"
+                "workspaces, 1, 6, default"
+              ];
 
-                dwindle {
-                # See https://wiki.hyprland.org/Configuring/Dwindle-Layout/ for more
-                pseudotile = true # master switch for pseudotiling. Enabling is bound to mainMod + P in the keybinds section below
-                preserve_split = true # you probably want this
-                }
+            };
+            gestures = {
+              # See https://wiki.hyprland.org/Configuring/Variables/ for more
+              workspace_swipe = false;
+            };
+            misc = {
+              enable_swallow = true;
+              swallow_regex = "^(Alacritty|kitty|foot)$";
+              force_default_wallpaper = 0;
+            };
+            # trigger when the switch is toggled
+            bindl= [
+              ",switch:on:Lid Switch,exec,hyprlock"
+            ];
+            # See https://wiki.hyprland.org/Configuring/Window-Rules/ for more
 
-                master {
-                # See https://wiki.hyprland.org/Configuring/Master-Layout/ for more
+            dwindle = {
+              # See https://wiki.hyprland.org/Configuring/Dwindle-Layout/ for more
+              pseudotile = true; # master switch for pseudotiling. Enabling is bound to mainMod + P in the keybinds section below
+              preserve_split = true; # you probably want this
+            };
 
-                }
-
-                gestures {
-                # See https://wiki.hyprland.org/Configuring/Variables/ for more
-                workspace_swipe = false
-                }
-
-                misc {
-                enable_swallow = true
-                swallow_regex = ^(Alacritty|kitty|foot)$
-                force_default_wallpaper = 0
-                }
-
-
-                # Example per-device config
-                # See https://wiki.hyprland.org/Configuring/Keywords/#executing for more
-                #device:epic mouse V1 {
-                #    sensitivity = -0.5
-                #}
-
-                # trigger when the switch is toggled
-                #bindl=,switch:Lid Switch,exec,waylock
-                bindl=,switch:on:Lid Switch,exec,waylock
-                # trigger when the switch is turning on
-                #bindl=,switch:on:Lid Switch,exec,hyprctl keyword monitor "eDP-1,2560x1440@165,0x0,1"
-                # trigger when the switch is turning off
-                #bindl=,switch:off:Lid Switch,exec,hyprctl keyword monitor "eDP-1, disable"
-
-                # Example windowrule v1
-                # windowrule = float, ^(kitty)$
-                # Example windowrule v2
-                # windowrulev2 = float,class:^(kitty)$,title:^(kitty)$
-                # See https://wiki.hyprland.org/Configuring/Window-Rules/ for more
+            "$mainMod" = "SUPER";
 
 
-                # See https://wiki.hyprland.org/Configuring/Keywords/ for more
-                $mainMod = SUPER
-
-                # Example binds, see https://wiki.hyprland.org/Configuring/Binds/ for more
-                bind = $mainMod, Q, exec, foot
-                bind = $mainMod, C, killactive,
-                bind = $mainMod, M, exit,
-                bind = $mainMod, L, exec, waylock
-                bind = $mainMod, V, togglefloating,
-                bind = $mainMod, R, exec, wofi --show drun
-                bind = $mainMod, P, pseudo, # dwindle
-                bind = $mainMod, J, togglesplit, # dwindle
+            bind = [
+              "$mainMod, E, exec, emacs"
+              "$mainMod, Q, exec, foot"
+              "$mainMod, C, killactive,"
+              "$mainMod, M, exit,"
+              ##"$mainMod, L, exec, waylock"
+              "$mainMod, V, togglefloating,"
+              ##"$mainMod, R, exec, wofi --show drun"
+              "$mainMod, P, pseudo," # dwindle
+              "$mainMod, J, togglesplit," # dwindle
 
 
                 # Move focus with mainMod + arrow keys
-                bind = $mainMod, left, movefocus, l
-                bind = $mainMod, right, movefocus, r
-                bind = $mainMod, up, movefocus, u
-                bind = $mainMod, down, movefocus, d
+              "$mainMod, left, movefocus, l"
+              "$mainMod, right, movefocus, r"
+              "$mainMod, up, movefocus, u"
+              "$mainMod, down, movefocus, d"
 
-                # Switch workspaces with mainMod + [0-9]
-                bind = $mainMod, 1, workspace, 1
-                bind = $mainMod, 2, workspace, 2
-                bind = $mainMod, 3, workspace, 3
-                bind = $mainMod, 4, workspace, 4
-                bind = $mainMod, 5, workspace, 5
-                bind = $mainMod, 6, workspace, 6
-                bind = $mainMod, 7, workspace, 7
-                bind = $mainMod, 8, workspace, 8
-                bind = $mainMod, 9, workspace, 9
-                bind = $mainMod, 0, workspace, 10
-
-                # Move active window to a workspace with mainMod + SHIFT + [0-9]
-                bind = $mainMod SHIFT, 1, movetoworkspace, 1
-                bind = $mainMod SHIFT, 2, movetoworkspace, 2
-                bind = $mainMod SHIFT, 3, movetoworkspace, 3
-                bind = $mainMod SHIFT, 4, movetoworkspace, 4
-                bind = $mainMod SHIFT, 5, movetoworkspace, 5
-                bind = $mainMod SHIFT, 6, movetoworkspace, 6
-                bind = $mainMod SHIFT, 7, movetoworkspace, 7
-                bind = $mainMod SHIFT, 8, movetoworkspace, 8
-                bind = $mainMod SHIFT, 9, movetoworkspace, 9
-                bind = $mainMod SHIFT, 0, movetoworkspace, 10
-
-                # Scroll through existing workspaces with mainMod + scroll
-                bind = $mainMod, mouse_down, workspace, e+1
-                bind = $mainMod, mouse_up, workspace, e-1
-
-                # Move/resize windows with mainMod + LMB/RMB and dragging
-                bindm = $mainMod, mouse:272, movewindow
-                bindm = $mainMod, mouse:273, resizewindow
-                  '';
+              # Move/resize windows with mainMod + LMB/RMB and dragging
+              "$mainMod, mouse:272, movewindow"
+              "$mainMod, mouse:273, resizewindow"
+            ]
+            ++ (
+              # workspaces
+              # binds $mainMod + [shift +] {1..10} to [move to] workspace {1..10}
+              builtins.concatLists (
+                builtins.genList (
+                  x: let ws =
+                      let
+                      c = (x + 1) / 10;
+                      in
+                      builtins.toString (x + 1 - (c * 10));
+                     in
+                  [
+                    "$mainMod, ${ws}, workspace, ${toString (x + 1)}"
+                    "$mainMod SHIFT, ${ws}, movetoworkspace, ${toString (x + 1)}"
+                  ]
+                ) 10
+              )
+            );
           };
+          plugins = [
+          ];
+        };
 
+        programs.hyprlock = {
+          enable = true;
+          settings = {
+            hide_cursor = true;
+            ignore_empty_input = true;
+            widgets = {
+              background = {
+                monitor = "";
+                color = "rgba(150, 150, 0, 1.0)";
+              };
+            };
+          };
         };
       };
+        
+#
       gtk_setup = {config, pkgs, ...}: {
         gtk = {
           enable = true;
@@ -2145,11 +2127,6 @@ bar {
           iconTheme = {
             package = pkgs.adwaita-icon-theme;
             name = "Adwaita";
-          };
-          cursorTheme = {
-            package = pkgs.vanilla-dmz;
-            name = "Vanilla-DMZ";
-            size = 16;
           };
         };
       };
@@ -5185,6 +5162,7 @@ the target and properties of the edge."
           self.nixosModules.system-conf.stateversion
           self.nixosModules.system-conf.slurm-server
           self.nixosModules.window-managers.hyprland
+          self.nixosModules.window-managers.wayland.clipboard
 
           # self.nixosModules.bib_reorganise # riskier when using org-bibtex, may be editing notes when timer kicks in.
           self.nixosModules.gui.inkscape # works best when GTK is set up
