@@ -2160,7 +2160,6 @@ bar {
             defaultCacheTtl = 72000;
             pinentryPackage = pkgs.pinentry-curses; # other interesting flavours emacs tty curses
             extraConfig = ''
-                  allow-emacs-pinentry
                   allow-loopback-pinentry
                 '';
 
