@@ -478,7 +478,7 @@
           {
             environment.systemPackages = with pkgs; [
               firefox
-              (nyxt.override (x: { sbclPackages = sbcl_2_4_6.pkgs; }))
+              nyxt
               pqiv
               gthumb
             ];
