@@ -1996,7 +1996,7 @@ bar {
               border_size = 2;
               "col.active_border" = "rgba(33ccffee) rgba(00ff99ee) 45deg";
               "col.inactive_border" = "rgba(595959aa)";
-              "col.layout" = "dwindle";
+              layout = "dwindle";
             };
             decoration = {
                 # See https://wiki.hyprland.org/Configuring/Variables/ for more
@@ -2052,6 +2052,11 @@ bar {
 
             "$mainMod" = "SUPER";
 
+            bindm = [
+              # Move/resize windows with mainMod + LMB/RMB and dragging
+              "$mainMod, mouse:272, movewindow"
+              "$mainMod, mouse:273, resizewindow"
+            ];
 
             bind = [
               "$mainMod, E, exec, emacs"
@@ -2071,9 +2076,6 @@ bar {
               "$mainMod, up, movefocus, u"
               "$mainMod, down, movefocus, d"
 
-              # Move/resize windows with mainMod + LMB/RMB and dragging
-              "$mainMod, mouse:272, movewindow"
-              "$mainMod, mouse:273, resizewindow"
             ]
             ++ (
               # workspaces
