@@ -2103,13 +2103,13 @@ bar {
         programs.hyprlock = {
           enable = true;
           settings = {
-            hide_cursor = true;
-            ignore_empty_input = true;
-            widgets = {
-              background = {
-                monitor = "";
-                color = "rgba(150, 150, 0, 1.0)";
-              };
+            general = {
+              hide_cursor = true;
+              ignore_empty_input = true;
+            };
+            background = {
+              monitor = "";
+              color = "rgba(150, 150, 0, 1.0)";
             };
           };
         };
