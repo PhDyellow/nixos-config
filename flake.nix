@@ -2063,7 +2063,7 @@ bar {
               "$mainMod, Q, exec, foot"
               "$mainMod, C, killactive,"
               "$mainMod, M, exit,"
-              ##"$mainMod, L, exec, waylock"
+              "$mainMod, L, exec, hyprlock"
               "$mainMod, V, togglefloating,"
               ##"$mainMod, R, exec, wofi --show drun"
               "$mainMod, P, pseudo," # dwindle
