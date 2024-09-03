@@ -1958,12 +1958,12 @@ bar {
         gtk = {
           enable = true;
           theme = {
-            package = pkgs.paper-gtk-theme;
-            name = "Paper-Dark";
+            package = pkgs.andromeda-gtk-theme;
+            name = "Andromeda";
           };
           iconTheme = {
-            package = pkgs.paper-gtk-theme;
-            name = "Paper-Dark";
+            package = pkgs.andromeda-gtk-theme;
+            name = "Andromeda";
           };
           gtk3.extraConfig = {
             Settings = ''
