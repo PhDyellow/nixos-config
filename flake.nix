@@ -1309,7 +1309,6 @@
                 nurNoPkgs.repos.rycee.hmModules.emacs-init
                 self.hmModules.emacs-hm-init
                 ## self.hmModules.emacs-mwe
-                self.hmModules.gtk_setup
                 self.hmModules.gpg-agent-emacs
                 self.hmModules.hyprland-config
                 self.hmModules.git-config
@@ -1943,12 +1942,40 @@ bar {
         imports = [
           inputs.hyprland.homeManagerModules.default
         ];
-        home.pointerCursor = {
-          x11.enable = true;
-          gtk.enable = true;
-          package = pkgs.catppuccin-cursors.frappeYellow;
-          name = "catppuccin-frappe-yellow-cursors";
-          size = 24;
+        home = {
+          pointerCursor = {
+            x11.enable = true;
+            gtk.enable = true;
+            package = pkgs.catppuccin-cursors.frappeYellow;
+            name = "catppuccin-frappe-yellow-cursors";
+            size = 24;
+          };
+          sessionVariables = {
+            GTK_THEME = "Paper";
+          };
+        };
+        # See https://hoverbear.org/blog/declarative-gnome-configuration-in-nixos/
+        gtk = {
+          enable = true;
+          theme = {
+            package = pkgs.paper-gtk-theme;
+            name = "Paper-Dark";
+          };
+          iconTheme = {
+            package = pkgs.paper-gtk-theme;
+            name = "Paper-Dark";
+          };
+          gtk3.extraConfig = {
+            Settings = ''
+              gtk-application-prefer-dark-theme=1
+            '';
+          };
+
+          gtk4.extraConfig = {
+            Settings = ''
+              gtk-application-prefer-dark-theme=1
+            '';
+          };
         };
         wayland.windowManager.hyprland = {
           enable = true;
@@ -2116,19 +2143,6 @@ bar {
       };
         
 #
-      gtk_setup = {config, pkgs, ...}: {
-        gtk = {
-          enable = true;
-          theme = {
-            package = pkgs.gnome-themes-extra;
-            name = "Adwaita";
-          };
-          iconTheme = {
-            package = pkgs.adwaita-icon-theme;
-            name = "Adwaita";
-          };
-        };
-      };
       gpg-agent-emacs = {config, pkgs, ...}: {
         services = {
           gpg-agent = {
