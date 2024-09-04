@@ -1767,9 +1767,23 @@ bar {
           };
       };
       cli = {
-        ryzen_monitor = {config, pkgs, ...}:
+        ryzen-monitor = {config, pkgs, ...}:
           {
             programs.ryzen-monitor-ng.enable = true;
+          };
+        ryzen-monitor-inital-ppt = {config, pkgs, ...}:
+          {
+            systemd.services = {
+              ryzen-monitor-init = {
+                serviceConfig.Type = "oneshot";
+                after = [ "systemd-modules-load.service" ];
+                wantedBy = [ "systemd-modules-load.service" ];
+                script = ''
+                  # 65W eco mode, "performance mode" set by Metabox
+                  sudo ryzen_monitor --set-ppt 88 --set-tdc 60 --set-edc 90
+                '';
+              };
+            };
           };
 
         # System-wide python
@@ -5177,7 +5191,8 @@ the target and properties of the edge."
           self.nixosModules.cli.direnv
           #self.nixosModules.window-managers.xfce_desktop
 
-          self.nixosModules.cli.ryzen_monitor
+          self.nixosModules.cli.ryzen-monitor
+          self.nixosModules.cli.ryzen-monitor-inital-ppt
 
           # Not sure how this fits in
           inputs.ragenix.nixosModules.age
