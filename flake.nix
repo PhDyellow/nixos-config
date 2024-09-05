@@ -1778,9 +1778,9 @@ bar {
                 serviceConfig.Type = "oneshot";
                 after = [ "basic.target" ];
                 wantedBy = [ "basic.target" ];
-                script = ''
+                script = with pkgs; ''
                   # 65W eco mode, "performance mode" set by Metabox
-                  ryzen_monitor --set-ppt 88 --set-tdc 60 --set-edc 90
+                  ${ryzen-monitor-ng}/bin/ryzen_monitor --set-ppt 88 --set-tdc 60 --set-edc 90
                 '';
               };
             };
