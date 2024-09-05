@@ -1780,7 +1780,7 @@ bar {
                 wantedBy = [ "systemd-modules-load.service" ];
                 script = ''
                   # 65W eco mode, "performance mode" set by Metabox
-                  sudo ryzen_monitor --set-ppt 88 --set-tdc 60 --set-edc 90
+                  ryzen_monitor --set-ppt 88 --set-tdc 60 --set-edc 90
                 '';
               };
             };
