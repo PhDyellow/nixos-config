@@ -1776,8 +1776,8 @@ bar {
             systemd.services = {
               ryzen-monitor-init = {
                 serviceConfig.Type = "oneshot";
-                after = [ "systemd-modules-load.service" ];
-                wantedBy = [ "systemd-modules-load.service" ];
+                after = [ "basic.target" ];
+                wantedBy = [ "basic.target" ];
                 script = ''
                   # 65W eco mode, "performance mode" set by Metabox
                   ryzen_monitor --set-ppt 88 --set-tdc 60 --set-edc 90
