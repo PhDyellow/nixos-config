@@ -478,11 +478,11 @@
           {
             environment.systemPackages = with pkgs; [
               firefox
-              nyxt
               pqiv
               gthumb
             ];
           };
+
         cli = {config, pkgs, ...}:
           {
             environment.systemPackages = with pkgs; [
@@ -1842,6 +1842,16 @@ bar {
             # })
           ];
         };
+        nyxt-browser = {config, pkgs, ...}:
+          {
+            environment.systemPackages = with pkgs; [
+              nyxt
+            ];
+            environment.sessionVariables = {
+              # Remove flickering in Nyxt browser
+              WEBKIT_DISABLE_COMPOSITING_MODE=1;
+            };
+          };
       };
 
       bib_reorganise = {config, pkgs, ...}: {
@@ -5186,6 +5196,7 @@ the target and properties of the edge."
 
           # self.nixosModules.bib_reorganise # riskier when using org-bibtex, may be editing notes when timer kicks in.
           self.nixosModules.gui.inkscape # works best when GTK is set up
+          self.nixosModules.gui.nyxt-browser
           self.nixosModules.cli.python-system
           self.nixosModules.cli.spell_checkers
           self.nixosModules.cli.direnv
