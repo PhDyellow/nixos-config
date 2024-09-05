@@ -1975,7 +1975,7 @@ bar {
             size = 24;
           };
           sessionVariables = {
-            GTK_THEME = "Paper";
+            GTK_THEME = "Andromeda";
           };
         };
         # See https://hoverbear.org/blog/declarative-gnome-configuration-in-nixos/
