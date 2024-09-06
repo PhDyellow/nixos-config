@@ -3055,6 +3055,9 @@ bar {
                     "(rfn-eshadow-update-overlay . vertico-directory-tidy)"
                   ];
                 };
+                picpocket = {
+                  enable = true;
+                };
                 image-dired = {
                   enable = true;
                   config = ''
