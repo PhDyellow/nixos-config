@@ -4740,6 +4740,7 @@ the target and properties of the edge."
                 };
                 pdf-tools = {
                   enable = true;
+                  extraPackages = with pkgs; [ ghostscript ];
                   init = ''
                       '';
                 };
