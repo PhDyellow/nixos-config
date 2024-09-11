@@ -137,6 +137,21 @@
       #   Only use gui or cli for programs that need tweaking
 
       system-conf = {
+        network-printers = {config, pkgs, ...}:
+          {
+            services.printing.enable = true;
+            # Discover printers on Wifi network
+            services.avahi = {
+              enable = true;
+              nssmdns4 = true;
+              openFirewall = true;
+            };
+          };
+        network-scanners = {config, pkgs, ...}:
+          {
+            hardware.sane.enable = true;
+            users.users.phil.extraGroups = ["scanner" "lp" ];
+          };
         umask = {config, pkgs, ...}:
           {
             environment.extraInit = "umask 0027";
@@ -5195,6 +5210,8 @@ the target and properties of the edge."
           self.nixosModules.system-conf.nix-config
           self.nixosModules.system-conf.stateversion
           self.nixosModules.system-conf.slurm-server
+          self.nixosModules.system-conf.network-printers
+          self.nixosModules.system-conf.network-scanners
           self.nixosModules.window-managers.hyprland
           self.nixosModules.window-managers.wayland.clipboard
 
