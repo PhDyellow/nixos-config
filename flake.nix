@@ -1939,6 +1939,16 @@ bar {
           allowOther = false;
         };
 
+        # Create some directories on each boot, but do not persist them
+        systemd.user.services.make-dirs = {
+          enable = true;
+          serviceConfig.Type = "oneshot";
+          after = [ "graphical-session.target" ];
+          wantedBy = [ "graphical-session.target" ];
+          script = ''
+            mkdir -p $HOME/Downloads
+          '';
+        };
       };
       r-config = {config, pkgs, ...}: {
         home.file.r-config = {
