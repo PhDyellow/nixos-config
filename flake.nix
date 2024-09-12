@@ -1954,7 +1954,7 @@ bar {
             Service = {
               Type = "oneshot";
               ExecStart = ''
-            ${pkgs.coreutils}/bin/mkdir -p $HOME/Downloads
+            ${pkgs.coreutils}/bin/mkdir -p /home/${config.home.username}/Downloads
           '';
             };
           };
