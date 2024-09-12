@@ -1940,14 +1940,24 @@ bar {
         };
 
         # Create some directories on each boot, but do not persist them
-        systemd.user.services.make-dirs = {
+        systemd.user = {
           enable = true;
-          serviceConfig.Type = "oneshot";
-          after = [ "graphical-session.target" ];
-          wantedBy = [ "graphical-session.target" ];
-          script = ''
+          startServices = true;
+          services.make-dirs = {
+            Unit = {
+              Description = "Creates some directories destroyed by  nixos impermanence";
+              After = [ "graphical-session.target" ];
+            };
+            Install = {
+              WantedBy = [ "graphical-session.target" ];
+            };
+            Service = {
+              Type = "oneshot";
+              ExecStart = ''
             mkdir -p $HOME/Downloads
           '';
+            };
+          };
         };
       };
       r-config = {config, pkgs, ...}: {
