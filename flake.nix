@@ -2220,7 +2220,7 @@ bar {
         ];
         services = {
           emacs = {
-            enable = true;
+            enable = false;
             defaultEditor = true;
             ## Allow server to start with graphics so wayland session is
             ## correctly detected by server
