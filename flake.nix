@@ -956,6 +956,7 @@
                 "/var/lib/systemd"
                 "/var/lib/syncthing"
                 "/var/lib/tailscale"
+                "/var/lib/bluetooth"
                 "/nix"
                 "/var/log"
                 # quick note, these are mounted from /persistent/{dir} to /{dir}
