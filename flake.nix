@@ -540,6 +540,19 @@
             };
 
           };
+        bluetooth = {config, lib, pkgs, ...}:
+          {
+            hardware.bluetooth = {
+              enable = true; # enables support for Bluetooth
+              powerOnBoot = true; # powers up the default Bluetooth controller on boot
+              settings = {
+                General = {
+                  Enable = "Source,Sink,Media,Socket";
+                };
+              };
+            };
+            services.blueman.enable = true;
+          };
         hardware_config_tuxedo = { config, lib, pkgs, modulesPath, ...}:
           let
             tailor-super-fans = pkgs.writeTextFile {
@@ -5204,6 +5217,7 @@ the target and properties of the edge."
         modules = [
           self.nixosModules.prime-ai.hardware_config
           self.nixosModules.prime-ai.networking
+          self.nixosModules.prime-ai.bluetooth
           self.nixosModules.prime-ai.hardware_config_tuxedo
           self.nixosModules.prime-ai.hardware_shared_crypt
           self.nixosModules.prime-ai.impermanence
