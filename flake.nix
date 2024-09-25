@@ -1948,7 +1948,8 @@ bar {
             ".local/share/fish"
           ];
           files = [
-
+            ".config/enchant/en_AU.dic"
+            ".config/enchant/en_AU.exc"
           ];
           allowOther = false;
         };
