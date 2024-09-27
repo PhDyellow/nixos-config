@@ -2521,6 +2521,9 @@ bar {
                   config = ''
                         '';
                 };
+                journalctl-mode = {
+                  enable = true;
+                };
                 god-mode = {
                   enable = false;
                   init = ''
