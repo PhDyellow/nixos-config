@@ -124,7 +124,7 @@
       flake = false;
     };
     journalctl-el = {
-      url = "https://github.com/WJCFerguson/journalctl";
+      url = "github:WJCFerguson/journalctl/master";
       flake = false;
     };
   };

@@ -972,13 +972,18 @@
     "journalctl-el": {
       "flake": false,
       "locked": {
-        "narHash": "sha256-DYIU8lk63Efhynm3SK8ItMC82zso/66PUFyl5GlhHDo=",
-        "type": "file",
-        "url": "https://github.com/WJCFerguson/journalctl"
+        "lastModified": 1699826126,
+        "narHash": "sha256-n09bHdOgkIvQuFy4Rz49g9diOc2205c4VfrcoY/6q24=",
+        "owner": "WJCFerguson",
+        "repo": "journalctl",
+        "rev": "d665927e043332ebf009108973ad8bb626342960",
+        "type": "github"
       },
       "original": {
-        "type": "file",
-        "url": "https://github.com/WJCFerguson/journalctl"
+        "owner": "WJCFerguson",
+        "ref": "master",
+        "repo": "journalctl",
+        "type": "github"
       }
     },
     "key-game": {
