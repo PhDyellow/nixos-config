@@ -1306,7 +1306,7 @@
             users.users = {
               phil = {
                 isNormalUser = true;
-                extraGroups = ["wheel"];
+                extraGroups = ["wheel" "systemd-journal"];
                 hashedPasswordFile = config.age.secrets.user_phil_pwd.path;
                 uid = 1001;
                 shell = pkgs.fish;
