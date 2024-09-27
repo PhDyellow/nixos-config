@@ -969,6 +969,18 @@
         "type": "github"
       }
     },
+    "journalctl-el": {
+      "flake": false,
+      "locked": {
+        "narHash": "sha256-DYIU8lk63Efhynm3SK8ItMC82zso/66PUFyl5GlhHDo=",
+        "type": "file",
+        "url": "https://github.com/WJCFerguson/journalctl"
+      },
+      "original": {
+        "type": "file",
+        "url": "https://github.com/WJCFerguson/journalctl"
+      }
+    },
     "key-game": {
       "flake": false,
       "locked": {
@@ -1838,6 +1850,7 @@
         "hyprland": "hyprland",
         "impermanence": "impermanence",
         "isend-mode": "isend-mode",
+        "journalctl-el": "journalctl-el",
         "key-game": "key-game",
         "lanzaboote": "lanzaboote",
         "nix-on-droid": "nix-on-droid",

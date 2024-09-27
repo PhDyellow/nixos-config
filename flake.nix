@@ -123,6 +123,10 @@
       url = "github:chrisbarrett/nursery/main";
       flake = false;
     };
+    journalctl-el = {
+      url = "https://github.com/WJCFerguson/journalctl";
+      flake = false;
+    };
   };
 
   outputs = {self, nixpkgs-unstable, ...}@inputs: {
@@ -2382,6 +2386,13 @@ bar {
                 ];
 
               };
+              journalctl = prev.emacs.pkgs.trivialBuild {
+                pname = "journalctl";
+                version = "git";
+                src = inputs.journalctl-el;
+                packageRequires = [
+                ];
+              };
             };
             init = {
               enable = true;
@@ -2522,6 +2533,9 @@ bar {
                         '';
                 };
                 journalctl-mode = {
+                  enable = false;
+                };
+                journalctl = {
                   enable = true;
                 };
                 god-mode = {
