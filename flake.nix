@@ -186,12 +186,15 @@
               squashfsTools
               squashfs-tools-ng
               inputs.ragenix.packages.x86_64-linux.default
-              davfs2
             ];
           };
         allow-unfree = {config, pkgs, ...}:
           {
             nixpkgs.config.allowUnfree = true;
+          };
+        davfs = {config, pkgs, ...}:
+          {
+            services.davfs2.enable = true;
           };
         udisks = {config, pkgs, ...}:
           {
@@ -5258,6 +5261,7 @@ the target and properties of the edge."
           self.nixosModules.system-conf.umask
           self.nixosModules.system-conf.cli
           self.nixosModules.system-conf.gui
+          self.nixosModules.system-conf.davfs
           self.nixosModules.system-conf.udisks
           self.nixosModules.system-conf.fonts
           self.nixosModules.system-conf.lock-root
