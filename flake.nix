@@ -165,6 +165,8 @@
           {
             environment.systemPackages = with pkgs; [
               bitwarden
+              keepassxc
+              btop
             ];
           };
         cli = {config, pkgs, ...}:
