@@ -166,7 +166,7 @@
             environment.systemPackages = with pkgs; [
               bitwarden
               keepassxc
-              btop
+              (btop.override {cudaSupport = true;})
             ];
           };
         cli = {config, pkgs, ...}:
