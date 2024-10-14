@@ -184,6 +184,7 @@
               squashfsTools
               squashfs-tools-ng
               inputs.ragenix.packages.x86_64-linux.default
+              davfs2
             ];
           };
         allow-unfree = {config, pkgs, ...}:
