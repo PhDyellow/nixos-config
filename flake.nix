@@ -3129,6 +3129,18 @@ bar {
                 picpocket = {
                   enable = true;
                 };
+                # work around bug in image-converter when using imagemagick v7
+                # and opening .heic files
+                image-converter = {
+                  enable = true;
+                  config = ''
+                    (setq image-use-external-converter t)
+                    (set 'image-converter--converters
+                      '((graphicsmagick :command ("gm" "convert") :probe ("-list" "format"))
+                       (ffmpeg :command "ffmpeg" :probe "-decoders")
+                        (imagemagick :command "magick" :probe ("-list" "format"))))
+                  '';
+                };
                 image-dired = {
                   enable = true;
                   config = ''
