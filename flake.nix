@@ -1852,7 +1852,7 @@ bar {
           let
                 #moderncv =
                  # awesomecv =
-            altacv = pkgs.stdenv.stdenvNoCC.mkDerivation {
+            altacv = pkgs.stdenvNoCC.mkDerivation {
                 pname = "latex-altacv";
                 version = "1.1.3";
 
