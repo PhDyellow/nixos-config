@@ -1882,7 +1882,7 @@ bar {
                };
 
 
-            texlive-extended = pkgs.texliveFull.withPackages (ps: with ps; [
+            texlive-extended = pkgs.texliveFull.withPackages (ps:  [
               altacv
             ]);
           in {
