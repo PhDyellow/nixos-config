@@ -4473,7 +4473,7 @@ the target and properties of the edge."
                       '';
                 };
                 citar = {
-                  enable = false;
+                  enable = true;
                   after = [ "org" ];
                   config = ''
                         (setq citar-bibliography my-bib-files
@@ -4575,25 +4575,25 @@ the target and properties of the edge."
 
                 };
                 citar-org = {
-                  enable = true;
+                  enable = false;
                   after = [ "org"];
                 };
                 citar-capf = {
-                  enable = true;
+                  enable = false;
                   command = [ "citar-capf-setup" ];
                   hook = [
                     "(org-mode . citar-capf-setup)"
                   ];
                 };
                 citar-embark = {
-                  enable = true;
+                  enable = false;
                   after = [ "citar" ];
                   config = ''
                         (citar-embark-mode)
                       '';
                 };
                 citar-org-roam = {
-                  enable = true;
+                  enable = false;
                   after = [ "citar" "org-roam" "org-roam-bibtex" ];
                   init = ''
 
