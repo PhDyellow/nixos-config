@@ -1857,13 +1857,13 @@ bar {
                 version = "1.1.3";
 
                 outputs = [ "tex" ];
-
+                passthru.tlDeps = with pkgs.texlive; [ latex ];
                 src = inputs.altacv;
 
                 installPhase = ''
                 runHook preInstall
 
-                path="${tex}/tex/latex/AltaCV/"
+                path="$tex/tex/latex/AltaCV/"
                 mkdir -p "$path"
                 cp *.{cls} "$path/"
 
