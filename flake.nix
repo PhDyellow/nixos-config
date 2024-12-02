@@ -904,6 +904,7 @@
                 #forceFullCompositionPipeline = true;
                 nvidiaPersistenced = true;
                 gsp.enable = true;
+                package = config.boot.kernelPackages.nvidiaPackages.beta;
               };
               graphics = {
                 enable = true;
