@@ -267,27 +267,27 @@
           {
             age.secrets.wpa_pwd_env.file = ./agenix/wpa_pwd.env.age;
             networking.wireless = {
-              environmentFile = config.age.secrets.wpa_pwd_env.path;
+              secretsFile = config.age.secrets.wpa_pwd_env.path;
               networks = {
                 PBAGJmob = {
-                  psk = "@phone_psk@";
+                  pskRaw = "ext:phone_psk";
                   priority = 20;
                 };
                 WIFI-56E0-5G = {
-                  psk = "@parent_psk@";
+                  pskRaw = "ext:parent_psk";
                   priority = 60;
                 };
                 WiFi-56E0-5G = {
-                  psk = "@parent_psk@";
+                  pskRaw = "ext:parent_psk";
                   priority = 65;
                 };
                 PBAGJE_H_5G = {
-                  psk = "@home_psk@";
+                  pskRaw = "ext:home_psk";
                   priority = 99;
                 };
                 #BParent 2.4Ghz
                 TelstraA76952 = {
-                  psk = "@bparent_psk@";
+                  pskRaw = "ext:bparent_psk";
                   priority = 50;
                 };
               };
