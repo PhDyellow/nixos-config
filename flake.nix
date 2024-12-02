@@ -1857,13 +1857,6 @@ bar {
                 version = "1.1.3";
 
 
-                nativeBuildInputs = [
-                  (pkgs.texliveSmall.withPackages (ps: with ps; [ cm-super hypdoc latexmk ]))
-                  # multiple-outputs.sh fails if $out is not defined
-                  (pkgs.writeShellScript "force-tex-output.sh" ''
-                   out="''${tex-}"
-                   '')
-                ];
 
                 outputs = [  "tex"  ];
                 passthru.tlDeps = with pkgs.texlive; [ latex ];
