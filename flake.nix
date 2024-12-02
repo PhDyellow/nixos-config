@@ -2416,6 +2416,7 @@ bar {
             enable = true;
             package = pkgs.emacs-pgtk;
             extraPackages = epkgs: [
+              org-cv
             ];
             overrides = final: prev: {
               # org-ref = prev.org-ref.overrideAttrs (old: {
