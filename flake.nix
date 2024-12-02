@@ -1858,7 +1858,7 @@ bar {
 
 
 
-                outputs = [  "tex" ];
+                outputs = [  "tex" "out" ];
                 passthru.tlDeps = with pkgs.texlive; [ latex ];
                 src = inputs.altacv;
 
