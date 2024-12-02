@@ -2537,6 +2537,7 @@ bar {
                 src = inputs.org-cv;
                 packageRequires = [
                   final.ox-hugo
+                  final.dash
                 ];
               };
               # trivialBuild assumes all list files are in the root dir
