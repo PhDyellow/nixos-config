@@ -3498,7 +3498,9 @@ bar {
                 ox-moderncv = {
                   enable = true;
                 };
-
+                ox-hugo = {
+                  enable = true;
+                };
                 org-drill = {
                   enable = false;
                   config = ''
