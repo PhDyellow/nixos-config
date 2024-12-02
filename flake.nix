@@ -2536,6 +2536,7 @@ bar {
                 version = "git";
                 src = inputs.org-cv;
                 packageRequires = [
+                  final.ox-hugo
                 ];
               };
               # trivialBuild assumes all list files are in the root dir
