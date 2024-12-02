@@ -1856,15 +1856,22 @@ bar {
                 pname = "latex-altacv";
                 version = "1.1.3";
 
-
                 nativeBuildInputs = [
                   # multiple-outputs.sh fails if $out is not defined
                   (pkgs.writeShellScript "force-tex-output.sh" ''
                     out="''${tex-}"
                                     '')
                 ];
+
                 outputs = [  "tex"  ];
-                passthru.tlDeps = with pkgs.texlive; [ latex ];
+
+                passthru.tlDeps = with pkgs.texlive; [
+                  latex
+                  lualatex
+                  academicons
+                  fontawesome5
+                ];
+
                 src = inputs.altacv;
 
                 installPhase = ''
@@ -1874,12 +1881,9 @@ bar {
                 mkdir -p "$path"
                 cp "$src/altacv.cls" "$path"
 
-
                 runHook postInstall
                 '';
-
                };
-
 
             texlive-extended = pkgs.texliveFull.withPackages (ps:  [
               altacv.tex
