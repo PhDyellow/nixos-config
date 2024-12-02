@@ -4575,25 +4575,25 @@ the target and properties of the edge."
 
                 };
                 citar-org = {
-                  enable = false;
+                  enable = true;
                   after = [ "org"];
                 };
                 citar-capf = {
-                  enable = false;
+                  enable = true;
                   command = [ "citar-capf-setup" ];
                   hook = [
                     "(org-mode . citar-capf-setup)"
                   ];
                 };
                 citar-embark = {
-                  enable = false;
+                  enable = true;
                   after = [ "citar" ];
                   config = ''
                         (citar-embark-mode)
                       '';
                 };
                 citar-org-roam = {
-                  enable = false;
+                  enable = true;
                   after = [ "citar" "org-roam" "org-roam-bibtex" ];
                   init = ''
 
