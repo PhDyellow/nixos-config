@@ -5174,10 +5174,40 @@ the target and properties of the edge."
         };
       tex-full = {config, pkgs, ...}:
         {
-          programs.texlive = {
+         let altacv = = stdenvNoCC.mkDerivation {
+                pname = "latex-altacv";
+                version = "1.1.3";
+
+                outputs = [ "tex" "texdoc" ];
+                passthru.tlDeps = with texlive; [ latex lualatex xelatex academicons fontawesome tikz ];
+
+                src = inputs.altacv;
+
+                preInstall = ''
+                mkdir -p $tex
+  '';
+
+                postInstall = ''
+                cp ${src}/altacv.cls $tex
+                '';
+
+                    meta = {
+      description = "CV Class";
+      license = "latex Project Public License,  1.3+";
+      maintainers = with lib.maintainers; [ phdyellow ];
+      platforms = lib.platforms.all;
+                    };
+             };
+         in
+
+                #moderncv =
+
+                 # awesomecv =
+           programs.texlive = {
             enable = true;
             extraPackages = tpkgs: {
               inherit (tpkgs)
+                altacv
                 scheme-basic
                 scheme-full
                 biber
