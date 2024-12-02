@@ -71,6 +71,15 @@
       url =  "github:Titan-C/AltaCV";
       flake = false;
     };
+    moderncv = {
+      url =  "github:Titan-C/moderncv";
+      flake = false;
+    };
+    awesomecv = {
+      url =  "github:posquit0/Awesome-CV";
+      flake = false;
+    };
+
     #Emacs packages
     org-sltypes = {
       url = "github:PhDyellow/org-sltypes/stable";
