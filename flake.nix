@@ -1864,14 +1864,11 @@ bar {
                   academicons
                   fontawesome5
                   xcolor
-                  tikz
                   tcolorbox
                   enumitem
-                  graphicx
                   etoolbox
                   dashrule
                   multirow
-                  tabularx
                   changepage
                 ];
 
