@@ -5174,21 +5174,25 @@ the target and properties of the edge."
         };
       tex-full = {config, pkgs, ...}:
         {
-         let altacv = = stdenvNoCC.mkDerivation {
+          let
+            altacv = stdenvNoCC.mkDerivation {
                 pname = "latex-altacv";
                 version = "1.1.3";
 
-                outputs = [ "tex" "texdoc" ];
-                passthru.tlDeps = with texlive; [ latex lualatex xelatex academicons fontawesome tikz ];
+                outputs = [ "tex" ];
+
+                passthru.tlDeps = with texlive; [  academicons fontawesome tikz];
 
                 src = inputs.altacv;
 
-                preInstall = ''
-                mkdir -p $tex
-  '';
+                installPhase = ''
+                runHook preInstall
 
-                postInstall = ''
-                cp ${src}/altacv.cls $tex
+                path="$tex/tex/latex/AltaCV/"
+                mkdir -p "$path"
+                 cp *.{cls} "$path/"
+
+                 runHook postInstall
                 '';
 
                     meta = {
@@ -5205,6 +5209,8 @@ the target and properties of the edge."
                  # awesomecv =
            programs.texlive = {
             enable = true;
+             # The contents of extraPackages is
+             # passed to ~texlive.combine~ directly
             extraPackages = tpkgs: {
               inherit (tpkgs)
                 altacv
