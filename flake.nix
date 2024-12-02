@@ -118,6 +118,10 @@
       url = "sourcehut:~l3kn/org-fc/main";
       flake = false;
     };
+    org-cv = {
+      url = "gitlab:Titan-C/org-cv";
+      flake = false;
+    };
     # Primarily for org-roam-review
     chrisbarrett-nursery = {
       url = "github:chrisbarrett/nursery/main";
@@ -2373,6 +2377,13 @@ bar {
                   cp -R awk $LISPDIR
                 '';
               };
+              org-cv = prev.emacs.pkgs.trivialBuild {
+                pname = "org-cv";
+                version = "git";
+                src = inputs.org-cv;
+                packageRequires = [
+                ];
+              };
               # trivialBuild assumes all list files are in the root dir
               # Using melpaBuild
               # melpaBuild is more complex than expected, trying
@@ -3313,6 +3324,28 @@ bar {
                           (which-key-mode)
                         '';
                 };
+                ## org-cv packages
+                ox-altacv = {
+                  enable = true;
+                  init = "(require 'ox-altacv)";
+                };
+                ox-awesomecv = {
+                  enable = true;
+                  init = "(require 'ox-awesomecv)";
+                };
+                ox-awesomecv2 = {
+                  enable = true;
+                  init = "(require 'ox-awesomecv2)";
+                };
+                ox-hugocv = {
+                  enable = true;
+                  init = "(require 'ox-hugocv)";
+                };
+                ox-moderncv = {
+                  enable = true;
+                  init = "(require 'ox-moderncv)";
+                };
+
                 org-drill = {
                   enable = false;
                   config = ''
