@@ -1865,8 +1865,8 @@ bar {
                    '')
                 ];
 
-                outputs = [ "tex" "texdoc" ];
-                passthru.tlDeps = with pkgs.texlive; [ latex ];
+                outputs = [ "out" "tex" "texdoc" ];
+                passthru.tlDeps = with pkgs.texliveFull; [ latex ];
                 src = inputs.altacv;
 
                 installPhase = ''
