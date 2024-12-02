@@ -3500,6 +3500,7 @@ bar {
                 };
                 ox-hugo = {
                   enable = true;
+                  after = [ "ox" ];
                 };
                 org-drill = {
                   enable = false;
