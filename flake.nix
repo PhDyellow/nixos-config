@@ -1890,6 +1890,8 @@ bar {
                 pname = "latex-awesome-cv";
                 version = "1.6.1";
 
+                phases = [ "installPhase" ];
+
                 outputs = [  "tex" "out"  ];
 
                 passthru.tlDeps = with pkgs.texlive; [
