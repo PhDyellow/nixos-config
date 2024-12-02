@@ -5187,7 +5187,6 @@ the target and properties of the edge."
           };
         };
       tex-full = {config, pkgs, ...}:
-        {
           let
             altacv = stdenvNoCC.mkDerivation {
                 pname = "latex-altacv";
