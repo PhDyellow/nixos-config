@@ -2423,7 +2423,7 @@ bar {
             };
             init = {
               enable = true;
-              packageQuickstart = true;
+              packageQuickstart = false;
               recommendedGcSettings = true;
               startupTimer = true;
               earlyInit = "";
