@@ -304,7 +304,8 @@
           {
             fonts = {
               packages = with pkgs; [
-                (nerdfonts.override { fonts = [ "FiraCode" "RobotoMono" ]; })
+                nerd-fonts.fira-code
+                nerd-fonts.roboto-mono
               ];
               fontconfig.defaultFonts = {
                 monospace = [ "RobotoMono" ];
