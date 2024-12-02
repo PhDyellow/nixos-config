@@ -5186,7 +5186,7 @@ the target and properties of the edge."
 
           };
         };
-      tex-full = {config, pkgs, ...}:
+      tex-full = {config, pkgs, lib, ...}:
           let
             altacv = pkgs.stdenv.stdenvNoCC.mkDerivation {
                 pname = "latex-altacv";
@@ -5194,7 +5194,7 @@ the target and properties of the edge."
 
                 outputs = [ "tex" ];
 
-                passthru.tlDeps = with texlive; [  academicons fontawesome tikz];
+                passthru.tlDeps = with pkgs.texlive; [  academicons fontawesome tikz];
 
                 src = inputs.altacv;
 
