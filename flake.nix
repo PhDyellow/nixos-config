@@ -1869,7 +1869,9 @@ bar {
 
                 runHook postInstall
                 '';
-
+                meta = {
+                  outputsToInstall = ["tex"];
+                };
                };
 
 
