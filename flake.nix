@@ -3482,23 +3482,18 @@ bar {
                 ## org-cv packages
                 ox-altacv = {
                   enable = true;
-                  init = "(require 'ox-altacv)";
                 };
                 ox-awesomecv = {
                   enable = true;
-                  init = "(require 'ox-awesomecv)";
                 };
                 ox-awesomecv2 = {
                   enable = true;
-                  init = "(require 'ox-awesomecv2)";
                 };
                 ox-hugocv = {
                   enable = true;
-                  init = "(require 'ox-hugocv)";
                 };
                 ox-moderncv = {
                   enable = true;
-                  init = "(require 'ox-moderncv)";
                 };
 
                 org-drill = {
