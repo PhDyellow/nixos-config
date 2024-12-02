@@ -4473,7 +4473,7 @@ the target and properties of the edge."
                       '';
                 };
                 citar = {
-                  enable = true;
+                  enable = false;
                   after = [ "org" ];
                   config = ''
                         (setq citar-bibliography my-bib-files
