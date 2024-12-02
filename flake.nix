@@ -1850,7 +1850,41 @@ bar {
 
         texlive-system = {config, pkgs, ...}:
           let
-                #moderncv =
+            moderncv = pkgs.stdenvNoCC.mkDerivation {
+                pname = "latex-moderncv";
+                version = "2.0.0";
+
+                outputs = [  "tex" "out"  ];
+
+                passthru.tlDeps = with pkgs.texlive; [
+                  latex
+                  luatex
+
+                  microtype
+                  fancyhdr
+                  etoolbox
+                  geometry
+                  url
+                ];
+
+                src = inputs.moderncv;
+
+                installPhase = ''
+                runHook preInstall
+
+                path="$tex/tex/latex/moderncv/"
+                mkdir -p "$path"
+                cp $src/*.{cls,sty} "$path"
+
+                # $out must be defined, but does not
+                # need to be used.
+                # By putting `out` second in `outputs`,
+                # `out` will not be the default
+                mkdir -p $out
+
+                runHook postInstall
+                '';
+               };
                  # awesomecv =
             altacv = pkgs.stdenvNoCC.mkDerivation {
                 pname = "latex-altacv";
@@ -1893,6 +1927,7 @@ bar {
 
             texlive-extended = pkgs.texliveFull.withPackages (ps:  [
               altacv
+              moderncv
             ]);
           in {
             environment.systemPackages = with pkgs; [
