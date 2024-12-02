@@ -1856,7 +1856,16 @@ bar {
                 pname = "latex-altacv";
                 version = "1.1.3";
 
-                outputs = [ "tex" ];
+
+                nativeBuildInputs = [
+                  (texliveSmall.withPackages (ps: with ps; [ cm-super hypdoc latexmk ]))
+                  # multiple-outputs.sh fails if $out is not defined
+                  (writeShellScript "force-tex-output.sh" ''
+                   out="''${tex-}"
+                   '')
+                ];
+
+                outputs = [ "tex" "texdoc" ];
                 passthru.tlDeps = with pkgs.texlive; [ latex ];
                 src = inputs.altacv;
 
@@ -1869,9 +1878,7 @@ bar {
 
                 runHook postInstall
                 '';
-                meta = {
-                  outputsToInstall = ["tex"];
-                };
+
                };
 
 
