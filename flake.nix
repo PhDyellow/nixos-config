@@ -38,6 +38,7 @@
     openconnect-sso = {
       # url = "github:vlaci/openconnect-sso";
       url = "github:ThinkChaos/openconnect-sso/fix/nix-flake";
+      inputs.nixpkgs.follows = "nixpkgs-unstable";
     };
 
     nix-on-droid = {
