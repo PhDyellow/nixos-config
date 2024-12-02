@@ -1373,7 +1373,7 @@
                 self.hmModules.hyprland-config
                 self.hmModules.git-config
                 self.hmModules.r-config
-                self.hmModules.tex-full
+                # self.hmModules.tex-full
                 self.hmModules.impermanence-phil
 
               ];
@@ -1844,6 +1844,42 @@ bar {
                 '';
               };
             };
+          };
+
+        # System wide TeX Live
+
+        texlive-system = {config, pkgs, ...}:
+          let
+                #moderncv =
+                 # awesomecv =
+            altacv = pkgs.stdenv.stdenvNoCC.mkDerivation {
+                pname = "latex-altacv";
+                version = "1.1.3";
+
+                outputs = [ "tex" ];
+
+                src = inputs.altacv;
+
+                installPhase = ''
+                runHook preInstall
+
+                path="$tex/tex/latex/AltaCV/"
+                mkdir -p "$path"
+                 cp *.{cls} "$path/"
+
+                 runHook postInstall
+                '';
+
+               };
+
+
+            texlive-extended = pkgs.texliveFull.withPackages (ps: with ps; [
+              altacv
+            ]);
+          in {
+            environment.systemPackages = with pkgs; [
+              texlive-extended
+            ];
           };
 
         # System-wide python
@@ -5187,46 +5223,13 @@ the target and properties of the edge."
           };
         };
       tex-full = {config, pkgs, lib, ...}:
-          let
-            altacv = pkgs.stdenv.stdenvNoCC.mkDerivation {
-                pname = "latex-altacv";
-                version = "1.1.3";
-
-                outputs = [ "tex" ];
-
-                passthru.tlDeps = with pkgs.texlive; [  academicons fontawesome tikz];
-
-                src = inputs.altacv;
-
-                installPhase = ''
-                runHook preInstall
-
-                path="$tex/tex/latex/AltaCV/"
-                mkdir -p "$path"
-                 cp *.{cls} "$path/"
-
-                 runHook postInstall
-                '';
-
-                    meta = {
-      description = "CV Class";
-      license = "latex Project Public License,  1.3+";
-      maintainers = with lib.maintainers; [ phdyellow ];
-      platforms = lib.platforms.all;
-                    };
-             };
-          in {
-
-                #moderncv =
-
-                 # awesomecv =
+        {
            programs.texlive = {
             enable = true;
              # The contents of extraPackages is
              # passed to ~texlive.combine~ directly
             extraPackages = tpkgs: {
               inherit (tpkgs)
-                altacv
                 scheme-basic
                 scheme-full
                 biber
@@ -5331,6 +5334,7 @@ the target and properties of the edge."
           self.nixosModules.gui.inkscape # works best when GTK is set up
           self.nixosModules.gui.nyxt-browser
           self.nixosModules.cli.python-system
+          self.nixosModules.cli.texlive-system
           self.nixosModules.cli.spell_checkers
           self.nixosModules.cli.direnv
           #self.nixosModules.window-managers.xfce_desktop
