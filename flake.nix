@@ -1857,8 +1857,13 @@ bar {
                 version = "1.1.3";
 
 
-
-                outputs = [  "tex" "out" ];
+                nativeBuildInputs = [
+                  # multiple-outputs.sh fails if $out is not defined
+                  (writeShellScript "force-tex-output.sh" ''
+                    out="''${tex-}"
+                                    '')
+                ];
+                outputs = [  "tex"  ];
                 passthru.tlDeps = with pkgs.texlive; [ latex ];
                 src = inputs.altacv;
 
@@ -1868,6 +1873,7 @@ bar {
                 path="$tex/tex/latex/AltaCV/"
                 mkdir -p "$path"
                 cp "$src/altacv.cls" "$path"
+
 
                 runHook postInstall
                 '';
