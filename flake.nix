@@ -1863,6 +1863,17 @@ bar {
                   luatex
                   academicons
                   fontawesome5
+                  normalphoto
+                  xcolor
+                  tikz
+                  tcolorbox
+                  enumitem
+                  graphicx
+                  etoolbox
+                  dashrule
+                  multirow
+                  tabularx
+                  changepage
                 ];
 
                 src = inputs.altacv;
