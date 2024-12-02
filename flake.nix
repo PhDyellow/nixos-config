@@ -5216,7 +5216,7 @@ the target and properties of the edge."
       platforms = lib.platforms.all;
                     };
              };
-         in
+          in {
 
                 #moderncv =
 
