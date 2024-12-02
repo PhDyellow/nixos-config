@@ -66,6 +66,11 @@
       url = "github:lierdakil/pandoc-crossref";
     };
 
+    # TeX packages
+    altacv = {
+      url =  "github:Titan-C/AltaCV";
+      flake = false;
+    };
     #Emacs packages
     org-sltypes = {
       url = "github:PhDyellow/org-sltypes/stable";
