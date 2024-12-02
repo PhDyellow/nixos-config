@@ -2231,11 +2231,7 @@ bar {
               "HYPRCURSOR_THEME,catppuccin-frappe-yellow-cursors"
               "HYPRCURSOR_SIZE,24"
             ];
-            cursor = {
-              # experimental with nvidia
-              no_hardware_cursors = false;
-              allow_dumb_copy = true;
-            };
+
             monitor="eDP-1,2560x1440@165,0x0,1";
             exec-once = "emacs";
             input = {
