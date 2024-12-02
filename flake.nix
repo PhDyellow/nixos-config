@@ -2416,7 +2416,6 @@ bar {
             enable = true;
             package = pkgs.emacs-pgtk;
             extraPackages = epkgs: [
-              org-cv
             ];
             overrides = final: prev: {
               # org-ref = prev.org-ref.overrideAttrs (old: {
@@ -3481,6 +3480,9 @@ bar {
                         '';
                 };
                 ## org-cv packages
+                org-cv = {
+                  enable = true;
+                };
                 ox-altacv = {
                   enable = true;
                 };
