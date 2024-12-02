@@ -1886,7 +1886,7 @@ bar {
                };
 
             texlive-extended = pkgs.texliveFull.withPackages (ps:  [
-              altacv
+              altacv.tex
             ]);
           in {
             environment.systemPackages = with pkgs; [
