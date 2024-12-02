@@ -1858,7 +1858,7 @@ bar {
 
 
 
-                outputs = [  "tex"  ];
+                outputs = [ "out" "tex"  ];
                 passthru.tlDeps = with pkgs.texlive; [ latex ];
                 src = inputs.altacv;
 
@@ -1868,6 +1868,8 @@ bar {
                 path="$tex/tex/latex/AltaCV/"
                 mkdir -p "$path"
                 cp "$src/altacv.cls" "$path"
+
+                mkdir -p $out/tex/latex/AltaCV/
 
                 runHook postInstall
                 '';
