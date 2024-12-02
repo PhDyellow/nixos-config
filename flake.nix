@@ -1874,7 +1874,7 @@ bar {
 
                 path="$tex/tex/latex/AltaCV/"
                 mkdir -p "$path"
-                cp "$src/*.cls" "$path"
+                cp "$src/altacv.cls" "$path"
 
                 runHook postInstall
                 '';
