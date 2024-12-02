@@ -16,6 +16,22 @@
         "type": "github"
       }
     },
+    "altacv": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1524657073,
+        "narHash": "sha256-4TpXJckm1sX9+9xITFMeTWrzOdo27By6r1fUX51qzBE=",
+        "owner": "Titan-C",
+        "repo": "AltaCV",
+        "rev": "47b739bb760de3905cd3f8f19ee6d1ff2a9ecbf9",
+        "type": "github"
+      },
+      "original": {
+        "owner": "Titan-C",
+        "repo": "AltaCV",
+        "type": "github"
+      }
+    },
     "aquamarine": {
       "inputs": {
         "hyprutils": [
@@ -46,6 +62,22 @@
       "original": {
         "owner": "hyprwm",
         "repo": "aquamarine",
+        "type": "github"
+      }
+    },
+    "awesomecv": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1706199377,
+        "narHash": "sha256-BuUJ70eKD3LjlM8DnwPUKgsylNP33SDlIn1RWEgEtAY=",
+        "owner": "posquit0",
+        "repo": "Awesome-CV",
+        "rev": "e6efa6be7b2ac7650e1e04f23b991af6d5568099",
+        "type": "github"
+      },
+      "original": {
+        "owner": "posquit0",
+        "repo": "Awesome-CV",
         "type": "github"
       }
     },
@@ -1037,6 +1069,22 @@
         "type": "github"
       }
     },
+    "moderncv": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1697926929,
+        "narHash": "sha256-ZesCQe1RlQD1QcPOuUDZXMGba/K7yriQKXC5mfnKAPc=",
+        "owner": "Titan-C",
+        "repo": "moderncv",
+        "rev": "9d6aa96af8c6588c058877ca440dbaf687e8a6cd",
+        "type": "github"
+      },
+      "original": {
+        "owner": "Titan-C",
+        "repo": "moderncv",
+        "type": "github"
+      }
+    },
     "nix": {
       "inputs": {
         "lowdown-src": "lowdown-src",
@@ -1142,11 +1190,11 @@
     },
     "nixos-hardware": {
       "locked": {
-        "lastModified": 1733066523,
-        "narHash": "sha256-aQorWITXZu7b095UwnpUvcGt9dNJie/GO9r4hZfe2sU=",
+        "lastModified": 1733139194,
+        "narHash": "sha256-PVQW9ovo0CJbhuhCsrhFJGGdD1euwUornspKpBIgdok=",
         "owner": "NixOS",
         "repo": "nixos-hardware",
-        "rev": "fe01780d356d70fd119a19277bff71d3e78dad00",
+        "rev": "c6c90887f84c02ce9ebf33b95ca79ef45007bf88",
         "type": "github"
       },
       "original": {
@@ -1541,11 +1589,11 @@
     },
     "nur": {
       "locked": {
-        "lastModified": 1733136078,
-        "narHash": "sha256-F+gLv1YTOfP5BP0kHPEOLtrJWL1s3XGoaBhfwDsndNw=",
+        "lastModified": 1733145148,
+        "narHash": "sha256-Q+FmFkPEO+H6uQCKx0VJ6nAozelBjO7udze97FHCO+o=",
         "owner": "nix-community",
         "repo": "NUR",
-        "rev": "aadc32a2305cd303d1866be1d500ad6f7b344b82",
+        "rev": "e73a3cfea5a1e8a516fc36927a1db4983012decb",
         "type": "github"
       },
       "original": {
@@ -1884,6 +1932,8 @@
     },
     "root": {
       "inputs": {
+        "altacv": "altacv",
+        "awesomecv": "awesomecv",
         "chrisbarrett-nursery": "chrisbarrett-nursery",
         "color-theme-buffer-local": "color-theme-buffer-local",
         "denote": "denote",
@@ -1896,6 +1946,7 @@
         "journalctl-el": "journalctl-el",
         "key-game": "key-game",
         "lanzaboote": "lanzaboote",
+        "moderncv": "moderncv",
         "nix-on-droid": "nix-on-droid",
         "nixos-hardware": "nixos-hardware",
         "nixpkgs-unstable": "nixpkgs-unstable",
