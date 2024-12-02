@@ -1856,14 +1856,7 @@ bar {
                 pname = "latex-altacv";
                 version = "1.1.3";
 
-                nativeBuildInputs = [
-                  # multiple-outputs.sh fails if $out is not defined
-                  (pkgs.writeShellScript "force-tex-output.sh" ''
-                    out="''${tex-}"
-                                    '')
-                ];
-
-                outputs = [  "tex"  ];
+                outputs = [  "tex" "out"  ];
 
                 passthru.tlDeps = with pkgs.texlive; [
                   latex
@@ -1881,12 +1874,18 @@ bar {
                 mkdir -p "$path"
                 cp "$src/altacv.cls" "$path"
 
+                # $out must be defined, but does not
+                # need to be used.
+                # By putting `out` second in `outputs`,
+                # `out` will not be the default
+                mkdir -p $out
+
                 runHook postInstall
                 '';
                };
 
             texlive-extended = pkgs.texliveFull.withPackages (ps:  [
-              altacv.tex
+              altacv
             ]);
           in {
             environment.systemPackages = with pkgs; [
