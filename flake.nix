@@ -3479,7 +3479,7 @@ bar {
                 };
                 ## org-cv packages
                 org-cv = {
-                  enable = true;
+                  enable = false;
                 };
                 ox-altacv = {
                   enable = true;
@@ -4746,9 +4746,6 @@ the target and properties of the edge."
                 citar-org-roam = {
                   enable = true;
                   after = [ "citar" "org-roam" "org-roam-bibtex" ];
-                  init = ''
-
-                      '';
                   config = ''
                         (citar-register-notes-source
                           'orb-citar-source (list :name "Org Roam Notes"
