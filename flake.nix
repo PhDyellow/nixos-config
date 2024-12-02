@@ -3485,6 +3485,7 @@ bar {
                 };
                 ox-altacv = {
                   enable = true;
+                  extraPackages = [ pkgs.emacs.pkgs.org-cv ];
                 };
                 ox-awesomecv = {
                   enable = true;
