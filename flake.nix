@@ -1867,7 +1867,7 @@ bar {
 
                 passthru.tlDeps = with pkgs.texlive; [
                   latex
-                  lualatex
+                  luatex
                   academicons
                   fontawesome5
                 ];
