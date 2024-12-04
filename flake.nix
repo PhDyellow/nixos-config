@@ -2644,7 +2644,7 @@ bar {
               #config inserted after use-package
               postlude = ''
                       ; Seems to break if called too early
-                       (citar-org-roam-mode)
+                       ;(citar-org-roam-mode)
 
                       ;Always start emacs by showing Goals and tasks
                       ;(org-ql-view  "Progressing Goals")
@@ -4774,11 +4774,7 @@ the target and properties of the edge."
                              (:btype "=type="))
                         )
 
-
-
-
-                      '';
-                  extraConfig = ''
+                        (citar-org-roam-mode)
                       '';
                 };
                 citar-denote = {
