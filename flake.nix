@@ -4966,7 +4966,7 @@ the target and properties of the edge."
                   config = ''
 (let* ((files (directory-files (file-name-directory
 																(locate-library "pdf-tools")) nil "\\.el$"))
-	     (names   (seq-map #'(lambda (s) (string-trim-right s "\\.el")) files))
+	     (names (remove "pdf-tools-pkg" (seq-map #'(lambda (s) (string-trim-right s "\\.el")) files)))
 	     (symbols (seq-map #'intern names)))
   (seq-do #'require symbols))
 
