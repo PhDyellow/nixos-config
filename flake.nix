@@ -4971,16 +4971,6 @@ the target and properties of the edge."
                   config = ''
                         (pdf-loader-install)
 
-;; fix, because temporary squashfs files contain a colon
-;; which can't be used in ntfs, so tmp dir must
-;; not be in para, but only when opening pdfs from squashfs
-(defun redefine-tmp (modfunc &rest args)
-	"redefine tmpdir to '/tmp/pdftools'"
-	(let ((pdf-util--base-directory "/tmp")
-				(temporary-file-directory "/tmp"))
-							(apply modfunc args)))
-(advice-add 'pdf-util-dedicated-directory :around #'redefine-tmp)
-
                       '';
                 };
 
