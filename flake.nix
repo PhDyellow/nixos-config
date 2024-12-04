@@ -4963,14 +4963,14 @@ the target and properties of the edge."
                 pdf-tools = {
                   enable = true;
                   extraPackages = with pkgs; [ ghostscript ];
-                  init = ''
-                      '';
-                };
-                pdf-loader = { #part of pdf-tools
-                  enable = true;
                   config = ''
-                        (pdf-loader-install)
+(let* ((files (directory-files (file-name-directory
+																(locate-library "pdf-tools")) nil "\\.el$"))
+	     (names   (seq-map #'(lambda (s) (string-trim-right s "\\.el")) files))
+	     (symbols (seq-map #'intern names)))
+  (seq-do #'require symbols))
 
+                        (pdf-loader-install)
                       '';
                 };
 
