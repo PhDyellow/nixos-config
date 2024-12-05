@@ -76,7 +76,8 @@
       flake = false;
     };
     awesomecv = {
-      url =  "github:posquit0/Awesome-CV";
+      # url =  "github:posquit0/Awesome-CV";
+      url =  "github:erikswpark/Awesome-CV/fix-spacing-bug";
       flake = false;
     };
 
