@@ -2580,7 +2580,7 @@ bar {
             init = {
               enable = true;
               ## TODO as of 2024-12-02 and emacs 31, package-quickstart breaks citar
-              packageQuickstart = true;
+              packageQuickstart = false;
               recommendedGcSettings = true;
               startupTimer = true;
               earlyInit = "";
