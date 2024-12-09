@@ -31,7 +31,7 @@
       inputs.nixpkgs.follows = "nixpkgs-unstable";
     };
     hyprland = {
-      url = "git+https://github.com/hyprwm/Hyprland?submodules=1";
+      url = "github:hyprwm/Hyprland";
       # not following nixpkgs to get caching
     };
 
@@ -77,7 +77,7 @@
     };
     awesomecv = {
       # url =  "github:posquit0/Awesome-CV";
-      url =  "github:erikswpark/Awesome-CV/fix-spacing-bug";
+      url =  "github:ericswpark/Awesome-CV/fix-spacing-bug";
       flake = false;
     };
 
@@ -1761,6 +1761,8 @@ bar {
 
             programs.hyprland = {
               enable = true;
+              package = inputs.hyprland.packages.${pkgs.stdenv.hostPlatform.system}.hyprland;
+              portalPackage = inputs.hyprland.packages.${pkgs.stdenv.hostPlatform.system}.xdg-desktop-portal-hyprland;
             };
 
             programs.hyprlock = {
