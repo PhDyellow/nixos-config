@@ -2119,6 +2119,7 @@ bar {
           files = [
             ".config/enchant/en_AU.dic"
             ".config/enchant/en_AU.exc"
+            ".config/nix/nix.conf"
           ];
           allowOther = false;
         };
