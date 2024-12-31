@@ -1177,22 +1177,31 @@
                 devices = {
                   dpbagje = {
                     addresses = [
+                      "tcp://192.168.20.10:22000"
+                      "tcp://dpbagje.philjd.com:22000"
                       "quic://192.168.20.10:22000"
                       "quic://dpbagje.philjd.com:22000"
+                      "dynamic"
                     ];
                     id = "V2CZC46-XWNXBME-WDTOBSM-SHIO25H-KTTUFYQ-BXRRXFM-PQFYLYK-LUGCBQK";
                   };
                   galaxy_m62 = {
                     addresses = [
+                      "tcp://100.89.185.54:22000"
+                      "tcp://192.168.20.14:22000"
+                      "tcp://192.168.1.119:22000"
                       "quic://100.89.185.54:22000"
                       "quic://192.168.20.14:22000"
                       "quic://192.168.1.119:22000"
+                      "dynamic"
                     ];
                     id = "O4OCDD3-BN3WGHU-4U42GOR-CZQQTSQ-GTSULNM-YQM76V5-6R7RT2Y-TTOG5AG";
                   };
                   x1_carbon = {
                     addresses = [
+                      "tcp://100.103.6.30:2200"
                       "quic://100.103.6.30:2200"
+                      "dynamic"
                     ];
                     id = "PBQHAZ3-VEXG3K6-VC7AHMS-3OPLJOJ-SIL4UFP-MRIPZHL-PS2DUTD-DO6QXA6";
                   };
