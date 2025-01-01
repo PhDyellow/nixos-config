@@ -1207,6 +1207,16 @@
                   };
                 };
                 folders = {
+                  tagpaths = {
+                    path = "/para/tagpaths/";
+                    id = "hnris-vatpw";
+                    enable = true;
+                    devices = [
+                      "dpbagje"
+                      "galaxy_m62"
+                      "x1_carbon"
+                    ];
+                  };
                   memx = {
                     path = "/para/areas/memx___syncthing/";
                     id = "nihsu-jd7zf";
