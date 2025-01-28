@@ -170,6 +170,9 @@
               nssmdns4 = true;
               openFirewall = true;
             };
+            services.printing.drivers = [
+              pkgs.epson-escpr2
+            ];
           };
         network-scanners = {config, pkgs, ...}:
           {
