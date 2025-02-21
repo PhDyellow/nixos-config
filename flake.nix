@@ -5245,6 +5245,33 @@ the target and properties of the edge."
                       '';
                 };
 
+                chatgpt-shell = {
+                  after = ["gptel"];
+                  enable = true;
+                  extraConfig = ''
+                    :custom
+                      ((chatgpt-shell-openai-key
+                      (lambda ()
+                      (gptel-api-key-from-auth-source "api.openai.com" "apikey"))))
+
+                   '';
+                };
+                ob-chatgpt-shell = {
+                  after = ["gptel"];
+                  enable = true;
+                  extraConfig = ''
+                    :custom
+                      ((chatgpt-shell-openai-key
+                      (lambda ()
+                      (gptel-api-key-from-auth-source "api.openai.com" "apikey"))))
+                   '';
+                };
+                gptel = {
+                  enable = true;
+                };
+                evedel = {
+                  enable = true;
+                };
                 eglot = {
                   enable = true;
                   command = [ "eglot" "eglot-ensure" ];
