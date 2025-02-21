@@ -3327,7 +3327,11 @@ bar {
                   ];
                 };
                 picpocket = {
+                  enable = false; # thumbnail handling wasn't better than image-dired
+                };
+                dirvish = {
                   enable = true;
+                  extraPackages = with pkgs; [ ];
                 };
                 # work around bug in image-converter when using imagemagick v7
                 # and opening .heic files
