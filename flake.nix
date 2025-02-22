@@ -305,7 +305,7 @@
                   priority = 99;
                 };
                 #BParent 2.4Ghz
-                TelstraA76952 = {
+                Telstra6C9EC9 = {
                   pskRaw = "ext:bparent_psk";
                   priority = 50;
                 };
