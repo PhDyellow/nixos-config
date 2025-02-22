@@ -5268,9 +5268,25 @@ the target and properties of the edge."
                 };
                 gptel = {
                   enable = true;
+                  config = ''
+                  (require 'gptel-org)
+                  (require 'gptel-openai)
+                  (require 'gptel-curl)
+                  (require 'gptel-openai-extras)
+                  (require 'gptel-rewrite)
+                  (require 'gptel-transient)
+                  (require 'gptel-context)
+                  (require 'gptel-ollama)
+                  '';
                 };
                 evedel = {
                   enable = true;
+                  config = ''
+                  (require 'evedel-gptel)
+                  (require 'evedel-instructions)
+                  (require 'evedel-restorer)
+                  (require 'evedel-utilities)
+                  '';
                 };
                 eglot = {
                   enable = true;
