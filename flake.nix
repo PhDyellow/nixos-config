@@ -5277,6 +5277,19 @@ the target and properties of the edge."
                   (require 'gptel-transient)
                   (require 'gptel-context)
                   (require 'gptel-ollama)
+                  ;; OpenRouter offers an OpenAI compatible API
+                  (setq gptel-model "meta-llama/llama-3.3-70b-instruct:free")
+                  (setq gptel-backend
+                    (gptel-make-openai "OpenRouter"              ;Any name you want
+                    :host "openrouter.ai"
+                    :endpoint "/api/v1/chat/completions"
+                    :stream t
+                    :key (lambda ()
+                      (gptel-api-key-from-auth-source "api.openrouter.com" "apikey") )
+                    :models '(cognitivecomputations/dolphin3.0-r1-mistral-24b:free
+                              deepseek/deepseek-chat:free
+                              meta-llama/llama-3.3-70b-instruct:free
+                    )))
                   '';
                 };
                 evedel = {
