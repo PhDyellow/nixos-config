@@ -160,6 +160,28 @@
       # cli.<module-name>: a cli program configured for my needs
       #   Only use gui or cli for programs that need tweaking
 
+      llms = {
+        ollama = {config, pkgs, ...}:
+          {
+            services.ollama = {
+              enable = true;
+              loadModels = [ ];
+            };
+          };
+        cudafy-ollama = {config, pkgs, ...}:
+          {
+            services.ollama = {
+              acceleration = "cuda";
+            };
+          };
+        llama-cpp-cuda = {config, pkgs, ...}:
+          {
+            services.llama-cpp = {
+              enable = true;
+              extraFlags = [ ];
+            };
+          };
+      };
       system-conf = {
         network-printers = {config, pkgs, ...}:
           {
@@ -5278,7 +5300,7 @@ the target and properties of the edge."
                   (require 'gptel-context)
                   (require 'gptel-ollama)
                   ;; OpenRouter offers an OpenAI compatible API
-                  (setq gptel-model "meta-llama/llama-3.3-70b-instruct:free")
+                  (setq gptel-model 'meta-llama/llama-3.3-70b-instruct:free)
                   (setq gptel-backend
                     (gptel-make-openai "OpenRouter"              ;Any name you want
                     :host "openrouter.ai"
@@ -5288,6 +5310,7 @@ the target and properties of the edge."
                       (gptel-api-key-from-auth-source "api.openrouter.com" "apikey") )
                     :models '(cognitivecomputations/dolphin3.0-r1-mistral-24b:free
                               deepseek/deepseek-chat:free
+                              deepseek/deepseek-r1:free
                               meta-llama/llama-3.3-70b-instruct:free
                     )))
                   '';
