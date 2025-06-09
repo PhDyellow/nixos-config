@@ -302,6 +302,11 @@
                   fsType = "cifs";
                   options = ["${automount_opts},credentials=${config.age.secrets.cifs_dpbagje_share.path}"];
                 };
+                "/nas/dpbagj/repos" = {
+                  device = "//100.108.81.63/repos";
+                  fsType = "cifs";
+                  options = ["${automount_opts},credentials=${config.age.secrets.cifs_dpbagje_share.path}"];
+                };
               };
             };
         wifi_secrets = {config, pkgs, ...}:
