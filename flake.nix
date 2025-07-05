@@ -2035,16 +2035,6 @@ bar {
             ];
           };
 
-        # System-wide python
-        python-system = {config, pkgs, ...}:
-          {
-            environment.systemPackages = with pkgs; [
-              (python3.withPackages(ps: with ps; [
-                # inkex
-              ]))
-            ];
-          };
-
         spell_checkers = {config, pkgs, ...}: {
           environment = {
             sessionVariables = {
@@ -5533,7 +5523,6 @@ the target and properties of the edge."
           # self.nixosModules.bib_reorganise # riskier when using org-bibtex, may be editing notes when timer kicks in.
           self.nixosModules.gui.inkscape # works best when GTK is set up
           self.nixosModules.gui.nyxt-browser
-          self.nixosModules.cli.python-system
           self.nixosModules.cli.texlive-system
           self.nixosModules.cli.spell_checkers
           self.nixosModules.cli.direnv
@@ -5577,7 +5566,6 @@ the target and properties of the edge."
           self.nixosModules.window-managers.sway
           self.nixosModules.window-managers.sway-config-vm
 
-          self.nixosModules.cli.python-system
           self.nixosModules.cli.spell_checkers
           self.nixosModules.cli.direnv
 
@@ -5617,7 +5605,6 @@ the target and properties of the edge."
           self.nixosModules.window-managers.sway
           self.nixosModules.window-managers.sway-config-vm
 
-          self.nixosModules.cli.python-system
           self.nixosModules.cli.spell_checkers
           # self.nixosModules.cli.direnv
 
