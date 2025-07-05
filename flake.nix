@@ -5254,6 +5254,18 @@ the target and properties of the edge."
                             org-babel-load-languages)
                    '';
                 };
+                python-mode = {
+                  enable = true;
+                  after = [ "org" ];
+                  mode = [ ''"\\\\.py\\\\'"'' ];
+                  config = ''
+
+                          (add-to-list 'org-babel-load-languages (cons (intern "pytohn") t))
+                          (org-babel-do-load-languages
+                            'org-babel-load-languages
+                            org-babel-load-languages)
+                   '';
+                };
                 flycheck-plantuml = {
                   enable = true;
                   after = [ "flycheck" "plantuml-mode" ];
