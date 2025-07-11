@@ -160,6 +160,21 @@
       # cli.<module-name>: a cli program configured for my needs
       #   Only use gui or cli for programs that need tweaking
 
+      flatpak = {
+        base = {config, pkgs, ...}:
+          {
+            services.flatpak.enable = true;
+            users.users.phil.extraGroups = [ "flatpak" ];
+          };
+        impermanence = {config, pkgs, ...}:
+          {
+            environment.persistence."/persistent" = {
+              directories = [
+                "/var/lib/flatpak"
+              ];
+            };
+          };
+      };
       llms = {
         ollama = {config, pkgs, ...}:
           {
@@ -1425,6 +1440,7 @@
                 self.hmModules.r-config
                 # self.hmModules.tex-full
                 self.hmModules.impermanence-phil
+                self.hmModules.impermanence-flatpak
 
               ];
               manual.manpages.enable = true;
@@ -2146,6 +2162,19 @@ bar {
     };
     #Modules for importing into home-manager.users.<name>.imports = [ here ];
     hmModules = {
+      impermanence-flatpak = {config, pkgs, ...}:
+        {
+          imports = [
+            inputs.impermanence.nixosModules.home-manager.impermanence
+          ];
+
+          home.persistence."/persistent/home/phil" = {
+            directories = [
+              ".cache/flatpak"
+              ".local/share/flatpak"
+            ];
+          };
+        };
       impermanence-phil = {config, pkgs, ...}: {
         imports = [
           inputs.impermanence.nixosModules.home-manager.impermanence
@@ -5530,6 +5559,9 @@ the target and properties of the edge."
           self.nixosModules.system-conf.network-scanners
           self.nixosModules.window-managers.hyprland
           self.nixosModules.window-managers.wayland.clipboard
+
+          self.nixosModules.flatpak.base
+          self.nixosModules.flatpak.impermanence
 
           # self.nixosModules.bib_reorganise # riskier when using org-bibtex, may be editing notes when timer kicks in.
           self.nixosModules.gui.inkscape # works best when GTK is set up
