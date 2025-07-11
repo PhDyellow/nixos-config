@@ -5274,7 +5274,6 @@ the target and properties of the edge."
                 python-mode = {
                   enable = true;
                   after = [ "org" ];
-                  mode = [ ''"\\\\.py\\\\'"'' ];
                   config = ''
                           (add-to-list 'org-babel-load-languages (cons (intern "python") t))
                           (org-babel-do-load-languages
