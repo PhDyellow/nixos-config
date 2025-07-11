@@ -1440,8 +1440,6 @@
                 self.hmModules.r-config
                 # self.hmModules.tex-full
                 self.hmModules.impermanence-phil
-                self.hmModules.impermanence-flatpak
-
               ];
               manual.manpages.enable = true;
 
@@ -2162,19 +2160,6 @@ bar {
     };
     #Modules for importing into home-manager.users.<name>.imports = [ here ];
     hmModules = {
-      impermanence-flatpak = {config, pkgs, ...}:
-        {
-          imports = [
-            inputs.impermanence.nixosModules.home-manager.impermanence
-          ];
-
-          home.persistence."/persistent/home/phil" = {
-            directories = [
-              ".cache/flatpak"
-              ".local/share/flatpak"
-            ];
-          };
-        };
       impermanence-phil = {config, pkgs, ...}: {
         imports = [
           inputs.impermanence.nixosModules.home-manager.impermanence
@@ -2185,6 +2170,9 @@ bar {
             ".ssh"
             ".emacs.d"
             ".local/share/fish"
+            ".cache/flatpak"
+            ".local/share/flatpak"
+
           ];
           files = [
             ".config/enchant/en_AU.dic"
