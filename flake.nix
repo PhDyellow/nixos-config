@@ -3624,12 +3624,6 @@ them as reviewed with `org-roam-review-accept',
                   init = ''
                         '';
                   config = ''
-                          ;;Add R to org-babel
-                          (add-to-list 'org-babel-load-languages (cons (intern "R") t))
-                          (org-babel-do-load-languages
-                            'org-babel-load-languages
-                            org-babel-load-languages)
-
                           ;; Don't hide links. Uglier, but easier to manipulate
                           (setq org-link-descriptive nil)
 
@@ -5147,22 +5141,29 @@ the target and properties of the edge."
                 };
                 ess-site = {
                   enable= true;
-                  mode = [ ''
-                          ("\\.Rd\\'" . Rd-mode)
-                          ("DESCRIPTION\\'" . conf-colon-mode)
-                          ("\\.Rd\\'" . Rd-mode)
-                          ("DESCRIPTION\\'" . conf-colon-mode)
-                          ("\\.[Rr]out\\'" . ess-r-transcript-mode)
-                          ("CITATION\\'" . ess-r-mode)
-                          ("NAMESPACE\\'" . ess-r-mode)
-                          ("\\.[rR]profile\\'" . ess-r-mode)
-                          ("\\.[rR]\\'" . ess-r-mode)
-                          ("/R/.*\\.q\\'" . ess-r-mode)
-                          ("\\.[Jj][Aa][Gg]\\'" . ess-jags-mode)
-                          ("\\.[Bb][Mm][Dd]\\'" . ess-bugs-mode)
-                          ("\\.[Bb][Oo][Gg]\\'" . ess-bugs-mode)
-                          ("\\.[Bb][Uu][Gg]\\'" . ess-bugs-mode)
-                        '' ];
+                  # mode = [ ''
+                  #        ("\\.Rd\\'" . Rd-mode)
+                  #        ("DESCRIPTION\\'" . conf-colon-mode)
+                  #        ("\\.Rd\\'" . Rd-mode)
+                  #        ("DESCRIPTION\\'" . conf-colon-mode)
+                  #        ("\\.[Rr]out\\'" . ess-r-transcript-mode)
+                  #        ("CITATION\\'" . ess-r-mode)
+                  #        ("NAMESPACE\\'" . ess-r-mode)
+                  #        ("\\.[rR]profile\\'" . ess-r-mode)
+                  #        ("\\.[rR]\\'" . ess-r-mode)
+                  #        ("/R/.*\\.q\\'" . ess-r-mode)
+                  #        ("\\.[Jj][Aa][Gg]\\'" . ess-jags-mode)
+                  #        ("\\.[Bb][Mm][Dd]\\'" . ess-bugs-mode)
+                  #        ("\\.[Bb][Oo][Gg]\\'" . ess-bugs-mode)
+                  #        ("\\.[Bb][Uu][Gg]\\'" . ess-bugs-mode)
+                  #      '' ];
+                  config = ''
+                          ;;Add R to org-babel
+                          (add-to-list 'org-babel-load-languages (cons (intern "R") t))
+                          (org-babel-do-load-languages
+                            'org-babel-load-languages
+                            org-babel-load-languages)
+                            '';
                   extraConfig = ''
                           :interpreter (("r" . ess-r-mode)
                           ("Rscript" . ess-r-mode))
@@ -5200,7 +5201,7 @@ the target and properties of the edge."
                 ob-d2 = {
                   enable = true;
                   config = ''
-(add-to-list 'org-babel-load-languages (cons (intern "d2") t))
+                         (add-to-list 'org-babel-load-languages (cons (intern "d2") t))
                           (org-babel-do-load-languages
                             'org-babel-load-languages
                             org-babel-load-languages)
@@ -5256,19 +5257,19 @@ the target and properties of the edge."
                   enable = true;
                   config = ''
                         (setq org-plantuml-exec-mode 'plantuml)
-                      '';
-                };
-                plantuml-mode = {
-                  enable = true;
-                  after = [ "org" ];
-                  mode = [ ''"\\\\.plantuml\\\\'"'' ];
-                  config = ''
-                        (setq plantuml-default-exec-mode 'executable)
                         (add-to-list 'org-src-lang-modes '("plantuml" . plantuml))
                           (add-to-list 'org-babel-load-languages (cons (intern "plantuml") t))
                           (org-babel-do-load-languages
                             'org-babel-load-languages
                             org-babel-load-languages)
+
+                      '';
+                };
+                plantuml-mode = {
+                  enable = true;
+                  after = [ "org" ];
+                  config = ''
+                        (setq plantuml-default-exec-mode 'executable)
                    '';
                 };
                 python-mode = {
