@@ -198,6 +198,10 @@
           };
       };
       system-conf = {
+        localsend = {config, pkgs, ...}:
+          {
+            programs.localsend.enable = true;
+          };
         network-printers = {config, pkgs, ...}:
           {
             services.printing.enable = true;
@@ -5542,6 +5546,8 @@ the target and properties of the edge."
           self.nixosModules.system-conf.wifi_secrets
           self.nixosModules.system-conf.secure_boot
 
+          
+          self.nixosModules.system-conf.localsend
           self.nixosModules.system-conf.openssh
           self.nixosModules.system-conf.allow-unfree
           self.nixosModules.system-conf.locale_au
