@@ -2,6 +2,10 @@
   description = "Prime-AI Nixos Configuration";
 
   inputs  = {
+    nixpkgs-stable = {
+      url = "github:NixOS/nixpkgs/nixos-24.05";
+    };
+    
     nixpkgs-unstable = {
       # url = "github:PhDyellow/nixpkgs/master_patched";
       url = "github:NixOS/nixpkgs/nixos-unstable";
@@ -39,10 +43,6 @@
       # url = "github:vlaci/openconnect-sso";
       url = "github:ThinkChaos/openconnect-sso/fix/nix-flake";
       inputs.nixpkgs.follows = "nixpkgs-unstable";
-    };
-
-    nix-on-droid = {
-      url = "github:t184256/nix-on-droid/release-23.05";
     };
 
     nur = {
@@ -147,7 +147,11 @@
       url = "github:WJCFerguson/journalctl/master";
       flake = false;
     };
-  };
+    nix-on-droid = {
+      url = "github:nix-community/nix-on-droid/release-24.05";
+      inputs.nixpkgs.follows = "nixpkgs-stable";
+    };
+};
 
   outputs = {self, nixpkgs-unstable, ...}@inputs: {
     nixosModules = {
@@ -5668,7 +5672,10 @@ the target and properties of the edge."
     };
     nixOnDroidConfigurations = {
       galaxym62 = inputs.nix-on-droid.lib.nixOnDroidConfiguration {
-        modules = [];
+        pkgs = import inputs.nixpkgs-stable {system = "aarch64-linux";};
+        modules = [
+          self.nixosModules.
+        ];
       };
     };
     # For managing with home-manager cli.
