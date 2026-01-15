@@ -5675,7 +5675,7 @@ the target and properties of the edge."
       galaxym62 = inputs.nix-on-droid.lib.nixOnDroidConfiguration {
         pkgs = import inputs.nixpkgs-stable {system = "aarch64-linux";};
         modules = [
-          self.nixosModules.
+          # self.nixosModules.
         ];
       };
     };
