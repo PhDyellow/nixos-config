@@ -1861,6 +1861,7 @@ bar {
                 foot
                 lsix
                 libsixel
+                hyprshot
               ];
               sessionVariables = {
               };
