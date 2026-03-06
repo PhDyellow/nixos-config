@@ -2171,24 +2171,22 @@ bar {
     hmModules = {
       impermanence-phil = {config, pkgs, ...}: {
         imports = [
-          inputs.impermanence.nixosModules.home-manager.impermanence
+          inputs.impermanence.nixosModules.impermanence
         ];
-
-        home.persistence."/persistent/home/phil" = {
+        
+        home.persistence."/persistent" = {
           directories = [
             ".ssh"
             ".emacs.d"
             ".local/share/fish"
             ".cache/flatpak"
             ".local/share/flatpak"
-
           ];
           files = [
             ".config/enchant/en_AU.dic"
             ".config/enchant/en_AU.exc"
             ".config/nix/nix.conf"
           ];
-          allowOther = false;
         };
 
         # Create some directories on each boot, but do not persist them
