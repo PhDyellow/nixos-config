@@ -2234,7 +2234,7 @@ bar {
       git-config = {config, pkgs, ...}: {
         programs.git ={
           enable = true;
-          package = pkgs.gitAndTools.gitFull;
+          package = pkgs.gitFull;
           userName = "Phil Dyer";
           userEmail = "phildyer@protonmail.com";
           extraConfig = {
