@@ -2171,11 +2171,7 @@ bar {
     };
     #Modules for importing into home-manager.users.<name>.imports = [ here ];
     hmModules = {
-      impermanence-phil = {config, pkgs, ...}: {
-        imports = [
-          inputs.impermanence.nixosModules.impermanence
-        ];
-        
+      impermanence-phil = {config, pkgs, ...}: {        
         home.persistence."/persistent" = {
           directories = [
             ".ssh"
