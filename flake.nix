@@ -1803,7 +1803,7 @@ bar {
               enable = true;
               settings = {
                 default_session = {
-                  command = "${pkgs.greetd.tuigreet}/bin/tuigreet -t -r -g 'Init: Prime-AI' --cmd xfce";
+                  command = "${pkgs.tuigreet}/bin/tuigreet -t -r -g 'Init: Prime-AI' --cmd xfce";
                   user = "phil";
                 };
               };
@@ -1847,7 +1847,7 @@ bar {
               enable = true;
               settings = {
                 default_session = {
-                  command = "${pkgs.greetd.tuigreet}/bin/tuigreet -t -r -g 'Init: Prime-AI' --cmd Hyprland";
+                  command = "${pkgs.tuigreet}/bin/tuigreet -t -r -g 'Init: Prime-AI' --cmd Hyprland";
                   user = "phil";
                 };
               };
