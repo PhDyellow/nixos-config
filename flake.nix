@@ -29,8 +29,8 @@
     impermanence = {
       url = "github:nix-community/impermanence";
       # Don't pull in pinned nixpkgs or home-manager
-      impermanence.inputs.nixpkgs.follows = ""; 
-      impermanence.inputs.home-manager.follows = "";
+      inputs.nixpkgs.follows = ""; 
+      inputs.home-manager.follows = "";
     };
 
     home-manager = {
