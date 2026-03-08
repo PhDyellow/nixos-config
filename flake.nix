@@ -28,6 +28,9 @@
 
     impermanence = {
       url = "github:nix-community/impermanence";
+      # Don't pull in pinned nixpkgs or home-manager
+      impermanence.inputs.nixpkgs.follows = ""; 
+      impermanence.inputs.home-manager.follows = "";
     };
 
     home-manager = {
@@ -874,7 +877,7 @@
             # Cleans out root on each boot, while saving
             # previous root to a snapshot and deleting
             # snapshots after a while
-            boot.initrd.postDeviceCommands = lib.mkAfter ''
+            boot.initrd.postResumeCommands = lib.mkAfter ''
     mkdir /btrfs_tmp
     mount /dev/nixos_lvm_group/nix_persistent /btrfs_tmp
     if [[ -e /btrfs_tmp/root ]]; then
@@ -1025,7 +1028,7 @@
               hideMounts = true;
               directories = [
                 # This will grow as I discover things
-                # Persistece is for things that either
+                # Persistence is for things that either
                 # 1. Must not go in the nix store
                 # 2. Are frequently updated by the application
                 # examples of 2. are cache files and data, but
@@ -1122,7 +1125,7 @@
                 "btrfs"
               ];
             };
-                        boot.initrd.postDeviceCommands = lib.mkAfter ''
+                        boot.initrd.postResumeCommands = lib.mkAfter ''
     mkdir /btrfs_tmp
     mount /dev/nixos_lvm_group/nix_persistent /btrfs_tmp
     if [[ -e /btrfs_tmp/root ]]; then
