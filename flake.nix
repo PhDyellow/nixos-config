@@ -235,7 +235,7 @@
         gui = {config, pkgs, ...}:
           {
             environment.systemPackages = with pkgs; [
-              bitwarden
+              bitwarden-desktop
               keepassxc
               (btop.override {cudaSupport = true;})
             ];
