@@ -981,7 +981,7 @@
               graphics = {
                 enable = true;
                 extraPackages = with pkgs; [
-                  vaapiVdpau
+                  libva-vdpau-driver
                   libvdpau-va-gl
                   libva
                   qt5.qtwayland
