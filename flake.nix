@@ -996,7 +996,7 @@
               };
             };
             #services.cpupower-gui.enable = true;
-            services.logind.lidSwitch = "ignore";
+            services.logind.settings.Login.HandleLidSwitch = "ignore";
             environment.systemPackages = with pkgs; [
               zenstates
               #ryzenadj #rejects the 5900X as "not mobile" and won't run
@@ -2076,7 +2076,7 @@ bar {
 
               enchant
 
-              (nuspellWithDicts [
+              (nuspell.WithDicts [
                 hunspellDicts.en-au-large
               ])
             ];
@@ -2240,9 +2240,9 @@ bar {
         programs.git ={
           enable = true;
           package = pkgs.gitFull;
-          userName = "Phil Dyer";
-          userEmail = "phildyer@protonmail.com";
-          extraConfig = {
+          settings = {
+            user.name = "Phil Dyer";
+            user.email = "phildyer@protonmail.com";
             core = {
               autocrlf = "input";
             };
@@ -2450,7 +2450,7 @@ bar {
           gpg-agent = {
             enable = true;
             defaultCacheTtl = 72000;
-            pinentryPackage = pkgs.pinentry-curses; # other interesting flavours emacs tty curses
+            pinentry.package = pkgs.pinentry-curses; # other interesting flavours emacs tty curses
             extraConfig = ''
                   allow-loopback-pinentry
                 '';
