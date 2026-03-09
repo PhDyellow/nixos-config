@@ -2076,8 +2076,8 @@ bar {
 
               enchant
 
-              (nuspell.withDicts ([
-                hunspellDicts.en-au-large
+              (nuspell.withDicts (dicts: with dicts; [
+                en-au-large
               ]))
             ];
 
