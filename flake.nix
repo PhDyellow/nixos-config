@@ -337,7 +337,12 @@
             };
         wifi_secrets = {config, pkgs, ...}:
           {
-            age.secrets.wpa_pwd_env.file = ./agenix/wpa_pwd.env.age;
+            age.secrets.wpa_pwd_env = {
+              file = ./agenix/wpa_pwd.env.age;
+              mode = "600";
+              owner = "wpa_supplicant";
+              group = "wpa_supplicant";
+            };
             networking.wireless = {
               secretsFile = config.age.secrets.wpa_pwd_env.path;
               networks = {
