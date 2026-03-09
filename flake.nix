@@ -2356,10 +2356,7 @@ bar {
               ];
 
             };
-            gestures = {
-              # See https://wiki.hyprland.org/Configuring/Variables/ for more
-              workspace_swipe = false;
-            };
+
             misc = {
               enable_swallow = true;
               swallow_regex = "^(Alacritty|kitty|foot)$";
@@ -2394,7 +2391,7 @@ bar {
               "$mainMod, V, togglefloating,"
               ##"$mainMod, R, exec, wofi --show drun"
               "$mainMod, P, pseudo," # dwindle
-              "$mainMod, J, togglesplit," # dwindle
+              "$mainMod, J, layoutmsg, togglesplit" # dwindle
 
 
                 # Move focus with mainMod + arrow keys
