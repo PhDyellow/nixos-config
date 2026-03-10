@@ -1895,7 +1895,7 @@ bar {
               enable = true;
               settings = {
                 default_session = {
-                  command = "${pkgs.tuigreet}/bin/tuigreet -t -r -g 'Init: Prime-AI' --cmd Hyprland";
+                  command = "${pkgs.tuigreet}/bin/tuigreet -t -r -g 'Init: Prime-AI' --cmd start-hyprland";
                   user = "phil";
                 };
               };
