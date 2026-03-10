@@ -287,7 +287,7 @@
               #agentTimeout = "1h"; #request passphrase for keys every hour
               startAgent = true;
               askPassword = "systemd-ask-password";
-              knownhosts = {
+              knownHosts = {
                 github-ed25519 = {
                   hostNames = [ "github.com" ];
                   publicKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOMqqnkVzrm0SdG6UOoqKLsabgH5C9okWi0dh2l9GKJl";
