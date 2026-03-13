@@ -5375,7 +5375,6 @@ the target and properties of the edge."
                   config = ''
                   (require 'gptel-org)
                   (require 'gptel-openai)
-                  (require 'gptel-curl)
                   (require 'gptel-openai-extras)
                   (require 'gptel-rewrite)
                   (require 'gptel-transient)
