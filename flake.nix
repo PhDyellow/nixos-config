@@ -3447,9 +3447,6 @@ bar {
                           (setq image-dired-thumbnail-storage 'standard-large)
                         '';
                 };
-                one-themes = {
-                  enable = true;
-                };
                 nerd-icons = {
                   enable = true;
                   config = ''
