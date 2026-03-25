@@ -1,5 +1,6 @@
 ((nil
 	. ((eglot-workspace-configuration
-			. (:nil (:nix (:flake (:autoarchive t
+			. (:nil (:nix (:maxMemoryMB 25600
+										 :flake (:autoarchive t
 													   :autoEvalInputs t
 														 :nixpkgsInputName "nixpkgs-unstable"))))))))
