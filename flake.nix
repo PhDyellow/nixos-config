@@ -42,12 +42,6 @@
       # not following nixpkgs to get caching
     };
 
-    openconnect-sso = {
-      # url = "github:vlaci/openconnect-sso";
-      url = "github:ThinkChaos/openconnect-sso/fix/nix-flake";
-      inputs.nixpkgs.follows = "nixpkgs-unstable";
-    };
-
     nur = {
       url = "github:nix-community/NUR";
     };
@@ -628,9 +622,9 @@
 
         networking = {config, pkgs, ...}:
           {
+            # if I need openconnect, see
+            # https://search.nixos.org/options?channel=25.11&query=openconnect
             environment.systemPackages = with pkgs; [
-              openconnect
-              inputs.openconnect-sso.packages.x86_64-linux.default
             ];
             networking = {
               hostName = "prime-ai-nixos";
