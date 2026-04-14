@@ -3340,6 +3340,7 @@ bar {
                   init = ''
                           (setq completion-styles '(orderless basic)
                           completion-category-defaults nil
+                          completion-pcm-leading-wildcard t
                           completion-category-overrides '((file (styles partial-completion))))
                         '';
                 };
@@ -3381,6 +3382,10 @@ bar {
                   config = ''
                           (vertico-mode)
                         '';
+                };
+                vertico-sort = {
+                  enable = true;
+                  after = [ "vertico" ];
                 };
                 vertico-quick = {
                   after = [ "vertico" ];
@@ -3557,6 +3562,10 @@ bar {
                   config = ''
                           (corfu-popupinfo-mode 1)
                       '';
+                };
+                corfu-sort = {
+                  enable = true;
+                  after = [ "corfu" ];
                 };
                 cape = {
                   enable = true;
