@@ -3379,7 +3379,8 @@ bar {
                 };
                 vertico = {
                   enable = true;
-                  config = ''
+
+                  init = ''
                           (message "vertico-sort is: %s" (and (fboundp 'vertico-sort-history-length-alpha) 'vertico-sort-history-length-alpha))
                           (require 'vertico-sort)
                           (vertico-mode)
