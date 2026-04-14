@@ -3380,7 +3380,9 @@ bar {
                 vertico = {
                   enable = true;
                   config = ''
+                         (message (and (fboundp 'vertico-sort-history-length-alpha) 'vertico-sort-history-length-alpha))
                           (vertico-mode)
+                         (message (and (fboundp 'vertico-sort-history-length-alpha) 'vertico-sort-history-length-alpha))
                         '';
                 };
                 vertico-sort = {
