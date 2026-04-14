@@ -3385,7 +3385,7 @@ bar {
                 };
                 vertico-sort = {
                   enable = true;
-                  after = [ "vertico" ];
+                  #after = [ "vertico" ];
                 };
                 vertico-quick = {
                   after = [ "vertico" ];
