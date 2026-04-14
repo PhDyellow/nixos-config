@@ -3380,15 +3380,15 @@ bar {
                 vertico = {
                   enable = true;
                   config = ''
-
                           (message "vertico-sort is: %s" (and (fboundp 'vertico-sort-history-length-alpha) 'vertico-sort-history-length-alpha))
+                          (require 'vertico-sort)
                           (vertico-mode)
                          (message "vertico-sort is: %s" (and (fboundp 'vertico-sort-history-length-alpha) 'vertico-sort-history-length-alpha))
                         '';
                 };
                 vertico-sort = {
                   enable = true;
-                  #after = [ "vertico" ];
+                  after = [ "vertico" ];
                 };
                 vertico-quick = {
                   after = [ "vertico" ];
