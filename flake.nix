@@ -3379,7 +3379,7 @@ bar {
                 };
                 vertico = {
                   enable = true;
-                  after [ "vertico-sort" ];
+                  after = [ "vertico-sort" ];
                   init = ''
                           (vertico-mode)
                         '';
