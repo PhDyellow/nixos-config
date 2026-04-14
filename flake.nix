@@ -3563,7 +3563,7 @@ bar {
                           (corfu-popupinfo-mode 1)
                       '';
                 };
-                corfu-sort = {
+                corfu-history = {
                   enable = true;
                   after = [ "corfu" ];
                 };
