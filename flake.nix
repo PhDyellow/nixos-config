@@ -3378,7 +3378,7 @@ bar {
                 };
                 vertico = {
                   enable = true;
-                  init = ''
+                  config = ''
                           (vertico-mode)
                         '';
                 };
