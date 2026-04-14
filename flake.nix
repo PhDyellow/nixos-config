@@ -3379,19 +3379,18 @@ bar {
                 };
                 vertico = {
                   enable = true;
-                  after = [ "vertico-sort" ];
                   init = ''
                           (vertico-mode)
                         '';
                 };
                 vertico-sort = {
                   enable = true;
-                  #after = [ "vertico" ];
+                  after = [ "vertico" ];
                   config = ''
                     ;; this should have been true by default
-                    ;; but was failing
-                    ;;
-                   ; (setq vertico-sort-function #'vertico-sort-history-length-alpha)
+                    ;; but was failing for reasons I don't understand.
+                    ;; Setting it does solve my problem.
+                    (setq vertico-sort-function #'vertico-sort-history-length-alpha)
                   '';
                 };
                 vertico-quick = {
