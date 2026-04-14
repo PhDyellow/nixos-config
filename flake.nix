@@ -3112,9 +3112,9 @@ bar {
                               (cdr args)))
                           (advice-add #'completing-read-multiple :filter-args #'crm-indicator)
 
-
-                          (setq read-extended-command-predicate
-                          #'command-completion-default-include-p)
+                          ; defined in `simple`
+                          ;(setq read-extended-command-predicate
+                          ;#'command-completion-default-include-p)
                         '';
                 };
                 simple = {
@@ -3367,7 +3367,7 @@ bar {
                 };
                 savehist = {
                   enable = true;
-                  config = ''
+                  init = ''
                           (setq savehist-additional-variables
                                 '(search-ring
                                   regexp-search-ring
