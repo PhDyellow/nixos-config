@@ -3379,18 +3379,20 @@ bar {
                 };
                 vertico = {
                   enable = true;
-
+                  after [ "vertico-sort" ];
                   init = ''
-                          (message "vertico-sort is: %s" (and (fboundp 'vertico-sort-history-length-alpha) 'vertico-sort-history-length-alpha))
-                          (require 'vertico-sort)
-                          (message "vertico-sort is: %s" (and (fboundp 'vertico-sort-history-length-alpha) 'vertico-sort-history-length-alpha))
                           (vertico-mode)
-                         (message "vertico-sort is: %s" (and (fboundp 'vertico-sort-history-length-alpha) 'vertico-sort-history-length-alpha))
                         '';
                 };
                 vertico-sort = {
                   enable = true;
-                  after = [ "vertico" ];
+                  #after = [ "vertico" ];
+                  config = ''
+                    ;; this should have been true by default
+                    ;; but was failing
+                    ;;
+                   ; (setq vertico-sort-function #'vertico-sort-history-length-alpha)
+                  '';
                 };
                 vertico-quick = {
                   after = [ "vertico" ];
