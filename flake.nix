@@ -2474,7 +2474,7 @@ bar {
             };
             background = {
               monitor = "";
-              color = "rgba(150, 150, 0, 1.0)";
+              color = "rgba(252, 229, 93, 1.0)";
             };
           };
         };
