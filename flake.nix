@@ -3802,7 +3802,7 @@ them as reviewed with `org-roam-review-accept',
 
                          (org-babel-do-load-languages
                             'org-babel-load-languages
-                            'org-babel-load-languages)
+                            org-babel-load-languages)
                   '';
                 };
                 ob-nix = {
