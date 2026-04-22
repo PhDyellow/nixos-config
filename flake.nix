@@ -5303,17 +5303,17 @@ the target and properties of the edge."
                   #      '' ];
                   config = ''
                             '';
-                  extraConfig = ''
-                          :interpreter (("r" . ess-r-mode)
-                          ("Rscript" . ess-r-mode))
-                        '';
                 };
                 ess = {
-                  after = [ "ess-site" ];
                   enable = true;
+                  init = ''(require 'ess-site)'';
                   config = ''
                           ;;(setq inferior-ess-r-program "radian") ;;  ESS can't speak radian's language
                           (setq ess-use-flymake nil)
+                        '';
+                  extraConfig = ''
+                          :interpreter (("r" . ess-r-mode)
+                          ("Rscript" . ess-r-mode))
                         '';
                   hook = [
                     "(ess-r-mode . (lambda ()
