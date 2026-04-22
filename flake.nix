@@ -3784,6 +3784,83 @@ them as reviewed with `org-roam-review-accept',
 
                         '';
                 };
+                # Org-babel
+                ob = {
+                  enable = true;
+                  config = ''
+                         ;; configure allowed languages
+                         (setq org-babel-load-languages
+                                '((R . t)
+                                 (emacs-lisp . t)
+                                 (python . t)
+                                 (plantuml . t)
+                                 (latex . t)
+                                 (d2 . t)
+                                 (julia . t)
+                                 (sql . t)
+                                 (sqlite . t)))
+
+                         (org-babel-do-load-languages
+                            'org-babel-load-languages
+                            'org-babel-load-languages)
+                  '';
+                };
+                ob-nix = {
+                  enable = true;
+                };
+                ob-chatgpt-shell = {
+                  after = ["gptel"];
+                  enable = true;
+                  extraConfig = ''
+                    :custom
+                      ((chatgpt-shell-openai-key
+                      (lambda ()
+                      (gptel-api-key-from-auth-source "api.openai.com" "apikey"))))
+                   '';
+                };
+                ob-d2 = {
+                  enable = true;
+                  config = ''
+                      '';
+                };
+                ob-latex = {
+                  enable = true;
+                  after = [ "org" ];
+                  config = ''
+                      (add-to-list 'org-latex-packages-alist '("" "gensymb" t))
+                      (setq
+                        org-latex-compiler "lualatex"
+                        org-babel-latex-preamble (lambda (_)
+                        "\\documentclass[tikz,crop]{standalone}
+                         \\def\\pgfsysdriver{pgfsys-tex4ht.def}
+                         "))
+
+                        (setq org-latex-pdf-process
+                          '("lualatex -shell-escape -interaction nonstopmode -output-directory=%o %f"
+"lualatex -shell-escape -interaction nonstopmode -output-directory=%o %f")
+                               luamagick '(luamagick :programs ("lualatex" "convert")
+:description "pdf -> png"
+:message "You need to install lualatex and imagemagick"
+:use-xcolor t
+:image-input-type "pdf"
+:image-output-type "png"
+:image-size-adjust (1.0 . 1.0)
+:latex-compiler ("lualatex -interaction nonstopmode -output-directory %o %f")
+:image-converter ("convert -density %D -trim -antialias %f -quality 100 %O")))
+
+                        (add-to-list 'org-preview-latex-process-alist luamagick)
+                        ;(setq org-preview-latex-default-process 'luamagick)
+
+
+                      '';
+                };
+                ob-plantuml = {
+                  enable = true;
+                  config = ''
+                        (setq org-plantuml-exec-mode 'plantuml)
+                      '';
+                };
+
                 ox-pandoc = {
                   after = [ "org" ] ;
                   enable = true;
@@ -5225,11 +5302,6 @@ the target and properties of the edge."
                   #        ("\\.[Bb][Uu][Gg]\\'" . ess-bugs-mode)
                   #      '' ];
                   config = ''
-                          ;;Add R to org-babel
-                          (add-to-list 'org-babel-load-languages (cons (intern "R") t))
-                          (org-babel-do-load-languages
-                            'org-babel-load-languages
-                            org-babel-load-languages)
                             '';
                   extraConfig = ''
                           :interpreter (("r" . ess-r-mode)
@@ -5262,53 +5334,6 @@ the target and properties of the edge."
                   command = [ "helm-nixos-options" ];
                   mode = [ ''"\\\\.nix\\\\'"'' ];
                 };
-                ob-nix = {
-                  enable = true;
-                };
-                ob-d2 = {
-                  enable = true;
-                  config = ''
-                         (add-to-list 'org-babel-load-languages (cons (intern "d2") t))
-                          (org-babel-do-load-languages
-                            'org-babel-load-languages
-                            org-babel-load-languages)
-                      '';
-                };
-                ob-latex = {
-                  enable = true;
-                  after = [ "org" ];
-                  config = ''
-                      (add-to-list 'org-latex-packages-alist '("" "gensymb" t))
-                      (setq
-                        org-latex-compiler "lualatex"
-                        org-babel-latex-preamble (lambda (_)
-                        "\\documentclass[tikz,crop]{standalone}
-                         \\def\\pgfsysdriver{pgfsys-tex4ht.def}
-                         "))
-
-                      (add-to-list 'org-babel-load-languages (cons (intern "latex") t))
-                          (org-babel-do-load-languages
-                            'org-babel-load-languages
-                            org-babel-load-languages)
-                        (setq org-latex-pdf-process
-                          '("lualatex -shell-escape -interaction nonstopmode -output-directory=%o %f"
-"lualatex -shell-escape -interaction nonstopmode -output-directory=%o %f")
-                               luamagick '(luamagick :programs ("lualatex" "convert")
-:description "pdf -> png"
-:message "You need to install lualatex and imagemagick"
-:use-xcolor t
-:image-input-type "pdf"
-:image-output-type "png"
-:image-size-adjust (1.0 . 1.0)
-:latex-compiler ("lualatex -interaction nonstopmode -output-directory %o %f")
-:image-converter ("convert -density %D -trim -antialias %f -quality 100 %O")))
-
-                        (add-to-list 'org-preview-latex-process-alist luamagick)
-                        ;(setq org-preview-latex-default-process 'luamagick)
-
-
-                      '';
-                };
                 tex = {
                   extraPackages = [ pkgs.auctex ];
                   enable = true;
@@ -5318,18 +5343,6 @@ the target and properties of the edge."
                   enable = true;
                   config = ''
                         (setq d2-tmp-dir temporary-file-directory)
-                      '';
-                };
-                ob-plantuml = {
-                  enable = true;
-                  config = ''
-                        (setq org-plantuml-exec-mode 'plantuml)
-                        (add-to-list 'org-src-lang-modes '("plantuml" . plantuml))
-                          (add-to-list 'org-babel-load-languages (cons (intern "plantuml") t))
-                          (org-babel-do-load-languages
-                            'org-babel-load-languages
-                            org-babel-load-languages)
-
                       '';
                 };
                 plantuml-mode = {
@@ -5342,12 +5355,6 @@ the target and properties of the edge."
                 python-mode = {
                   enable = true;
                   after = [ "org" ];
-                  config = ''
-                          (add-to-list 'org-babel-load-languages (cons (intern "python") t))
-                          (org-babel-do-load-languages
-                            'org-babel-load-languages
-                            org-babel-load-languages)
-                   '';
                 };
                 flycheck-plantuml = {
                   enable = true;
@@ -5366,16 +5373,6 @@ the target and properties of the edge."
                       (lambda ()
                       (gptel-api-key-from-auth-source "api.openai.com" "apikey"))))
 
-                   '';
-                };
-                ob-chatgpt-shell = {
-                  after = ["gptel"];
-                  enable = true;
-                  extraConfig = ''
-                    :custom
-                      ((chatgpt-shell-openai-key
-                      (lambda ()
-                      (gptel-api-key-from-auth-source "api.openai.com" "apikey"))))
                    '';
                 };
                 gptel = {
