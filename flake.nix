@@ -2703,6 +2703,10 @@ bar {
                       )
 
                       (setq temporary-file-directory "/para/tmp")
+                      (if  (getenv "TMPDIR")
+                           nil
+                           (setenv "TMPDIR" temporary-file-directory))
+
 
 
                       (setq make-backup-files nil
