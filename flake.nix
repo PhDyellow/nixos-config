@@ -2975,7 +2975,8 @@ bar {
                   };
                 };
                 origami = {
-                  enable = true;
+                  # use hs-mode, which is built in and works better for nix
+                  enable = false;
                   config = ''
                           (add-to-list 'origami-parser-alist '(ess-r-mode . origami-c-style-parser))
                           (global-origami-mode)
