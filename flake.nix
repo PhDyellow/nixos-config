@@ -3320,7 +3320,9 @@ bar {
                   config = ''
                         (global-flycheck-mode)
                         (setq flycheck-check-syntax-automatically '(save idle-change)
-                              flycheck-idle-change-delay 5)
+                              flycheck-idle-change-delay 5
+                              ;; org-lint is slow in the memx, and causes frequent multi-second hangs
+                              flycheck-disabled-checkers '(org-lint))
                       '';
                 };
                 consult-org = {
