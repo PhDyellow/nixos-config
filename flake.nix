@@ -3749,40 +3749,91 @@ them as reviewed with `org-roam-review-accept',
                           ;; (startgrouptag . nil) (taggg . "t") (grouptags . nil) ... (endgrouptag . nil) ->  tag group "taggg", not exclusive
                           ;; regular tag "proj"
                           ;; regexp tag "{proj_.+}" -> matches any tag starting with "proj_". Useful as part of group tag, eg ((startgroup) ("proj") (grouptags) ("{proj_.+}")(endgroup)) which allows searches for "proj" to match all projects, or proj_win to just match the proj_win project.
-
                           ;; If a tag is mutually exclusive with PROCESSING, then the tag is always a processing tag.
 
-                            ;; QUERY tag for question, investigation log, conclusion.
-                            (startgroup . nil) ("QUERY") ("PROCESSING") ("XXQUERY") (endgroup . nil)
-                            ;; RECIPE tag for how to do something
-                            (startgroup . nil) ("RECIPE") ("XXRECIPE") (endgroup . nil)
-                            ;; CITE tag for a reference or source. XXCITE is a retracted source
-                            (startgroup . nil) ("CITE") ("XXCITE") (endgroup . nil)
-                            ;; SPARK tag for an idea, probably crossing together a lot of other ideas and sources. XXSPARK is a spark that has been processed
-                            (startgroup . nil) ("SPARK") ("PROCESSING") ("XXSPARK") (endgroup . nil)
-                            ;; PROJ tag for a goal with tasks. Use PROJ if it is something that can be marked as done, is more complex than a single task and achieves something in itself when done (ie. not just partway to a desired state. A counterexample: submitting an application then accepting the returned offer are two tasks, the first one is not a complete project on it's own.). A subproject is also a PROJ, linked to the parent proj in a super/sub type link pair.
-                            (startgroup . nil) ("PROJ") ("XXPROJ") (endgroup . nil)
-                            ;; TASK tag for a task. Often redundant due to TODO states.
-                            (startgroup . nil) ("TASK") ("XXTASK") (endgroup . nil)
-                            ;; AREA tag for things I am responsible for, and want to maintain, but cannot be marked as done. I'm never really "done" with being a parent or husband, for example, or taking care of my health. Areas do close though, as life circumstances change.
-                            (startgroup . nil) ("AREA") ("XXAREA") (endgroup . nil)
-                            ;; VALUE tag for my fundamental understanding of things that are important. Values are concepts. Values are used to discern between actions that all seem good.
-                            (startgroup . nil) ("VALUE") ("XXVALUE") (endgroup . nil)
-                            ;; GOAL tag for things I want to work towards. Goals are visions of the future. An active goal is defined by a clear outcome. Goals pursue values, values inform goals.
-                            (startgroup . nil) ("GOAL") ("XXGOAL") (endgroup . nil)
-                            ;; WORKS tag for things I am working on. Code, writing, in collaboration, solo... They are marked as closed when I don't plan on changing anything else in them.
-                            (startgroup . nil) ("WORKS") ("XXWORKS") (endgroup . nil)
-                            ;; CONCEPT tag for notes that explain a concept. Theseare the "evergreen" notes in my memx, and should be reasonably self-contained and understandable to an outsider. Concept notes are not normally closed, but they might be retracted.
-                            (startgroup . nil) ("CONCEPT") ("XXCONCEPT") (endgroup . nil)
-                            ;; ENTITY  tag, for a thing, like a person, company, city or software program. Entity tags are closed when I no longer want to see them, not when the entity ceases to exist, as some entities are historical or fictional.
-                            (startgroup . nil) ("ENTITY") ("XXENTITY") (endgroup . nil)
-                            ;; Contains TOC, org-ql-views, overview, or some kind of summary that mostly just links to other things.
-                            (startgroup . nil) ("VIEW") ("XXVIEW") (endgroup . nil)
-                            ;; THINKING tag, for thinking things through. Like SPARK, but when I dont have an idea.
-                            (startgroup . nil) ("THINKING") ("PROCESSING") ("XXTHINKING") (endgroup . nil)
+                          ;;
+                          (:startgroup)
+                              ("TYPE" . ?1)
+                              (:grouptags)
+                                  ("PROCESS" . ?2)
+                                             ("PROCESSING" . ?4)
+                                             ("PROCESSED" . ?5)
+                                  ("INFORMATION" . ?3)
+                                             ("CURRENT" . ?6)
+                                             ("STALE" . ?7)
+                          (:endgroup)
+                          (:startgroup)
+                              ("PROCESS" . ?2)
+                              (:grouptags)
+                                  ("PROCESSING" . ?4)
+                                  ("PROCESSED" . ?5)
+                          (:endgroup)
+                          (:startgroup)
+                              ("INFORMATION" . ?3)
+                              (:grouptags)
+                                  ("CURRENT" . ?6)
+                                  ("STALE" . ?7)
+                          (:endgroup)
+                          (:startgroup)
+                              ("PROCESSING" . ?4)
+                              (:grouptags)
+;; QUERY tag for question, investigation log, conclusion.
+                                  ("QUERY" . ?u)
+;; SPARK tag for an idea, probably crossing together a lot of other ideas and sources. XXSPARK is a spark that has been processed
+                                  ("SPARK" . ?s)
+;; PROJ tag for a goal with tasks. Use PROJ if it is something that can be marked as done, is more complex than a single task and achieves something in itself when done (ie. not just partway to a desired state. A counterexample: submitting an application then accepting the returned offer are two tasks, the first one is not a complete project on it's own.). A subproject is also a PROJ, linked to the parent proj in a super/sub type link pair.
+                                  ("PROJ" . ?p)
+;; TASK tag for a task. Often redundant due to TODO states.
+                                  ("TASK" . ?t)
+;; AREA tag for things I am responsible for, and want to maintain, but cannot be marked as done. I'm never really "done" with being a parent or husband, for example, or taking care of my health. Areas do close though, as life circumstances change.
+                                  ("AREA" . ?a)
+;; GOAL tag for things I want to work towards. Goals are visions of the future. An active goal is defined by a clear outcome. Goals pursue values, values inform goals.
+                                  ("GOAL" . ?g)
+;; WORKS tag for things I am working on. Code, writing, in collaboration, solo... They are marked as closed when I don't plan on changing anything else in them.
+                                  ("ARTEFACT" . ?w)
+;; THINKING tag, for thinking things through. Like SPARK, but when I dont have an idea.
+                                  ("THINKING" . ?h)
+                          (:endgroup)
+                          (:startgroup)
+                              ("PROCESSED" . ?5)
+                              (:grouptags)
+                                  ("XXQUERY" . ?U)
+                                  ("XXSPARK" . ?S)
+                                  ("XXPROJ" . ?P)
+                                  ("XXTASK" . ?T)
+                                  ("XXAREA" . ?A)
+                                  ("XXGOAL" . ?G)
+                                  ("XXARTEFACT" . ?W)
+                                  ("XXTHINKING" . ?H)
+                          (:endgroup)
+                          (:startgroup)
+                              ("CURRENT" . ?6)
+                              (:grouptags)
+;; RECIPE tag for how to do something
+                                  ("RECIPE" . ?r)
+;; CITE tag for a reference or source. XXCITE is a retracted source
+                                  ("CITE" . ?c)
+;; VALUE tag for my fundamental understanding of things that are important. Values are concepts. Values are used to discern between actions that all seem good.
+                                  ("VALUE" . ?v)
+;; CONCEPT tag for notes that explain a concept. Theseare the "evergreen" notes in my memx, and should be reasonably self-contained and understandable to an outsider. Concept notes are not normally closed, but they might be retracted.
+                                  ("CONCEPT" . ?o)
+;; ENTITY  tag, for a thing, like a person, company, city or software program. Entity tags are closed when I no longer want to see them, not when the entity ceases to exist, as some entities are historical or fictional.
+                                  ("ENTITY" . ?e)
+;; Contains TOC, org-ql-views, overview, or some kind of summary that mostly just links to other things.
+                                  ("VIEW" . ?b)
+                          (:endgroup)
+                          (:startgroup)
+                              ("STALE" . ?7)
+                              (:grouptags)
+                                  ("XXRECIPE" . ?R)
+                                  ("XXCITE" . ?C)
+                                  ("XXVALUE" . ?V)
+                                  ("XXCONCEPT" . ?O)
+                                  ("XXENTITY" . ?E)
+                                  ("XXVIEW" . ?B)
+                          (:endgroup)))
 
 
-                          ))
 
                           (setq org-M-RET-may-split-line nil)
 
