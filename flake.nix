@@ -3735,6 +3735,14 @@ them as reviewed with `org-roam-review-accept',
                             ;(sequence "ADD" "FIND" "SKIM(1!)" "1ST_READ(2!)" "1ST_MARG(3!)" "2ND_READ(4!)" "2ND_MARG(5!)" "3RD_READ(6!)" "3RD_MARG(7!)" "GOLD(8!)" "|" "REF(9!)" "DROP(k)")
                           ))
 
+                          ;; set up Priorities that map to emotional capacity
+                          ;; see "energy and emotional capacity based priority system for org-mode, my todo system, memx, anchoring system"
+                          ;; for details
+                          (setq org-priority-highest 1
+                                org-priority-lowest 9
+                                org-priority-default 5)
+
+
                           (setq org-tag-alist '(
                           ;; (startgroup . nil) ... (endgroup . nil) -> Mutually exclusive  tags
                           ;; (startgroup . nil) (tagggx . "t") (grouptags . nil) ... (endgroup . nil) -> Mutually exclusive tags in tag group "tagggx"
