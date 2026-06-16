@@ -3739,8 +3739,8 @@ them as reviewed with `org-roam-review-accept',
                           ;; see "energy and emotional capacity based priority system for org-mode, my todo system, memx, anchoring system"
                           ;; for details
                           (setq org-priority-highest 1
-                                org-priority-lowest 9
-                                org-priority-default 5)
+                                org-priority-lowest 11
+                                org-priority-default 7)
 
 
                           (setq org-tag-alist '(
