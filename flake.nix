@@ -449,9 +449,14 @@
           {
             system.stateVersion = "21.11";
           };
+
         stateversion-nix-on-droid = {config, pkgs, ...}:
           {
             system.stateVersion = "24.05";
+
+        stateversion-2605 = {config, pkgs, ...}:
+          {
+            system.stateVersion = "26.05";
           };
 
         slurm-server = {config, pkgs, ...}:
@@ -513,6 +518,69 @@
       };
       nix-on-droid-config = {
 
+
+      };
+
+      server-vm-grass = {
+
+        impermanence = {config, lib, pkgs, ...}:
+          {
+            imports = [
+              inputs.impermanence.nixosModules.impermanence
+            ];
+
+            environment.persistence."/persistent" = {
+              enable = true;
+              hideMounts = true;
+              directories = [
+                # This will grow as I discover things
+                # Persistence is for things that either
+                # 1. Must not go in the nix store
+                # 2. Are frequently updated by the application
+                # examples of 2. are cache files and data, but
+                # where possible these should be configured to go elsewhere
+                {
+                  directory = "/secrets"; # syncthing is here too
+                  mode = "0700";
+                  user = "root";
+                  group = "root";
+                }
+                "/etc/secureboot"
+                "/var/lib/nixos" # persist random nixos serice UIDs
+                "/var/lib/systemd"
+                "/var/lib/syncthing"
+                "/var/lib/tailscale"
+                "/var/lib/bluetooth"
+                "/nix"
+                "/var/log"
+                # quick note, these are mounted from /persistent/{dir} to /{dir}
+                # That may be necessary knowledge for initial install
+              ];
+
+              files = [
+                "/etc/machine-id"
+                "/etc/ssh/ssh_host_ed25519_key"
+                "/etc/ssh/ssh_host_ed25519_key.pub"
+                "/etc/ssh/ssh_host_rsa_key"
+                "/etc/ssh/ssh_host_rsa_key.pub"
+              ];
+            };
+          };
+
+        networking = {config, pkgs, ...}:
+          {
+            networking = {
+              hostName = "grass";
+              firewall = {
+                enable = true;
+                allowedTCPPorts = [ ];
+                allowedUDPPorts = [ ];
+              };
+              interfaces = {
+              };
+            };
+
+          };
 
       };
 
@@ -5830,6 +5898,41 @@ the target and properties of the edge."
         ];
       };
 
+    };
+    server-vm-grass = nixpkgs-unstable.lib.nixosSystem {
+      system = "x86_64-Linux";
+      modules = [
+        # Nix config
+        self.nixosModules.system-conf.nix-config
+        self.nixosModules.system-conf.stateversion-2605
+        self.nixosModules.system-conf.allow-unfree
+
+        # Impermanence
+
+
+
+        # Hardware config
+
+        # Folders and drives
+
+        # SSH access
+        self.nixosModules.system-conf.openssh
+
+        # Networking
+        self.nixosModules.server-vm-grass.networking
+
+        # Admin user. maybe just with ssh keys?
+        self.nixosModules.system-conf.lock-root
+
+        # "Host" packages for system admin
+        self.nixosModules.system-conf.locale_au
+
+        # Containers and services
+
+
+
+
+      ];
     };
     nixOnDroidConfigurations = {
       galaxym62 = inputs.nix-on-droid.lib.nixOnDroidConfiguration {
