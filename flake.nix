@@ -449,6 +449,10 @@
           {
             system.stateVersion = "21.11";
           };
+        stateversion-nix-on-droid = {config, pkgs, ...}:
+          {
+            system.stateVersion = "24.05";
+          };
 
         slurm-server = {config, pkgs, ...}:
           let
@@ -2208,6 +2212,54 @@ bar {
                 fi
               '';
         };
+      };
+      nix-on-droid-modules = {
+        phil-home = {config, pkgs, ...}: {
+	            imports = [
+            inputs.home-manager.nixosModules.home-manager
+
+          ];
+
+          # This is the place to target emacs program versions
+          nixpkgs.overlays = [
+            inputs.emacs-overlay.overlays.default
+          ];
+
+
+          home-manager = {
+            useGlobalPkgs = true;
+            useUserPackages = true;
+            #config inserted before use-package
+            users.phil = {
+              imports = let
+                nurNoPkgs = import inputs.nur { pkgs = null; nurpkgs = pkgs; };
+              in [
+                nurNoPkgs.repos.rycee.hmModules.emacs-init
+                self.hmModules.emacs-hm-init
+                ## self.hmModules.emacs-mwe
+                self.hmModules.gpg-agent-emacs
+                self.hmModules.hyprland-config
+                self.hmModules.git-config
+                self.hmModules.r-config
+                # self.hmModules.tex-full
+                self.hmModules.impermanence-phil
+              ];
+              manual.manpages.enable = true;
+
+              home = {
+                stateVersion = "23.05";
+                file = {
+                  enchant-ordering = {
+                    target = ".config/enchant/enchant.ordering";
+                    text = ''
+                    en_AU:aspell,nuspell
+                    en:aspell,nuspell
+                    en_GB:aspell,nuspell'';
+                  };
+                };
+              };
+
+	};
       };
     };
     #Modules for importing into home-manager.users.<name>.imports = [ here ];
@@ -5783,7 +5835,16 @@ the target and properties of the edge."
       galaxym62 = inputs.nix-on-droid.lib.nixOnDroidConfiguration {
         pkgs = import inputs.nixpkgs-stable {system = "aarch64-linux";};
         modules = [
-          # self.nixosModules.
+          self.nixosModules.system-conf.allow-unfree
+          self.nixosModules.system-conf.locale_au
+          self.nixosModules.system-conf.fonts
+          self.nixosModules.system-conf.nix-config
+          self.nixosModules.system-conf.stateversion-nix-on-droid
+          self.nixosModules.system-conf.cli
+
+          self.nixosModules.nix-on-droid-modules.phil-home
+
+
         ];
       };
     };
