@@ -453,7 +453,7 @@
         stateversion-nix-on-droid = {config, pkgs, ...}:
           {
             system.stateVersion = "24.05";
-
+          };
         stateversion-2605 = {config, pkgs, ...}:
           {
             system.stateVersion = "26.05";
