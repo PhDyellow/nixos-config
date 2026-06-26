@@ -2306,11 +2306,11 @@ bar {
                 self.hmModules.emacs-hm-init
                 ## self.hmModules.emacs-mwe
                 self.hmModules.gpg-agent-emacs
-                self.hmModules.hyprland-config
+                ## self.hmModules.hyprland-config
                 self.hmModules.git-config
-                self.hmModules.r-config
+                ##self.hmModules.r-config
                 # self.hmModules.tex-full
-                self.hmModules.impermanence-phil
+                # self.hmModules.impermanence-phil
               ];
               manual.manpages.enable = true;
 
@@ -5947,6 +5947,8 @@ the target and properties of the edge."
 
           self.nixosModules.nix-on-droid-modules.phil-home
 
+          self.nixosModules.cli.spell_checkers
+          self.nixosModules.cli.direnv
 
         ];
       };
