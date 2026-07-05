@@ -5899,59 +5899,61 @@ the target and properties of the edge."
         ];
       };
 
-    };
-    server-vm-grass = nixpkgs-unstable.lib.nixosSystem {
-      system = "x86_64-Linux";
-      modules = [
-        # Nix config
-        self.nixosModules.system-conf.nix-config
-        self.nixosModules.system-conf.stateversion-2605
-        self.nixosModules.system-conf.allow-unfree
 
-        # Impermanence
-
-
-
-        # Hardware config
-
-        # Folders and drives
-
-        # SSH access
-        self.nixosModules.system-conf.openssh
-
-        # Networking
-        self.nixosModules.server-vm-grass.networking
-
-        # Admin user. maybe just with ssh keys?
-        self.nixosModules.system-conf.lock-root
-
-        # "Host" packages for system admin
-        self.nixosModules.system-conf.locale_au
-
-        # Containers and services
-
-
-
-
-      ];
-    };
-    nixOnDroidConfigurations = {
-      galaxym62 = inputs.nix-on-droid.lib.nixOnDroidConfiguration {
-        pkgs = import inputs.nixpkgs-stable {system = "aarch64-linux";};
+      server-vm-grass = nixpkgs-unstable.lib.nixosSystem {
+        system = "x86_64-Linux";
         modules = [
-          self.nixosModules.system-conf.allow-unfree
-          self.nixosModules.system-conf.locale_au
-          self.nixosModules.system-conf.fonts
+          # Nix config
           self.nixosModules.system-conf.nix-config
-          self.nixosModules.system-conf.stateversion-nix-on-droid
-          self.nixosModules.system-conf.cli
+          self.nixosModules.system-conf.stateversion-2605
+          self.nixosModules.system-conf.allow-unfree
 
-          self.nixosModules.nix-on-droid-modules.phil-home
+          # Impermanence
 
-          self.nixosModules.cli.spell_checkers
-          self.nixosModules.cli.direnv
+
+
+          # Hardware config
+
+          # Folders and drives
+
+          # SSH access
+          self.nixosModules.system-conf.openssh
+
+          # Networking
+          self.nixosModules.server-vm-grass.networking
+
+          # Admin user. maybe just with ssh keys?
+          self.nixosModules.system-conf.lock-root
+
+          # "Host" packages for system admin
+          self.nixosModules.system-conf.locale_au
+
+          # Containers and services
+
+
+
 
         ];
+      };
+      nixOnDroidConfigurations = {
+        # mostly just aiming to get emacs onto a phone here
+        galaxym62 = inputs.nix-on-droid.lib.nixOnDroidConfiguration {
+          pkgs = import inputs.nixpkgs-stable {system = "aarch64-linux";};
+          modules = [
+            self.nixosModules.system-conf.allow-unfree
+            self.nixosModules.system-conf.locale_au
+            self.nixosModules.system-conf.fonts
+            self.nixosModules.system-conf.nix-config
+            self.nixosModules.system-conf.stateversion-nix-on-droid
+            self.nixosModules.system-conf.cli
+
+            self.nixosModules.nix-on-droid-modules.phil-home
+
+            self.nixosModules.cli.spell_checkers
+            self.nixosModules.cli.direnv
+
+          ];
+        };
       };
     };
     # For managing with home-manager cli.
@@ -5965,6 +5967,7 @@ the target and properties of the edge."
         ];
 
       };
+    };
     };
   };
 }
