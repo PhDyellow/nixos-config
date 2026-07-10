@@ -161,28 +161,11 @@
       #   Only use gui or cli for programs that need tweaking
 
       flatpak = {
-        base = {config, pkgs, ...}:
-          {
-            services.flatpak.enable = true;
-            users.users.phil.extraGroups = [ "flatpak" ];
-          };
-        impermanence = {config, pkgs, ...}:
-          {
-            environment.persistence."/persistent" = {
-              directories = [
-                "/var/lib/flatpak"
-              ];
-            };
-          };
+        base = import ./flatpak/base.nix;
+        impermanence = import ./flatpak/impermanence.nix;
       };
       llms = {
-        ollama = {config, pkgs, ...}:
-          {
-            services.ollama = {
-              enable = true;
-              loadModels = [ ];
-            };
-          };
+        ollama = import ./llms/ollama.nix;
         cudafy-ollama = {config, pkgs, ...}:
           {
             services.ollama = {
