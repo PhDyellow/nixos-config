@@ -166,273 +166,33 @@
       };
       llms = {
         ollama = import ./llms/ollama.nix;
-        cudafy-ollama = {config, pkgs, ...}:
-          {
-            services.ollama = {
-              acceleration = "cuda";
-            };
-          };
-        llama-cpp-cuda = {config, pkgs, ...}:
-          {
-            services.llama-cpp = {
-              enable = true;
-              extraFlags = [ ];
-            };
-          };
+        cudafy-ollama = import ./llms/cudafy-ollama.nix;
+        llama-cpp-cuda = import ./llms/llama-cpp-cuda.nix;
       };
       system-conf = {
-        localsend = {config, pkgs, ...}:
-          {
-            programs.localsend.enable = true;
-          };
-        network-printers = {config, pkgs, ...}:
-          {
-            services.printing.enable = true;
-            # Discover printers on Wifi network
-            services.avahi = {
-              enable = true;
-              nssmdns4 = true;
-              openFirewall = true;
-            };
-            services.printing.drivers = [
-              pkgs.epson-escpr2
-            ];
-          };
-        network-scanners = {config, pkgs, ...}:
-          {
-            hardware.sane.enable = true;
-            users.users.phil.extraGroups = ["scanner" "lp" ];
-          };
-        umask = {config, pkgs, ...}:
-          {
-            environment.extraInit = "umask 0027";
-          };
+        localsend = import ./system-conf/localsend.nix;
+        network-printers = import ./system-conf/network-printers.nix;
+        network-scanners = import ./system-conf/network-scanners.nix;
+        umask = import ./system-conf/umask.nix;
         # Programs that I want on all devices, and don't need to configure
-        gui = {config, pkgs, ...}:
-          {
-            environment.systemPackages = with pkgs; [
-              bitwarden-desktop
-              keepassxc
-              (btop.override {cudaSupport = true;})
-            ];
-          };
-        cli = {config, pkgs, ...}:
-          {
-            environment.systemPackages = with pkgs; [
-              ripgrep
-              nil # nix language server
-              openssl
-              vim
-              git
-              gitSVN
-              wget
-              curl
-              dig
-              pigz
-              certbot
-              squashfsTools
-              squashfs-tools-ng
-              inputs.ragenix.packages.x86_64-linux.default
-            ];
-          };
-        allow-unfree = {config, pkgs, ...}:
-          {
-            nixpkgs.config.allowUnfree = true;
-          };
-        davfs = {config, pkgs, ...}:
-          {
-            services.davfs2.enable = true;
-          };
-        udisks = {config, pkgs, ...}:
-          {
-            services.udisks2.enable = true;
-          };
-        openssh = {config, pkgs, ...}:
-          {
-            #Enable OpenSSH daemon
-            #Primary use here is for agenix.
-            #Enabling openssh creates host keys, which agenix uses for secrets
-            #password entry is therefore disabled, and firewall ports are not opened
-            services.openssh = {
-              enable = true;
-              settings.PasswordAuthentication = false;
-              openFirewall = false;
-            };
+        gui = import ./system-conf/gui.nix;
+        cli = import ./system-conf/cli.nix;
+        allow-unfree = import ./system-conf/allow-unfree.nix;
+        davfs = import ./system-conf/davfs.nix;
+        udisks = import ./system-conf/udisks.nix;
+        openssh = import ./system-conf/openssh.nix;
+        secure_boot = import ./system-conf/secure-boot.nix;
+        network_fs = import ./system-conf/network-fs.nix;
+        wifi_secrets = import ./system-conf/wifi-secrets.nix;
 
-            programs.ssh = {
-              #agentTimeout = "1h"; #request passphrase for keys every hour
-              startAgent = true;
-              askPassword = "systemd-ask-password";
-              knownHosts = {
-                github-ed25519 = {
-                  hostNames = [ "github.com" ];
-                  publicKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOMqqnkVzrm0SdG6UOoqKLsabgH5C9okWi0dh2l9GKJl";
-                };
-                github-rsa = {
-                  hostNames = [ "github.com" ];
-                  publicKey = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQCj7ndNxQowgcQnjshcLrqPEiiphnt+VTTvDP6mHBL9j1aNUkY4Ue1gvwnGLVlOhGeYrnZaMgRK6+PKCUXaDbC7qtbW8gIkhL7aGCsOr/C56SJMy/BCZfxd1nWzAOxSDPgVsmerOBYfNqltV9/hWCqBywINIR+5dIg6JTJ72pcEpEjcYgXkE2YEFXV1JHnsKgbLWNlhScqb2UmyRkQyytRLtL+38TGxkxCflmO+5Z8CSSNY7GidjMIZ7Q4zMjA2n1nGrlTDkzwDCsw+wqFPGQA179cnfGWOWRVruj16z6XyvxvjJwbz0wQZ75XK5tKSb7FNyeIEs4TT4jk+S4dhPeAUC5y+bDYirYgM4GC7uEnztnZyaVWQ7B381AK4Qdrwt51ZqExKbQpTUNn+EjqoTwvqNj4kqx5QUCI0ThS/YkOxJCXmPUWZbhjpCg56i+2aB6CmK2JGhn57K5mj0MNdBXA4/WnwH6XoPWJzK5Nyu2zB3nAZp+S5hpQs+p1vN1/wsjk=";
-                };
-                github-ecdsa = {
-                  hostNames = [ "github.com" ];
-                  publicKey = "ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBEmKSENjQEezOmxkZMy7opKgwFB9nkt5YRrYMjNuG5N87uRgg6CLrbo5wAdT/y6v0mKV0U2w0WZ2YB/++Tpockg=";
-                };
-                r-forge-ecdsa = {
-                  hostNames = [ "scm.r-forge.r-project.org" ];
-                  publicKey = "ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBBGIpa5hMQnQUuLeRRokZNQSETFDLDybxPMawXvSFoXrxJBfNMVQV5qw622q7/HjNoxi01p0UR4CqhoCT9Hkjow=";
-                };
-                r-forge-rsa = {
-                  hostNames = [ "scm.r-forge.r-project.org" ];
-                  publicKey = "ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEA6JrzVW2dIkO2nxz0ioJ/s+tIOLpr7C3fXGoeR9JXOQEvUnCR6KDCOZTzbM9rmYbT8CTZ/ZJOyrfC4Tdgsg2Uq7RYgFqiDT8fBIA/WYjhC2x06lUJNG9dhTu+pb6gFdOhELL7HNfXRzsQTCjs+H6GyNd6sdZxOYJGWjv4rshkVW6VyHqzHyI4hQI5dqTyShFijuWPH+b5oPd4xmu3OeMbseHN4Djvc/wfOJ3o6WGonrdjZKijhGNX8cNfCScMUmXQhmhMYcjbG/gP/X59pTmIADS5+lPTzj/QRBgvxHU19SFnEWu2TQkV46KR9In5F4lgcqbsKxntPPUdvygOGKEAYQ==";
-                };
-                dpbagje-ecdsa = {
-                  hostNames = [ "dpbagje.philjd.com" ];
-                  publicKey = "ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBKltuaDB9eLC3U0Z+mOySmWafB0KL1txZc3dDfEBTIGEoktgoH7oSaKW4MD1zdSbkysGUBRUTqITu/I8dBa4QiQ=";
-                };
-                dpbagje-ed25519 = {
-                  hostNames = [ "dpbagje.philjd.com" ];
-                  publicKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIEPluafSiTm35xyEAPlhhZA2st4dPAY2JMVkPTw3CXYP";
-                };
-              };
-            };
-          };
-        secure_boot = {config, pkgs, lib, ...}:
-          {
-            imports = [
-              inputs.lanzaboote.nixosModules.lanzaboote
-            ];
-            #boot.bootspec.enable = true; #duplicated from prime-ai_hardware_config
-            boot = {
-              loader = {
-                efi.canTouchEfiVariables = true;
-                systemd-boot = {
-                  enable = lib.mkForce false; #force to false for lanzaboote
-                  #enable = true;
-                  editor = false;  #don't allow kernel cli editing before boot
-                };
-              };
-              lanzaboote = {
-                enable = true;
-                pkiBundle = "/etc/secureboot";
-              };
-            };
-          };
-        network_fs = {config, pkgs, ...}:
-          let
-            # this line prevents hanging on network split
-            automount_opts = "x-systemd.automount,noauto,x-systemd.idle-timeout=600,x-systemd.device-timeout=5s,x-systemd.mount-timeout=5s,uid=1001,gid=100";
-          in
-            {
-              age.secrets.cifs_dpbagje_share.file = ./agenix/cifs_dpbagje_share.age;
-              fileSystems = {
-                "/nas/dpbagj/parent_share" = {
-                  device = "//100.108.81.63/parent_share";
-                  fsType = "cifs";
-                  options = ["${automount_opts},credentials=${config.age.secrets.cifs_dpbagje_share.path}"];
-                };
-                "/nas/dpbagj/family_share" = {
-                  device = "//100.108.81.63/family_share";
-                  fsType = "cifs";
-                  options = ["${automount_opts},credentials=${config.age.secrets.cifs_dpbagje_share.path}"];
-                };
-                "/nas/dpbagj/repos" = {
-                  device = "//100.108.81.63/repos";
-                  fsType = "cifs";
-                  options = ["${automount_opts},credentials=${config.age.secrets.cifs_dpbagje_share.path}"];
-                };
-              };
-            };
-        wifi_secrets = {config, pkgs, ...}:
-          {
-            age.secrets.wpa_pwd_env = {
-              file = ./agenix/wpa_pwd.env.age;
-              mode = "600";
-              owner = "wpa_supplicant";
-              group = "wpa_supplicant";
-            };
-            networking.wireless = {
-              secretsFile = config.age.secrets.wpa_pwd_env.path;
-              networks = {
-                PBAGJmob = {
-                  pskRaw = "ext:phone_psk";
-                  priority = 20;
-                };
-                WIFI-56E0-5G = {
-                  pskRaw = "ext:parent_psk";
-                  priority = 60;
-                };
-                WiFi-56E0-5G = {
-                  pskRaw = "ext:parent_psk";
-                  priority = 65;
-                };
-                PBAGJE_H_5G = {
-                  pskRaw = "ext:home_psk";
-                  priority = 99;
-                };
-                #BParent 2.4Ghz
-                Telstra6C9EC9 = {
-                  pskRaw = "ext:bparent_psk";
-                  priority = 50;
-                };
-              };
-            };
-          };
-
-        locale_au = {config, pkgs, ...}:
-          {
-            time.timeZone = "Australia/Brisbane";
-            i18n.defaultLocale = "en_AU.UTF-8";
-          };
-        fonts = {config, pkgs, ...}:
-          {
-            fonts = {
-              packages = with pkgs; [
-                nerd-fonts.fira-code
-                nerd-fonts.roboto-mono
-              ];
-              fontconfig.defaultFonts = {
-                monospace = [ "RobotoMono" ];
-              };
-            };
-          };
-        lock-root = {config, pkgs, ...}:
-          {
-            users.mutableUsers = false;
-            users.users = {
-              root.hashedPassword = "*";
-            };
-          };
-        nix-config = {config, pkgs, ...}:
-          {
-
-            nix = {
-              package = pkgs.nixVersions.latest;
-              settings = {
-                system-features = [
-                  "recursive-nix"
-                  "kvm"
-                  "big-parallel"
-                  "nixos-test"
-                  "benchmark"
-                ];
-                experimental-features = [
-                  "nix-command"
-                  "flakes"
-                  "recursive-nix"
-                ];
-                substituters = [
-                  "https://nix-community.cachix.org" # for nix-community
-                ];
-                trusted-public-keys = [
-                  "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs=" #For Nix-community
-                ];
-              };
-            };
-          };
+        locale_au = import ./system-conf/locale-au.nix;
+        fonts = import ./system-conf/fonts.nix;
+        lock-root = import ./system-conf/lock-root.nix;
+        nix-config = import ./system-conf/nix-config.nix;
         stateversion = {config, pkgs, ...}:
           {
             system.stateVersion = "21.11";
           };
-
         stateversion-nix-on-droid = {config, pkgs, ...}:
           {
             system.stateVersion = "24.05";
@@ -441,130 +201,16 @@
           {
             system.stateVersion = "26.05";
           };
-
-        slurm-server = {config, pkgs, ...}:
-          let
-            gres = pkgs.writeTextFile {
-              name = "gres.conf";
-              text = ''
-                Name=gpu Type=nvidia File=/dev/nvidia0
-              '';
-              destination = "/gres.conf";
-            };
-          in
-
-            {
-            environment.systemPackages = with pkgs; [
-              apptainer
-            ];
-            age.secrets.munge_key = {
-              file = ./agenix/munge_key.age;
-              mode = "600";
-              owner = "munge";
-              group = "munge";
-            };
-
-            ## needed by slurm
-            services.munge = {
-              enable = true;
-              password = config.age.secrets.munge_key.path;
-            };
-            services.slurm = {
-              server = {
-                enable = true;
-              };
-              client = {
-                enable = true;
-              };
-              extraConfig = ''
-                SlurmctldHost=${config.networking.hostName}
-
-                SelectType=select/cons_tres
-                SelectTypeParameters=CR_Core_Memory
-                GresTypes=gpu
-              '';
-              extraConfigPaths = [
-                "${gres}"
-              ];
-              # controlMachine = config.networking.hostName;
-              # controlAddr="::1";
-              nodeName = [
-                "${config.networking.hostName} CPUs=11 CoresPerSocket=11 Sockets=1 RealMemory=62000  Gres=gpu:nvidia:1  State=UNKNOWN"
-              ];
-              partitionName = [
-                "cpu Nodes=${config.networking.hostName} MaxCPUsPerNode=10 Default=YES MaxTime=UNLIMITED MaxMemPerNode=62000 State=UP"
-                ## Reserve a cpu for the GPU jobs.
-                "gpu Nodes=${config.networking.hostName} MaxCPUsPerNode=1  MaxTime=UNLIMITED MaxMemPerNode=62000 State=UP"
-              ];
-            };
-          };
+        slurm-server = import ./system-conf/slurm-server.nix;
       };
-      nix-on-droid-config = {
 
+      ### Modules for specific machines
 
-      };
+      nix-on-droid-config = {};
 
       server-vm-grass = {
-
-        impermanence = {config, lib, pkgs, ...}:
-          {
-            imports = [
-              inputs.impermanence.nixosModules.impermanence
-            ];
-
-            environment.persistence."/persistent" = {
-              enable = true;
-              hideMounts = true;
-              directories = [
-                # This will grow as I discover things
-                # Persistence is for things that either
-                # 1. Must not go in the nix store
-                # 2. Are frequently updated by the application
-                # examples of 2. are cache files and data, but
-                # where possible these should be configured to go elsewhere
-                {
-                  directory = "/secrets"; # syncthing is here too
-                  mode = "0700";
-                  user = "root";
-                  group = "root";
-                }
-                "/etc/secureboot"
-                "/var/lib/nixos" # persist random nixos serice UIDs
-                "/var/lib/systemd"
-                "/var/lib/syncthing"
-                "/var/lib/tailscale"
-                "/var/lib/bluetooth"
-                "/nix"
-                "/var/log"
-                # quick note, these are mounted from /persistent/{dir} to /{dir}
-                # That may be necessary knowledge for initial install
-              ];
-
-              files = [
-                "/etc/machine-id"
-                "/etc/ssh/ssh_host_ed25519_key"
-                "/etc/ssh/ssh_host_ed25519_key.pub"
-                "/etc/ssh/ssh_host_rsa_key"
-                "/etc/ssh/ssh_host_rsa_key.pub"
-              ];
-            };
-          };
-
-        networking = {config, pkgs, ...}:
-          {
-            networking = {
-              hostName = "grass";
-              firewall = {
-                enable = true;
-                allowedTCPPorts = [ ];
-                allowedUDPPorts = [ ];
-              };
-              interfaces = {
-              };
-            };
-
-          };
-
+        impermanence = import ./server-vm-grass/impermanence.nix;
+        networking = import ./server-vm-grass/networking.nix;
       };
 
       x1carbon-vm = {
