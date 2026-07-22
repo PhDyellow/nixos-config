@@ -310,56 +310,56 @@
       prime-ai = nixpkgs-unstable.lib.nixosSystem {
         system = "x86_64-linux";
         modules = [
-          self.nixosModules.prime-ai.hardware_config
-          self.nixosModules.prime-ai.networking
-          self.nixosModules.prime-ai.bluetooth
-          self.nixosModules.prime-ai.hardware_config_tuxedo
-          self.nixosModules.prime-ai.hardware_shared_crypt
-          self.nixosModules.prime-ai.impermanence
-          self.nixosModules.prime-ai.impermanence-agenix #not needed for bootstrap
-          self.nixosModules.prime-ai.syncthing
-          self.nixosModules.prime-ai.tailscale
-          self.nixosModules.prime-ai.phil_home
-          self.nixosModules.prime-ai.phil_user
-          self.nixosModules.prime-ai.gui
+          ./nixos-modules/prime-ai/hardware-config.nix
+          ./nixos-modules/prime-ai/networking.nix
+          ./nixos-modules/prime-ai/bluetooth.nix
+          ./nixos-modules/prime-ai/hardware-config-tuxedo.nix
+          ./nixos-modules/prime-ai/hardware-shared-crypt.nix
+          ./nixos-modules/prime-ai/impermanence.nix
+          ./nixos-modules/prime-ai/impermanence-agenix.nix #not needed for bootstrap
+          ./nixos-modules/prime-ai/syncthing.nix
+          ./nixos-modules/prime-ai/tailscale.nix
+          ./nixos-modules/prime-ai/phil-home.nix
+          ./nixos-modules/prime-ai/phil-user.nix
+          ./nixos-modules/prime-ai/gui.nix
 
-          self.nixosModules.system-conf.network_fs
-          self.nixosModules.system-conf.wifi_secrets
-          self.nixosModules.system-conf.secure_boot
+          ./nixos-modules/system-conf/network-fs.nix
+          ./nixos-modules/system-conf/wifi-secrets.nix
+          ./nixos-modules/system-conf/secure-boot.nix
 
           
-          self.nixosModules.system-conf.localsend
-          self.nixosModules.system-conf.openssh
-          self.nixosModules.system-conf.allow-unfree
-          self.nixosModules.system-conf.locale_au
-          self.nixosModules.system-conf.umask
-          self.nixosModules.system-conf.cli
-          self.nixosModules.system-conf.gui
-          self.nixosModules.system-conf.davfs
-          self.nixosModules.system-conf.udisks
-          self.nixosModules.system-conf.fonts
-          self.nixosModules.system-conf.lock-root
-          self.nixosModules.system-conf.nix-config
-          self.nixosModules.system-conf.stateversion
-          self.nixosModules.system-conf.slurm-server
-          self.nixosModules.system-conf.network-printers
-          self.nixosModules.system-conf.network-scanners
-          self.nixosModules.window-managers.hyprland
-          self.nixosModules.window-managers.wayland-clipboard
+          ./nixos-modules/system-conf/localsend.nix
+          ./nixos-modules/system-conf/openssh.nix
+          ./nixos-modules/system-conf/allow-unfree.nix
+          ./nixos-modules/system-conf/locale-au.nix
+          ./nixos-modules/system-conf/umask.nix
+          ./nixos-modules/system-conf/cli.nix
+          ./nixos-modules/system-conf/gui.nix
+          ./nixos-modules/system-conf/davfs.nix
+          ./nixos-modules/system-conf/udisks.nix
+          ./nixos-modules/system-conf/fonts.nix
+          ./nixos-modules/system-conf/lock-root.nix
+          ./nixos-modules/system-conf/nix-config.nix
+          ./nixos-modules/system-conf/stateversion.nix
+          ./nixos-modules/system-conf/slurm-server.nix
+          ./nixos-modules/system-conf/network-printers.nix
+          ./nixos-modules/system-conf/network-scanners.nix
+          ./nixos-modules/window-managers/hyprland.nix
+          ./nixos-modules/window-managers/wayland-clipboard.nix
 
-          self.nixosModules.flatpak.base
-          self.nixosModules.flatpak.impermanence
+          ./nixos-modules/flatpak/base.nix
+          ./nixos-modules/flatpak/impermanence.nix
 
-          # self.nixosModules.bib_reorganise # riskier when using org-bibtex, may be editing notes when timer kicks in.
-          self.nixosModules.gui.inkscape # works best when GTK is set up
-          self.nixosModules.gui.nyxt-browser
-          self.nixosModules.cli.texlive-system
-          self.nixosModules.cli.spell_checkers
-          self.nixosModules.cli.direnv
-          #self.nixosModules.window-managers.xfce_desktop
+          # ./nixos-modules/bib_reorganise # riskier when using org-bibtex, may be editing notes when timer kicks in/
+          ./nixos-modules/gui/inkscape.nix # works best when GTK is set up
+          ./nixos-modules/gui/nyxt-browser.nix
+          ./nixos-modules/cli/texlive-system.nix
+          ./nixos-modules/cli/spell_checkers.nix
+          ./nixos-modules/cli/direnv.nix
+          #./nixos-modules/window-managers/xfce_desktop.nix
 
-          self.nixosModules.cli.ryzen-monitor
-          self.nixosModules.systemd-services.ryzen-monitor-inital-ppt
+          ./nixos-modules/cli/ryzen-monitor.nix
+          ./nixos-modules/systemd-services/ryzen-monitor-inital-ppt.nix
 
           # Not sure how this fits in
           inputs.ragenix.nixosModules.age
