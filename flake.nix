@@ -189,18 +189,6 @@
         fonts = import ./nixos-modules/system-conf/fonts.nix;
         lock-root = import ./nixos-modules/system-conf/lock-root.nix;
         nix-config = import ./nixos-modules/system-conf/nix-config.nix;
-        stateversion = {config, pkgs, ...}:
-          {
-            system.stateVersion = "21.11";
-          };
-        stateversion-nix-on-droid = {config, pkgs, ...}:
-          {
-            system.stateVersion = "24.05";
-          };
-        stateversion-2605 = {config, pkgs, ...}:
-          {
-            system.stateVersion = "26.05";
-          };
         slurm-server = import ./nixos-modules/system-conf/slurm-server.nix;
       };
 
