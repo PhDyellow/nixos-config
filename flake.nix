@@ -297,6 +297,7 @@
 
     nixosConfigurations = {
       prime-ai-bootstrap = nixpkgs-unstable.lib.nixosSystem {
+        specialArgs = { inherit inputs; };
         system = "x86_64-linux";
         modules = [
           self.nixosModules.prime-ai.bootstrap_hardware
@@ -308,6 +309,7 @@
         ];
       };
       prime-ai = nixpkgs-unstable.lib.nixosSystem {
+        specialArgs = { inherit inputs; };
         system = "x86_64-linux";
         modules = [
           ./nixos-modules/prime-ai/hardware-config.nix
