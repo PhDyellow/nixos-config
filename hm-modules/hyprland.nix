@@ -2,7 +2,7 @@
 {
   imports = [
     inputs.hyprland.homeManagerModules.default
-    self.nixosModules.hmModules.hyprlock
+    ./hyprlock.nix
   ];
   home = {
     pointerCursor = {
@@ -178,6 +178,4 @@
     plugins = [
     ];
   };
-
-
 }
